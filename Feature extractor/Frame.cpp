@@ -1,12 +1,14 @@
 #include "Frame.h"
 
 
-Frame::Frame()
-{
+namespace FeatureExtractor {
+	Frame::Frame()
+	{
 
-}
+	}
 
 
-Frame::~Frame()
-{
+	Frame::~Frame()
+	{
+	}
 }

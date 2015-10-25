@@ -8,19 +8,21 @@ extern "C" {
 
 #include "Frame.h"
 
-class PcapReader
-{
-	pcap_t *handle;
+namespace FeatureExtractor {
+	class PcapReader
+	{
+		pcap_t *handle;
 
-	// Snapshot length
-	static const int  MAX_SNAPLEN;
+		// Snapshot length = 14B Eth2 header + 60B - max IP header length + 20 TCP basic header
+		static const int SNAPLEN = 94;
 
-public:
-	PcapReader(char *fname);
-	PcapReader(int inum);
-	~PcapReader();
+	public:
+		PcapReader(char *fname);
+		PcapReader(int inum);
+		~PcapReader();
 
-	int next_frame();
+		int next_frame();
 
-};
+	};
+}
 

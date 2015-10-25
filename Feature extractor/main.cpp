@@ -6,10 +6,13 @@
 #include "PcapReader.h"
 
 using namespace std;
+using namespace FeatureExtractor;
 
 int main(int argc, char* argv[])
 {
 	PcapReader *p = NULL;
+
+
 	if (argc <= 1) {
 		p = new PcapReader(1);
 	}
@@ -21,17 +24,19 @@ int main(int argc, char* argv[])
 		else {
 			p = new PcapReader(argv[1]);
 		}
-		
+
 	}
 
 	//PcapReader p(1);
 	//PcapReader p("ip_frag_source.pcap");
 	//PcapReader p("ip_frag_source.pcap");
 
+//	p = new PcapReader("ip_frag_source.pcap");
+
 	while (p->next_frame())
 		;
 
 	cout << endl;
-	system("pause");
+	//system("pause");
 	return 0;
 }
