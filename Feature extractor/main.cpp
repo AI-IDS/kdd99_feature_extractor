@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 	//PcapReader p("ip_frag_source.pcap");
 	//PcapReader p("ip_frag_source.pcap");
 
-//	p = new PcapReader("ip_frag_source.pcap");
+	p = new PcapReader("ip_frag_source.pcap");
 
 	while (p->next_frame())
 		;

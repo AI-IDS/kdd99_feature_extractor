@@ -27,12 +27,12 @@ namespace FeatureExtractor {
 
 	uint8_t ip_header_t::flags() const
 	{
-		return (flags_fo & 0x7);
+		return (ntohs(flags_fo) >> 13) & 0x7;
 	}
 
 	bool ip_header_t::flag_eb() const
 	{
-		return (flags() & 0x4 != 0);
+		return (flags() & 0x1 != 0);
 	}
 
 	bool ip_header_t::flag_df() const
@@ -42,12 +42,12 @@ namespace FeatureExtractor {
 
 	bool ip_header_t::flag_mf() const
 	{
-		return (flags() & 0x1 != 0);
+		return (flags() & 0x4 != 0);
 	}
 
 	uint16_t ip_header_t::frag_offset() const
 	{
-		return (flags_fo >> 3);
+		return ntohs(flags_fo) & 0x01FFF;
 	}
 
 	const char *ip_header_t::protocol_str() const

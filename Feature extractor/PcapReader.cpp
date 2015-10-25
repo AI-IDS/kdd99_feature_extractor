@@ -99,6 +99,7 @@ namespace FeatureExtractor {
 		// IP
 		ip_header_t *ip = (ip_header_t *)eth->get_eth2_sdu();
 		ip->total_length = ntohs(ip->total_length);
+		cout << "(" << hex << (int)ip->flags() << dec << ", " << ip->frag_offset() * 8 << ")";
 		cout << " >> " << ip->protocol_str() << endl;
 
 		uint8_t *src_ip = (uint8_t *)&ip->src_addr;
