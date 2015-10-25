@@ -16,12 +16,20 @@ namespace FeatureExtractor {
 		// Snapshot length = 14B Eth2 header + 60B - max IP header length + 20 TCP basic header
 		static const int SNAPLEN = 94;
 
+		// Additional length = 4B = Ethernet II CRC size (CRC is not part of packet capture)
+		static const int ADDITIONAL_LEN = 4;
+
+
 	public:
 		PcapReader(char *fname);
 		PcapReader(int inum);
 		~PcapReader();
 
-		int next_frame();
+		Frame *next_frame();
+
+		//debug
+
+		int old_next_frame();
 
 	};
 }

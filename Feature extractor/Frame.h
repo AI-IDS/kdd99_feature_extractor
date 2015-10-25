@@ -1,46 +1,43 @@
 #pragma once
 
-#include <stdint.h>
+#include "net.h"
 
 namespace FeatureExtractor {
-	///*
-	// * Protocol on layer 2
-	// */
-	//enum L2Protocol : uint8_t;
-	//{
-	//	ETHERNET2,
-	//		OTHER = 0
-	//};
-
-	///*
-	// * Field Type in Ethernet header
-	// */
-	//enum L3Protocol : uint16_t
-	//{
-	//	IP = 0X800,
-	//	OTHER = 0
-	//};
-
-	///*
-	//* Field Protocol in Ethernet header
-	//*/
-	//enum L4Protocol : uint8_t
-	//{
-	//	ICMP = 1,
-	//	TCP = 9,
-	//	UDP = 17,
-	//	OTHER
-	//};
-
 	class Frame
 	{
-		//L2Protocol layer2_prot;
-		//L3Protocol layer3_prot;
-		//L4Protocol layer4_prot;
-
 	public:
+		struct timeval ts;
+		size_t length;
+
+		bool is_eth2;
+		bool is_ipv4;
+		bool is_icmp;
+		bool is_tcp;
+		bool is_udp;
+
+		size_t size;
+		
+		// Layer3 - IP
+		uint32_t src_ip;
+		uint32_t dst_ip;
+		uint16_t ip_id;
+		ip_field_protocol_t ip_protocol;
+		bool ip_flag_mf;
+		uint16_t ip_frag_offset;
+
+		// Layer 4 - TCP, UDP
+		uint16_t src_port;
+		uint16_t dst_port;
+		bool tcp_flag_fin;
+		bool tcp_flag_syn;
+		bool tcp_flag_rst;
+		bool tcp_flag_ack;
+		bool tcp_flag_urg;
+
 		Frame();
 		~Frame();
+		void print();
+
 	};
 
 }

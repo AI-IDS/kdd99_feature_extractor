@@ -1,12 +1,13 @@
+
 #include <iostream>
 #include "PcapReader.h"
 #include "net.h"
-
-
-
-using namespace std;
+#include "Frame.h"
 
 namespace FeatureExtractor {
+	
+	using namespace std;
+
 	PcapReader::PcapReader(char *fname)
 	{
 		char errbuf[PCAP_ERRBUF_SIZE];
@@ -59,9 +60,77 @@ namespace FeatureExtractor {
 		pcap_freealldevs(alldevs);
 	}
 
-#pragma warning(disable : 4996)
-	int PcapReader::next_frame()
+	Frame *PcapReader::next_frame()
 	{
+		struct pcap_pkthdr *header;
+		const u_char *data;
+
+		/* Retrieve the packet */
+		if (pcap_next_ex(this->handle, &header, &data) != 1) {
+			return NULL;
+		}
+
+		Frame *frame = new Frame();
+		frame->ts = header->ts;
+		frame->length = header->len + ADDITIONAL_LEN;
+
+		ether_header_t *eth = (ether_header_t *)data;
+		if (!eth->is_ethernet2())
+			return frame;
+		frame->is_eth2 = true;
+		if (!eth->is_type_ipv4())
+			return frame;
+		frame->is_ipv4 = true;
+
+		ip_header_t *ip = (ip_header_t *)eth->get_eth2_sdu();
+		frame->src_ip = ip->src_addr;
+		frame->dst_ip = ip->src_addr;
+		frame->ip_id = ip->id;
+		frame->ip_protocol = ip->protocol;
+		frame->ip_flag_mf = ip->flag_mf();
+		frame->ip_frag_offset = ip->frag_offset();
+
+		tcp_header_t *tcp = NULL;
+		udp_header_t *udp = NULL;
+
+		switch (ip->protocol) {
+		case ICMP:
+			frame->is_icmp = true;
+			break;
+
+		case TCP:
+			frame->is_tcp = true;
+			tcp = (tcp_header_t *)ip->get_sdu();
+			frame->src_port = ntohs(tcp->src_port);
+			frame->dst_port = ntohs(tcp->dst_port);
+
+			// TCP Flags
+			frame->tcp_flag_fin = tcp->flag_fin();
+			frame->tcp_flag_syn = tcp->flag_syn();
+			frame->tcp_flag_rst = tcp->flag_rst();
+			frame->tcp_flag_ack = tcp->flag_ack();
+			frame->tcp_flag_urg = tcp->flag_urg();
+			break;
+
+		case UDP:
+			frame->is_udp = true;
+			udp = (udp_header_t *)ip->get_sdu();
+			frame->src_port = ntohs(udp->src_port);
+			frame->dst_port = ntohs(udp->dst_port);
+			break;
+		}
+
+
+		return frame;
+	}
+
+
+
+
+
+//#pragma warning(disable : 4996)
+	int PcapReader::old_next_frame()
+		{
 		struct pcap_pkthdr *header;
 		const u_char *data;
 
@@ -74,68 +143,72 @@ namespace FeatureExtractor {
 			return 0;
 		}
 
+		// ---------- test output
+
+
 		local_tv_sec = header->ts.tv_sec;
 		ltime = localtime(&local_tv_sec);
 		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
 		cout << timestr;
 
-		// ----------
-		ether_header_t *eth = (ether_header_t *) data;
-		eth->type_length = (eth_field_type) ntohs(eth->type_length);
-		if (eth->is_ethernet2())
 		{
-			cout << " Ethernet II";
-		}
-		else {
-			cout << " NON-Ethernet Frame" << endl;
+			ether_header_t *eth_test = (ether_header_t *)data;
+			//eth->type_length = (eth_field_type_t) ntohs(eth->type_length);
+			if (eth_test->is_ethernet2())
+			{
+				cout << " Ethernet II";
+			}
+			else {
+				cout << " NON-Ethernet Frame" << endl;
+				return 1;
+			}
+			if (!eth_test->is_type_ipv4()) {
+				cout << " >> NON-IP(0x" << hex << eth_test->type_length << dec << ")" << endl;
+				return 1;
+			}
+			cout << " >> IP";
+
+			// IP
+			ip_header_t *ip_test = (ip_header_t *)eth_test->get_eth2_sdu();
+			ip_test->total_length = ntohs(ip_test->total_length);
+			cout << "(" << hex << (int)ip_test->flags() << dec << ", " << ip_test->frag_offset() << ")";
+			cout << " >> " << ip_test->protocol_str() << endl;
+
+			uint8_t *src_ip = (uint8_t *)&ip_test->src_addr;
+			uint8_t *dst_ip = (uint8_t *)&ip_test->dst_addr;
+
+
+			if (ip_test->protocol != TCP && ip_test->protocol != UDP) {
+				cout << "  src=" << (int)src_ip[0] << "." << (int)src_ip[1] << "." << (int)src_ip[2] << "." << (int)src_ip[3];
+				cout << " dst=" << (int)dst_ip[0] << "." << (int)dst_ip[1] << "." << (int)dst_ip[2] << "." << (int)dst_ip[3];
+				cout << " length=" << ip_test->total_length << endl;  // ntoh applied
+				return 1;
+			}
+
+
+			unsigned int sport = 0;
+			unsigned int dport = 0;
+			// TCP
+			if (ip_test->protocol == TCP) {
+				tcp_header_t *tcp = (tcp_header_t *)ip_test->get_sdu();
+				sport = ntohs(tcp->src_port);
+				dport = ntohs(tcp->dst_port);
+			}
+
+			// UDP
+			if (ip_test->protocol == UDP) {
+				udp_header_t *udp = (udp_header_t *)ip_test->get_sdu();
+				sport = ntohs(udp->src_port);
+				dport = ntohs(udp->dst_port);
+			}
+
+			cout << "  src=" << (int)src_ip[0] << "." << (int)src_ip[1] << "." << (int)src_ip[2] << "." << (int)src_ip[3] << ":" << sport;
+			cout << " dst=" << (int)dst_ip[0] << "." << (int)dst_ip[1] << "." << (int)dst_ip[2] << "." << (int)dst_ip[3] << ":" << dport;
+			cout << " length=" << ip_test->total_length << endl;  // ntoh applied
+
 			return 1;
+
 		}
-		if (!eth->is_type_ipv4()) {
-			cout << " >> NON-IP(0x" << hex << eth->type_length << dec << ")" << endl;
-			return 1;
-		}
-		cout << " >> IP";
-
-		// IP
-		ip_header_t *ip = (ip_header_t *)eth->get_eth2_sdu();
-		ip->total_length = ntohs(ip->total_length);
-		cout << "(" << hex << (int)ip->flags() << dec << ", " << ip->frag_offset() * 8 << ")";
-		cout << " >> " << ip->protocol_str() << endl;
-
-		uint8_t *src_ip = (uint8_t *)&ip->src_addr;
-		uint8_t *dst_ip = (uint8_t *)&ip->dst_addr;
-
-
-		if (ip->protocol != TCP && ip->protocol != UDP) {
-			cout << "  src=" << (int)src_ip[0] << "." << (int)src_ip[1] << "." << (int)src_ip[2] << "." << (int)src_ip[3];
-			cout << " dst=" << (int)dst_ip[0] << "." << (int)dst_ip[1] << "." << (int)dst_ip[2] << "." << (int)dst_ip[3];
-			cout << " length=" << ip->total_length << endl;  // ntoh applied
-			return 1;
-		}
-
-
-		unsigned int sport = 0;
-		unsigned int dport = 0;
-		// TCP
-		if (ip->protocol == TCP) {
-			tcp_header_t *tcp = (tcp_header_t *) ip->get_sdu();
-			sport = ntohs(tcp->src_port);
-			dport = ntohs(tcp->dst_port);
-		}
-
-		// UDP
-		if (ip->protocol == UDP) {
-			udp_header_t *udp = (udp_header_t *)ip->get_sdu();
-			sport = ntohs(udp->src_port);
-			dport = ntohs(udp->dst_port);
-		}
-
-		cout << "  src=" << (int)src_ip[0] << "." << (int)src_ip[1] << "." << (int)src_ip[2] << "." << (int)src_ip[3] << ":" << sport;
-		cout << " dst=" << (int)dst_ip[0] << "." << (int)dst_ip[1] << "." << (int)dst_ip[2] << "." << (int)dst_ip[3] << ":" << dport;
-		cout << " length=" << ip->total_length << endl;  // ntoh applied
-
-		return 1;
-
 		// -------------- old v 0.1
 
 

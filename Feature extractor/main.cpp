@@ -1,8 +1,7 @@
 
-#pragma warning(default:4265)
+//#pragma warning(default:4265)
 #include <iostream>
 #include <cstdlib>
-//#include <pcap.h>
 #include "PcapReader.h"
 
 using namespace std;
@@ -31,10 +30,14 @@ int main(int argc, char* argv[])
 	//PcapReader p("ip_frag_source.pcap");
 	//PcapReader p("ip_frag_source.pcap");
 
-	p = new PcapReader("ip_frag_source.pcap");
+//	p = new PcapReader("ip_frag_source.pcap");
 
-	while (p->next_frame())
-		;
+	Frame *f;
+	while ((f = p->next_frame()) != NULL) {
+		f->print();
+		delete f;
+	}
+		
 
 	cout << endl;
 	//system("pause");
