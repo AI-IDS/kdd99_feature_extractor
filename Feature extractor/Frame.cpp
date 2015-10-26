@@ -12,7 +12,7 @@ namespace FeatureExtractor {
 		: length(0)
 		, is_eth2(false), is_ipv4(false), is_icmp(false), is_tcp(false), is_udp(false)
 		, src_ip(0), dst_ip(0)
-		, ip_id(0), ip_protocol(ZERO), ip_flag_mf(false), ip_frag_offset(0)
+		, ip_id(0), ip_protocol(ZERO), ip_flag_mf(false), ip_frag_offset(0), ip_payload_length(0)
 		, src_port(0), dst_port(0)
 		, tcp_flag_syn(false), tcp_flag_ack(false), tcp_flag_rst(false), tcp_flag_urg(false)
 	{
@@ -46,7 +46,6 @@ namespace FeatureExtractor {
 			cout << ss.str() << endl;
 			return;
 		}
-		ss << "(MF=" << ip_flag_mf << ", offset=" << ip_frag_offset << ")";
 
 		if (is_icmp) {
 			ss << " > ICMP " << endl;
@@ -60,6 +59,7 @@ namespace FeatureExtractor {
 		else {
 			ss << " > Other " << endl;
 		}
+		ss << "  ip.mf=" << ip_flag_mf << ", ip.offset=" << ip_frag_offset << ", ip.id=" << hex << ip_id << dec << endl;
 
 		// Cast ips to array of
 		uint8_t *sip = (uint8_t *) &src_ip;

@@ -24,6 +24,7 @@ namespace FeatureExtractor {
 		ip_field_protocol_t ip_protocol;
 		bool ip_flag_mf;
 		uint16_t ip_frag_offset;
+		size_t ip_payload_length;
 
 		// Layer 4 - TCP, UDP
 		uint16_t src_port;

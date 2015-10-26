@@ -49,7 +49,7 @@ namespace FeatureExtractor {
 
 	size_t ip_header_t::frag_offset() const
 	{
-		return (ntohs(flags_fo) & 0x01FFF) * 8; // 1 unit = 8 bytes
+		return (ntohs(flags_fo) & 0x01FFF) << 3; // 1 unit = 8 bytes
 	}
 
 	const char *ip_header_t::protocol_str() const

@@ -10,6 +10,7 @@ extern "C" {
 
 
 /*
+ * Structs for parsing network headers
  * Inspired by http://stackoverflow.com/a/16523804/3503528
  */
 namespace FeatureExtractor {

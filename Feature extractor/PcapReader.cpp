@@ -85,10 +85,11 @@ namespace FeatureExtractor {
 		ip_header_t *ip = (ip_header_t *)eth->get_eth2_sdu();
 		frame->src_ip = ip->src_addr;
 		frame->dst_ip = ip->src_addr;
-		frame->ip_id = ip->id;
+		frame->ip_id = ntohs(ip->id);
 		frame->ip_protocol = ip->protocol;
 		frame->ip_flag_mf = ip->flag_mf();
 		frame->ip_frag_offset = ip->frag_offset();
+		frame->ip_payload_length = ip->total_length - ip->header_length;
 
 		tcp_header_t *tcp = NULL;
 		udp_header_t *udp = NULL;
