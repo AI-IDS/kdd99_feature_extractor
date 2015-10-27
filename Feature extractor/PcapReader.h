@@ -1,12 +1,12 @@
 #pragma once
 
+#include "IpFragment.h"
 // Wrap pcap.h in extern "C"
 // Bug in win WpdPack_4_1_2 http://www.winpcap.org/pipermail/winpcap-bugs/2013-November/001760.html
 extern "C" {
 #include <pcap.h>
 }
 
-#include "IpFragment.h"
 
 namespace FeatureExtractor {
 	class PcapReader

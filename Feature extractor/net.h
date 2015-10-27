@@ -8,7 +8,6 @@ extern "C" {
 //#include <winsock.h>
 //#endif // _WIN32
 
-
 /*
  * Structs for parsing network headers
  * Inspired by http://stackoverflow.com/a/16523804/3503528

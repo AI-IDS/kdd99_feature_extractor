@@ -7,7 +7,7 @@ namespace FeatureExtractor {
 	}
 
 	IpReassembler::IpReassemblyBufferKey::IpReassemblyBufferKey() 
-		: src(0), dst(0), protocol(ZERO), id(0)
+		: src(0), dst(0), protocol(PROTO_ZERO), id(0)
 	{}
 
 	IpReassembler::IpReassemblyBufferKey::IpReassemblyBufferKey(Frame *frame) {

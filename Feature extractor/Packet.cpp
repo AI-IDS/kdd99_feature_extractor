@@ -142,8 +142,8 @@ namespace FeatureExtractor {
 		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
 		ss << timestr;
 
-		ss << (is_eth2 ? " ETHERNET II" : " NON-ETHERNET");
-		if (!is_eth2) {
+		ss << (is_eth2() ? " ETHERNET II" : " NON-ETHERNET");
+		if (!is_eth2()) {
 			cout << ss.str() << endl;
 			return;
 		}
@@ -178,9 +178,9 @@ namespace FeatureExtractor {
 			ss << " frames=" << get_frame_count() << endl;
 		}
 		else {
-			ss << "  src=" << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3] << ":" << src_port;
-			ss << " dst=" << (int)dip[0] << "." << (int)dip[1] << "." << (int)dip[2] << "." << (int)dip[3] << ":" << dst_port;
-			ss << " length=" << length;
+			ss << "  src=" << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3] << ":" << get_src_port();
+			ss << " dst=" << (int)dip[0] << "." << (int)dip[1] << "." << (int)dip[2] << "." << (int)dip[3] << ":" << get_dst_port();
+			ss << " length=" << get_length();
 			ss << " frames=" << get_frame_count() << endl;
 
 			if (ip_proto == TCP) {
@@ -193,7 +193,7 @@ namespace FeatureExtractor {
 			}
 		}
 
-		cout << ss.str() << endl;
+		cout << endl << ss.str();
 	}
 
 }

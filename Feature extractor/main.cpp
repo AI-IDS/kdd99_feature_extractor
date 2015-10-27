@@ -32,10 +32,10 @@ int main(int argc, char* argv[])
 
 //	p = new PcapReader("ip_frag_source.pcap");
 
-	Frame *f;
-	while ((f = p->next_frame()) != NULL) {
-		f->print();
-		delete f;
+	IpFragment *fragm;
+	while ((fragm = p->next_frame()) != NULL) {
+		fragm->print();
+		delete fragm;
 	}
 		
 
