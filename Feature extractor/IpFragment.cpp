@@ -16,7 +16,7 @@ namespace FeatureExtractor {
 
 	}
 
-	uint16_t IpFragment::get_ip_id()
+	uint16_t IpFragment::get_ip_id() const
 	{
 		return ip_id;
 	}
@@ -26,7 +26,7 @@ namespace FeatureExtractor {
 		this->ip_id = ip_id;
 	}
 
-	bool IpFragment::get_ip_flag_mf()
+	bool IpFragment::get_ip_flag_mf() const
 	{
 		return ip_flag_mf;
 	}
@@ -36,7 +36,7 @@ namespace FeatureExtractor {
 		this->ip_flag_mf = ip_flag_mf;
 	}
 
-	uint16_t IpFragment::get_ip_frag_offset()
+	uint16_t IpFragment::get_ip_frag_offset() const
 	{
 		return ip_frag_offset;
 	}
@@ -46,7 +46,7 @@ namespace FeatureExtractor {
 		this->ip_frag_offset = ip_frag_offset;
 	}
 
-	size_t IpFragment::get_ip_payload_length()
+	size_t IpFragment::get_ip_payload_length() const
 	{
 		return ip_payload_length;
 	}
@@ -56,12 +56,12 @@ namespace FeatureExtractor {
 		this->ip_payload_length = ip_payload_length;
 	}
 
-	void IpFragment::print()
+	void IpFragment::print() const
 	{
 		Packet::print();
 		
-		cout << "  ip.mf=" << get_ip_flag_mf()
-			<< ", ip.offset=" << get_ip_frag_offset() 
+		cout << "  ip.flag_mf=" << get_ip_flag_mf()
+			<< ", ip.frag_offset=" << get_ip_frag_offset() 
 			<< ", ip.id=0x" << hex << get_ip_id() << dec << endl;
 	}
 }

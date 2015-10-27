@@ -1,10 +1,10 @@
 #include "IpReassemblyBufferHoleList.h"
 #include <limits.h>
-#include <stddef.h>
 #include <assert.h>
 
 namespace FeatureExtractor {
-	IpReassemblyBufferHoleList::Hole::Hole() : start(0), end(SIZE_MAX), next(NULL)
+	IpReassemblyBufferHoleList::Hole::Hole() 
+		: start(0), end(SIZE_MAX), next(nullptr)
 	{}
 
 	IpReassemblyBufferHoleList::Hole::Hole(size_t start, size_t end, Hole *next)
@@ -14,7 +14,8 @@ namespace FeatureExtractor {
 		this->next = next;
 	}
 
-	IpReassemblyBufferHoleList::IpReassemblyBufferHoleList() : first_hole(new Hole())
+	IpReassemblyBufferHoleList::IpReassemblyBufferHoleList() 
+		: first_hole(new Hole())
 	{}
 
 	IpReassemblyBufferHoleList::~IpReassemblyBufferHoleList()
@@ -28,42 +29,58 @@ namespace FeatureExtractor {
 		}
 	}
 
-	bool IpReassemblyBufferHoleList::is_empty()
+	bool IpReassemblyBufferHoleList::is_empty() const
 	{
-		return (first_hole == NULL);
+		return (first_hole == nullptr);
 	}
 
 	/*
 	 * RFC 815 - section 3: Fragment Processing Algorithm
+	 * Terms start (end) in code bellow corresponds to first (last) in RFC. 
 	 */
-	void IpReassemblyBufferHoleList::add_fragment(size_t start, size_t end, bool last_fragment) {
+	void IpReassemblyBufferHoleList::add_fragment(size_t frag_start, size_t frag_end, bool is_last_frag) {
+		// Should not insert to completed datagram
 		assert(!this->is_empty());
 
-		// 1.-3.: Find hole
-		Hole *prev = NULL;
+		Hole *prev = nullptr;
 		Hole *hole = this->first_hole;
-		while (hole && (start > hole->end || end < hole->start)) {
-			prev = hole;
-			hole = hole->next;
-		}
+		while (hole) { // 7. + 1. Loop finished when no next hole descriptor
 
-		if (hole) {
-			// 5. New hole before fragment
-			if (start > hole->start) {
-				Hole *new_hole = new Hole(hole->start, end - 1, hole->next);
-				prev->next = new_hole;
-				prev = new_hole;
+			// 1.-3. Find hole that fragment fits
+			while (hole && (frag_start > hole->end || frag_end < hole->start)) {
+				prev = hole;
+				hole = hole->next;
 			}
 
-			// 6. New hole after fragment
-			if (end < hole->end && !last_fragment) {
-				Hole *new_hole = new Hole(end + 1, hole->end, hole->next);
-				prev->next = new_hole;
-				prev = new_hole;
-			}
+			if (hole) {
+				Hole *next = hole->next;
 
-			// 4. Delete hole descriptor
-			delete hole;
+				// 5. New hole before fragment
+				if (frag_start > hole->start) {
+					Hole *new_hole = new Hole(hole->start, frag_end - 1, hole->next);
+					if (prev)
+						prev->next = new_hole;
+					else
+						first_hole = new_hole;
+					prev = new_hole;
+				}
+
+				// 6. New hole after fragment
+				if (frag_end < hole->end && !is_last_frag) {
+					Hole *new_hole = new Hole(frag_end + 1, hole->end, hole->next);
+					if (prev)
+						prev->next = new_hole;
+					else
+						first_hole = new_hole;
+					prev = new_hole;
+				}
+
+				// 4. Delete hole descriptor
+				delete hole;
+
+				// 1. Select the next hole  descriptor
+				hole = next;
+			}
 		}
 
 		// 8: If the hole descriptor list is now empty, the datagram is now complete

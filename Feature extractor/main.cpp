@@ -12,6 +12,22 @@ int main(int argc, char* argv[])
 	PcapReader *p = NULL;
 
 
+	//// TCP flag debug
+	//tcp_field_flags_t tcp_flags;
+	//tcp_flags.flags = 0x11;
+	//cout << (tcp_flags.fin() ? "F" : "-");
+	//cout << (tcp_flags.syn() ? "S" : "-");
+	//cout << (tcp_flags.rst() ? "R" : "-");
+	//cout << (tcp_flags.psh() ? "P" : "-");
+	//cout << " ";
+	//cout << (tcp_flags.ack() ? "A" : "-");
+	//cout << (tcp_flags.urg() ? "U" : "-");
+	//cout << (tcp_flags.ece() ? "E" : "-");
+	//cout << (tcp_flags.cwr() ? "C" : "-");
+	//cout << endl;
+	//system("pause");
+	//return 0;
+
 	if (argc <= 1) {
 		p = new PcapReader(1);
 	}

@@ -27,7 +27,7 @@ namespace FeatureExtractor {
 			uint16_t id;
 		public:
 			IpReassemblyBufferKey();
-			IpReassemblyBufferKey(Frame *frame);
+			IpReassemblyBufferKey(const Frame *frame);
 			bool operator<(const IpReassemblyBufferKey& other) const; // Required for map<> key
 		};
 

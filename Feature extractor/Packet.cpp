@@ -19,23 +19,23 @@ namespace FeatureExtractor {
 	{
 	}
 
-	timeval Packet::get_start_ts()
+	timeval Packet::get_start_ts() const
 	{
 		return start_ts;
 	}
 
-	void Packet::set_start_ts(timeval start_ts)
+	void Packet::set_start_ts(timeval &start_ts)
 	{
 		this->start_ts = start_ts;
 	}
 
-	timeval Packet::get_end_ts()
+	timeval Packet::get_end_ts() const
 	{
 		// Return the start timestamp
 		return start_ts;
 	}
 
-	bool Packet::is_eth2()
+	bool Packet::is_eth2() const
 	{
 		return eth2;
 	}
@@ -45,7 +45,7 @@ namespace FeatureExtractor {
 		this->eth2 = is_eth2;
 	}
 
-	eth_field_type_t Packet::get_eth_type()
+	eth_field_type_t Packet::get_eth_type() const
 	{
 		return eth_type;
 	}
@@ -54,7 +54,7 @@ namespace FeatureExtractor {
 		this->eth_type = eth_type;
 	}
 
-	ip_field_protocol_t Packet::get_ip_proto()
+	ip_field_protocol_t Packet::get_ip_proto() const
 	{
 		return ip_proto;
 	}
@@ -64,7 +64,7 @@ namespace FeatureExtractor {
 		this->ip_proto = ip_proto;
 	}
 
-	uint32_t Packet::get_src_ip()
+	uint32_t Packet::get_src_ip() const
 	{
 		return src_ip;
 	}
@@ -74,7 +74,7 @@ namespace FeatureExtractor {
 		this->src_ip = src_ip;
 	}
 
-	uint32_t Packet::get_dst_ip()
+	uint32_t Packet::get_dst_ip() const
 	{
 		return dst_ip;
 	}
@@ -84,7 +84,7 @@ namespace FeatureExtractor {
 		this->dst_ip = dst_ip;
 	}
 
-	uint16_t Packet::get_src_port()
+	uint16_t Packet::get_src_port() const
 	{
 		return src_port;
 	}
@@ -94,7 +94,7 @@ namespace FeatureExtractor {
 		this->src_port = src_port;
 	}
 
-	uint16_t Packet::get_dst_port()
+	uint16_t Packet::get_dst_port() const
 	{
 		return dst_port;
 	}
@@ -104,7 +104,7 @@ namespace FeatureExtractor {
 		this->dst_port = dst_port;
 	}
 
-	tcp_field_flags_t Packet::get_tcp_flags()
+	tcp_field_flags_t Packet::get_tcp_flags() const
 	{
 		return tcp_flags;
 	}
@@ -114,7 +114,7 @@ namespace FeatureExtractor {
 		this->tcp_flags = tcp_flags;
 	}
 
-	size_t Packet::get_length()
+	size_t Packet::get_length() const
 	{
 		return length;
 	}
@@ -124,13 +124,13 @@ namespace FeatureExtractor {
 		this->length = length;
 	}
 
-	uint16_t Packet::get_frame_count()
+	uint16_t Packet::get_frame_count() const
 	{
 		// By default packet consists of 1 frame
 		return 1;
 	}
 
-	void Packet::print()
+	void Packet::print() const
 	{
 		stringstream ss;
 
@@ -175,16 +175,20 @@ namespace FeatureExtractor {
 			ss << "  src=" << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3];
 			ss << " dst=" << (int)dip[0] << "." << (int)dip[1] << "." << (int)dip[2] << "." << (int)dip[3];
 			ss << " length=" << get_length();
-			ss << " frames=" << get_frame_count() << endl;
+			if (get_frame_count() > 1)
+				ss << " frames=" << get_frame_count();
+			ss << endl;
 		}
 		else {
 			ss << "  src=" << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3] << ":" << get_src_port();
 			ss << " dst=" << (int)dip[0] << "." << (int)dip[1] << "." << (int)dip[2] << "." << (int)dip[3] << ":" << get_dst_port();
 			ss << " length=" << get_length();
-			ss << " frames=" << get_frame_count() << endl;
+			if (get_frame_count() > 1)
+				ss << " frames=" << get_frame_count();
+			ss << endl;
 
 			if (ip_proto == TCP) {
-				ss << "  Flags: ";
+				ss << "  Flags(" << hex << (int) tcp_flags.flags << dec << "): ";
 				ss << (tcp_flags.fin() ? "F" : "");
 				ss << (tcp_flags.syn() ? "S" : "");
 				ss << (tcp_flags.rst() ? "R" : "");

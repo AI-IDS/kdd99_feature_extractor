@@ -85,41 +85,41 @@ namespace FeatureExtractor {
 
 	bool tcp_field_flags_t::fin() const
 	{
-		return (flags & 0x01 != 0);
+		return ((flags & 0x01) != 0);
 	}
 
 	bool tcp_field_flags_t::syn() const
 	{
-		return (flags & 0x02 != 0);
+		return ((flags & 0x02) != 0);
 	}
 
 	bool tcp_field_flags_t::rst() const
 	{
-		return (flags & 0x04 != 0);
+		return ((flags & 0x04) != 0);
 	}
 
 	bool tcp_field_flags_t::psh() const
 	{
-		return (flags & 0x08 != 0);
+		return ((flags & 0x08) != 0);
 	}
 
 	bool tcp_field_flags_t::ack() const
 	{
-		return (flags & 0x10 != 0);
+		return ((flags & 0x10) != 0);
 	}
 
 	bool tcp_field_flags_t::urg() const
 	{
-		return (flags & 0x20 != 0);
+		return ((flags & 0x20) != 0);
 	}
 
 	bool tcp_field_flags_t::ece() const
 	{
-		return (flags & 0x40 != 0);
+		return ((flags & 0x40) != 0);
 	}
 
 	bool tcp_field_flags_t::cwr() const
 	{
-		return (flags & 0x80 != 0);
+		return ((flags & 0x80) != 0);
 	}
 }

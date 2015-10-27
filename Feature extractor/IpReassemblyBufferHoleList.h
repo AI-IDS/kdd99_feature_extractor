@@ -21,7 +21,7 @@ namespace FeatureExtractor {
 		IpReassemblyBufferHoleList();
 		~IpReassemblyBufferHoleList();
 
-		bool is_empty();
+		bool is_empty() const;
 		void add_fragment(size_t start, size_t end, bool last_fragment);
 	};
 

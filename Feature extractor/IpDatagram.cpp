@@ -12,22 +12,29 @@ namespace FeatureExtractor {
 		end_ts.tv_usec = 0;
 	}
 
+	IpDatagram::IpDatagram(Packet const &packet)
+		: Packet(packet), frame_count(0)
+	{
+		end_ts.tv_sec = 0;
+		end_ts.tv_usec = 0;
+	}
+
 
 	IpDatagram::~IpDatagram()
 	{
 	}
 
 
-	timeval IpDatagram::get_end_ts()
+	timeval IpDatagram::get_end_ts() const
 	{
 		return this->end_ts;
 	}
-	void IpDatagram::set_end_ts(timeval end_ts)
+	void IpDatagram::set_end_ts(timeval &end_ts)
 	{
 		this->end_ts = end_ts;
 	}
 
-	uint16_t IpDatagram::get_frame_count()
+	uint16_t IpDatagram::get_frame_count() const
 	{
 		return frame_count;
 	}
@@ -44,7 +51,7 @@ namespace FeatureExtractor {
 	}
 
 
-	void IpDatagram::print()
+	void IpDatagram::print() const
 	{
 		Packet::print();
 		struct tm *ltime;

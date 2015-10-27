@@ -93,9 +93,13 @@ namespace FeatureExtractor {
 		f->set_ip_frag_offset(ip->frag_offset());
 		f->set_ip_payload_length(ip->total_length - ip->header_length());
 
+		// Look for L4 headers only in first fragment
+		if (f->get_ip_frag_offset() > 0)
+			return f;
+
+		// L4 - TCP & UDP
 		tcp_header_t *tcp = NULL;
 		udp_header_t *udp = NULL;
-
 		switch (ip->protocol) {
 		case TCP:
 			tcp = (tcp_header_t *)ip->get_sdu();
