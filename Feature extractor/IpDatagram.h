@@ -17,5 +17,10 @@ namespace FeatureExtractor {
 		uint16_t get_frame_count();
 		void set_frame_count(uint16_t frame_count);
 		void inc_frame_count();
+
+		/**
+		 * Output the class values (e.g. for debuging purposes)
+		 */
+		virtual void print();
 	};
 }

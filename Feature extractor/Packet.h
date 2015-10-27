@@ -53,6 +53,11 @@ namespace FeatureExtractor {
 
 		virtual uint16_t get_frame_count();
 
+		/**
+		 * Output the class values (e.g. for debuging purposes)
+		 */
+		virtual void print();
+
 	};
 
 }

@@ -1,7 +1,10 @@
+#include <iostream>
 #include "IpDatagram.h"
 
 
 namespace FeatureExtractor {
+	using namespace std;
+
 	IpDatagram::IpDatagram() 
 		: Packet(), frame_count(0)
 	{
@@ -38,5 +41,18 @@ namespace FeatureExtractor {
 	void IpDatagram::inc_frame_count()
 	{
 		this->frame_count++;
+	}
+
+
+	void IpDatagram::print()
+	{
+		Packet::print();
+		struct tm *ltime;
+		char timestr[16];
+		time_t local_tv_sec;
+		local_tv_sec = get_end_ts().tv_sec;
+		ltime = localtime(&local_tv_sec);
+		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
+		cout << "  IP datagram end ts: " << timestr << endl;
 	}
 }

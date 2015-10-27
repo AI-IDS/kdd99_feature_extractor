@@ -71,56 +71,50 @@ namespace FeatureExtractor {
 		}
 
 		IpFragment *f = new IpFragment();
-		f->ts = header->ts;
-		f->length = header->len + ADDITIONAL_LEN;
+		f->set_start_ts(header->ts);
+		f->set_length(header->len + ADDITIONAL_LEN);	// Additional lenght for e.g. CRC of Ethernet
 
+		// Ethernet type/length field
 		ether_header_t *eth = (ether_header_t *)data;
 		if (!eth->is_ethernet2())
 			return f;
-		f->is_eth2 = true;
+		f->set_eth2(true);
+		f->set_eth_type((eth_field_type_t)ntohs(eth->type_length));
 		if (!eth->is_type_ipv4())
 			return f;
-		f->is_ipv4 = true;
 
+		// IP
 		ip_header_t *ip = (ip_header_t *)eth->get_eth2_sdu();
-		f->src_ip = ip->src_addr;
-		f->dst_ip = ip->src_addr;
-		f->ip_id = ntohs(ip->id);
-		f->ip_protocol = ip->protocol;
-		f->ip_flag_mf = ip->flag_mf();
-		f->ip_frag_offset = ip->frag_offset();
-		f->ip_payload_length = ip->total_length - ip->header_length;
+		f->set_src_ip(ip->src_addr);
+		f->set_dst_ip(ip->dst_addr);
+		f->set_ip_proto(ip->protocol);
+		f->set_ip_id(ntohs(ip->id));
+		f->set_ip_flag_mf(ip->flag_mf());
+		f->set_ip_frag_offset(ip->frag_offset());
+		f->set_ip_payload_length(ip->total_length - ip->header_length);
 
 		tcp_header_t *tcp = NULL;
 		udp_header_t *udp = NULL;
 
 		switch (ip->protocol) {
-		case ICMP:
-			f->is_icmp = true;
-			break;
-
 		case TCP:
-			f->is_tcp = true;
 			tcp = (tcp_header_t *)ip->get_sdu();
-			f->src_port = ntohs(tcp->src_port);
-			f->dst_port = ntohs(tcp->dst_port);
-
-			// TCP Flags
-			f->tcp_flag_fin = tcp->flag_fin();
-			f->tcp_flag_syn = tcp->flag_syn();
-			f->tcp_flag_rst = tcp->flag_rst();
-			f->tcp_flag_ack = tcp->flag_ack();
-			f->tcp_flag_urg = tcp->flag_urg();
+			f->set_src_port(ntohs(tcp->src_port));
+			f->set_dst_port(ntohs(tcp->dst_port));
+			f->set_tcp_flags(tcp->flags);
 			break;
 
 		case UDP:
-			f->is_udp = true;
 			udp = (udp_header_t *)ip->get_sdu();
-			f->src_port = ntohs(udp->src_port);
-			f->dst_port = ntohs(udp->dst_port);
+			f->set_src_port(ntohs(udp->src_port));
+			f->set_dst_port(ntohs(udp->dst_port));
+			break;
+
+		case ICMP:
+		default:
+			// No special handling
 			break;
 		}
-
 
 		return f;
 	}

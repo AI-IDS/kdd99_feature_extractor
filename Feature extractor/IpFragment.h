@@ -5,6 +5,7 @@ namespace FeatureExtractor {
 	class IpFragment :
 		public Packet
 	{
+		uint16_t ip_id;
 		bool ip_flag_mf;
 		uint16_t ip_frag_offset;
 		size_t ip_payload_length;
@@ -12,6 +13,9 @@ namespace FeatureExtractor {
 	public:
 		IpFragment();
 		~IpFragment();
+
+		uint16_t get_ip_id();
+		void set_ip_id(uint16_t ip_id);
 
 		bool get_ip_flag_mf();
 		void set_ip_flag_mf(bool ip_flag_mf);
@@ -21,5 +25,10 @@ namespace FeatureExtractor {
 
 		size_t get_ip_payload_length();
 		void set_ip_payload_length(size_t ip_payload_length);
+
+		/**
+		 * Output the class values (e.g. for debuging purposes)
+		 */
+		virtual void print();
 	};
 }

@@ -1,9 +1,12 @@
+#include <iostream>
 #include "IPFragment.h"
 
 namespace FeatureExtractor {
+	using namespace std;
 
 	IpFragment::IpFragment()
-		: ip_flag_mf(0), ip_frag_offset(0), ip_payload_length(0)
+		: Packet()
+		, ip_flag_mf(0), ip_frag_offset(0), ip_payload_length(0)
 	{
 	}
 
@@ -11,6 +14,16 @@ namespace FeatureExtractor {
 	IpFragment::~IpFragment()
 	{
 
+	}
+
+	uint16_t IpFragment::get_ip_id()
+	{
+		return ip_id;
+	}
+
+	void IpFragment::set_ip_id(uint16_t ip_id)
+	{
+		this->ip_id = ip_id;
 	}
 
 	bool IpFragment::get_ip_flag_mf()
@@ -41,5 +54,14 @@ namespace FeatureExtractor {
 	void IpFragment::set_ip_payload_length(size_t ip_payload_length)
 	{
 		this->ip_payload_length = ip_payload_length;
+	}
+
+	void IpFragment::print()
+	{
+		Packet::print();
+		
+		cout << "  ip.mf=" << get_ip_flag_mf()
+			<< ", ip.offset=" << get_ip_frag_offset() 
+			<< ", ip.id=0x" << hex << get_ip_id() << dec << endl;
 	}
 }

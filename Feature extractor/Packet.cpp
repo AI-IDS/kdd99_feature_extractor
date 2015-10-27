@@ -1,8 +1,12 @@
+#include <sstream>
+#include <iostream>
 #include "Packet.h"
 
 namespace FeatureExtractor {
+	using namespace std;
+
 	Packet::Packet()
-		: eth_type(TYPE_ZERO), ip_proto(PROTO_ZERO)
+		: eth2(false), eth_type(TYPE_ZERO), ip_proto(PROTO_ZERO)
 		, src_ip(0), dst_ip(0), src_port(0), dst_port(0)
 		, tcp_flags(), length(0)
 	{
@@ -122,7 +126,74 @@ namespace FeatureExtractor {
 
 	uint16_t Packet::get_frame_count()
 	{
+		// By default packet consists of 1 frame
 		return 1;
+	}
+
+	void Packet::print()
+	{
+		stringstream ss;
+
+		struct tm *ltime;
+		char timestr[16];
+		time_t local_tv_sec;
+		local_tv_sec = get_start_ts().tv_sec;
+		ltime = localtime(&local_tv_sec);
+		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
+		ss << timestr;
+
+		ss << (is_eth2 ? " ETHERNET II" : " NON-ETHERNET");
+		if (!is_eth2) {
+			cout << ss.str() << endl;
+			return;
+		}
+		ss << (eth_type == IPV4 ? " > IP" : " > NON-IP");
+		if (eth_type != IPV4) {
+			ss << "(0x" << hex << eth_type << dec << ")";
+			cout << ss.str() << endl;
+			return;
+		}
+
+		if (ip_proto == ICMP) {
+			ss << " > ICMP " << endl;
+		}
+		else if (ip_proto == TCP) {
+			ss << " > TCP " << endl;
+		}
+		else if (ip_proto == UDP) {
+			ss << " > UDP " << endl;
+		}
+		else {
+			ss << " > Other(0x" << hex << ip_proto << dec << ")" << endl;
+		}
+
+		// Cast ips to arrays of octets
+		uint8_t *sip = (uint8_t *)&src_ip;
+		uint8_t *dip = (uint8_t *)&dst_ip;
+
+		if (ip_proto != TCP && ip_proto != UDP) {
+			ss << "  src=" << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3];
+			ss << " dst=" << (int)dip[0] << "." << (int)dip[1] << "." << (int)dip[2] << "." << (int)dip[3];
+			ss << " length=" << get_length();
+			ss << " frames=" << get_frame_count() << endl;
+		}
+		else {
+			ss << "  src=" << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3] << ":" << src_port;
+			ss << " dst=" << (int)dip[0] << "." << (int)dip[1] << "." << (int)dip[2] << "." << (int)dip[3] << ":" << dst_port;
+			ss << " length=" << length;
+			ss << " frames=" << get_frame_count() << endl;
+
+			if (ip_proto == TCP) {
+				ss << "  Flags: ";
+				ss << (tcp_flags.fin() ? "F" : "");
+				ss << (tcp_flags.syn() ? "S" : "");
+				ss << (tcp_flags.rst() ? "R" : "");
+				ss << (tcp_flags.ack() ? "A" : "");
+				ss << (tcp_flags.urg() ? "U" : "");
+			}
+		}
+
+		cout << ss.str() << endl;
 	}
 
 }
