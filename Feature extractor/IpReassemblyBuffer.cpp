@@ -1,9 +1,10 @@
-#include "ReassemblyBuffer.h"
+#include "IpReassemblyBuffer.h"
 
 
 namespace FeatureExtractor {
 	IpReassemblyBuffer::IpReassemblyBuffer()
 	{
+
 	}
 
 

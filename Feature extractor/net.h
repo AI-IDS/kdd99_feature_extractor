@@ -14,13 +14,18 @@ extern "C" {
  * Inspired by http://stackoverflow.com/a/16523804/3503528
  */
 namespace FeatureExtractor {
-	/* 
-	 * Ethernet header 
+	/*
+	 * Ethernet type/length field
 	 */
 	enum eth_field_type_t : uint16_t {
+		TYPE_ZERO = 0,
 		MIN_ETH2 = 0x600,
 		IPV4 = 0x800
 	};
+
+	/*
+	 * Ethernet header
+	 */
 	typedef struct {
 		uint8_t dst_addr[6];
 		uint8_t src_addr[6];
@@ -34,14 +39,18 @@ namespace FeatureExtractor {
 	} ether_header_t;
 
 	/*
-	 * IP header 
+	 * IP protocol field
 	 */
 	enum ip_field_protocol_t : uint8_t {
-		ZERO = 0,
+		PROTO_ZERO = 0,
 		ICMP = 1,
 		TCP = 6,
 		UDP = 17
 	};
+
+	/*
+	 * IP header
+	 */
 	typedef struct {
 		uint8_t ver_ihl;	// 4 bits version and 4 bits internet header length
 		uint8_t tos;
@@ -76,6 +85,24 @@ namespace FeatureExtractor {
 	} udp_header_t;
 
 	/*
+	* TCP flags field
+	*/
+	typedef struct tcp_field_flags_t {
+		uint8_t flags;
+
+		tcp_field_flags_t();
+		tcp_field_flags_t(uint8_t flags);
+		bool fin() const;
+		bool syn() const;
+		bool rst() const;
+		bool psh() const;
+		bool ack() const;
+		bool urg() const;	// Urgent
+		bool ece() const;	// ECN Echo
+		bool cwr() const;	// Congestion Window Reduced
+	} tcp_field_flags_t;
+
+	/*
 	 * TCP header
 	 */
 	typedef struct {
@@ -84,19 +111,9 @@ namespace FeatureExtractor {
 		uint32_t seq;
 		uint32_t ack;
 		uint8_t data_offset;  // 4 bits offset + 4 bits reserved
-		uint8_t flags;
+		tcp_field_flags_t flags;
 		uint16_t window_size;
 		uint16_t checksum;
 		uint16_t urgent_p;
-
-		bool flag_fin() const;
-		bool flag_syn() const;
-		bool flag_rst() const;
-		bool flag_psh() const;
-		bool flag_ack() const;
-		bool flag_urg() const;	// Urgent
-		bool flag_ece() const;	// ECN Echo
-		bool flag_cwr() const;	// Congestion Window Reduced
-
 	} tcp_header_t;
 }

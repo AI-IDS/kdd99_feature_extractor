@@ -75,43 +75,50 @@ namespace FeatureExtractor {
 		return (((uint8_t *) this) + header_length());
 	}
 
+	tcp_field_flags_t::tcp_field_flags_t() : tcp_field_flags_t(0)
+	{}
 
-	bool tcp_header_t::flag_fin() const
+	tcp_field_flags_t::tcp_field_flags_t(uint8_t flags)
+	{
+		this->flags = flags;
+	}
+
+	bool tcp_field_flags_t::fin() const
 	{
 		return (flags & 0x01 != 0);
 	}
 
-	bool tcp_header_t::flag_syn() const
+	bool tcp_field_flags_t::syn() const
 	{
 		return (flags & 0x02 != 0);
 	}
 
-	bool tcp_header_t::flag_rst() const
+	bool tcp_field_flags_t::rst() const
 	{
 		return (flags & 0x04 != 0);
 	}
 
-	bool tcp_header_t::flag_psh() const
+	bool tcp_field_flags_t::psh() const
 	{
 		return (flags & 0x08 != 0);
 	}
 
-	bool tcp_header_t::flag_ack() const
+	bool tcp_field_flags_t::ack() const
 	{
 		return (flags & 0x10 != 0);
 	}
 
-	bool tcp_header_t::flag_urg() const
+	bool tcp_field_flags_t::urg() const
 	{
 		return (flags & 0x20 != 0);
 	}
 
-	bool tcp_header_t::flag_ece() const
+	bool tcp_field_flags_t::ece() const
 	{
 		return (flags & 0x40 != 0);
 	}
 
-	bool tcp_header_t::flag_cwr() const
+	bool tcp_field_flags_t::cwr() const
 	{
 		return (flags & 0x80 != 0);
 	}

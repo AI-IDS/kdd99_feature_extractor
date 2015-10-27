@@ -4,7 +4,7 @@ namespace FeatureExtractor {
 	class IpReassemblyBufferHoleList
 	{
 		/*
-		 * Hole descriptor in hole descriptor list
+		 * Hole descriptor in hole descriptor linked list
 		 */
 		class Hole {
 		public:
@@ -14,8 +14,8 @@ namespace FeatureExtractor {
 			Hole(size_t first, size_t last, Hole *next);
 		};
 
+		// Pointer to linked list
 		Hole *first_hole;
-		size_t datagram_size;
 
 	public:
 		IpReassemblyBufferHoleList();
@@ -23,7 +23,6 @@ namespace FeatureExtractor {
 
 		bool is_empty();
 		void add_fragment(size_t start, size_t end, bool last_fragment);
-		size_t get_datagram_size();
 	};
 
 }

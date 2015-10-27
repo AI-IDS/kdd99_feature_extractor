@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IpReassemblyBufferHoleList.h"
 
 
 namespace FeatureExtractor {
@@ -9,9 +10,11 @@ namespace FeatureExtractor {
 	 */
 	class IpReassemblyBuffer
 	{
+		IpReassemblyBufferHoleList hole_list;
 		
 	public:
 		IpReassemblyBuffer();
 		~IpReassemblyBuffer();
+
 	};
 }

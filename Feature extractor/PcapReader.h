@@ -6,7 +6,7 @@ extern "C" {
 #include <pcap.h>
 }
 
-#include "Frame.h"
+#include "IpFragment.h"
 
 namespace FeatureExtractor {
 	class PcapReader
@@ -25,7 +25,7 @@ namespace FeatureExtractor {
 		PcapReader(int inum);
 		~PcapReader();
 
-		Frame *next_frame();
+		IpFragment *next_frame();
 
 		//debug
 

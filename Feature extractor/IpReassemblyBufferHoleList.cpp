@@ -14,15 +14,18 @@ namespace FeatureExtractor {
 		this->next = next;
 	}
 
-
-	IpReassemblyBufferHoleList::IpReassemblyBufferHoleList() : datagram_size(0)
-	{
-		this->first_hole = new Hole();
-	}
-
+	IpReassemblyBufferHoleList::IpReassemblyBufferHoleList() : first_hole(new Hole())
+	{}
 
 	IpReassemblyBufferHoleList::~IpReassemblyBufferHoleList()
 	{
+		// Deallocate linked list of holes
+		Hole *next;
+		while (first_hole) {
+			next = first_hole->next;
+			delete first_hole;
+			first_hole = next;
+		}
 	}
 
 	bool IpReassemblyBufferHoleList::is_empty()
@@ -30,20 +33,11 @@ namespace FeatureExtractor {
 		return (first_hole == NULL);
 	}
 
-	size_t IpReassemblyBufferHoleList::get_datagram_size() 
-	{
-		return datagram_size;
-	}
-
 	/*
 	 * RFC 815 - section 3: Fragment Processing Algorithm
 	 */
 	void IpReassemblyBufferHoleList::add_fragment(size_t start, size_t end, bool last_fragment) {
 		assert(!this->is_empty());
-
-		// Remember the size
-		if (end > datagram_size)
-			datagram_size = end;
 
 		// 1.-3.: Find hole
 		Hole *prev = NULL;
@@ -74,7 +68,7 @@ namespace FeatureExtractor {
 
 		// 8: If the hole descriptor list is now empty, the datagram is now complete
 		if (this->is_empty()) {
-			//TODO: 
+			//TODO: got the IP bitch!
 		}
 	}
 }

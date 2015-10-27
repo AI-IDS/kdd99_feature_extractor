@@ -14,7 +14,7 @@ namespace FeatureExtractor {
 	class IpReassembler
 	{
 		/*
-		 * Key for reassembly buffer identification (in map)
+		 * Reassembly buffer identification (key for map)
 		 * RFC 815 Section 7:
 		 * The correct reassembly buffer is identified by an equality of the following 
 		 * fields:  the  foreign  and  local  internet  address,  the protocol ID, 
@@ -38,6 +38,7 @@ namespace FeatureExtractor {
 	public:
 		IpReassembler();
 		~IpReassembler();
+
 	};
 }
 
