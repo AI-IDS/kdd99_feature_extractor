@@ -3,6 +3,7 @@
 #include "PcapReader.h"
 #include "net.h"
 #include "Frame.h"
+#include <assert.h>
 
 // prevent localtime warning
 #pragma warning(disable : 4996)
@@ -89,6 +90,7 @@ namespace FeatureExtractor {
 
 		// IP
 		ip_header_t *ip = (ip_header_t *)eth->get_eth2_sdu();
+		assert(header->len >= eth->ETH2_HEADER_LENGTH + ip->IP_MIN_HEADER_LENGTH);
 		f->set_src_ip(ip->src_addr);
 		f->set_dst_ip(ip->dst_addr);
 		f->set_ip_proto(ip->protocol);
@@ -98,7 +100,6 @@ namespace FeatureExtractor {
 		f->set_ip_payload_length(ntohs(ip->total_length) - ip->header_length());
 
 		// Look for L4 headers only in first fragment
-		// TODO: assertion for the length of payload to be >= L4 header
 		if (f->get_ip_frag_offset() > 0)
 			return f;
 
@@ -108,6 +109,7 @@ namespace FeatureExtractor {
 		switch (ip->protocol) {
 		case TCP:
 			tcp = (tcp_header_t *)ip->get_sdu();
+			assert(f->get_ip_payload_length() >= tcp->TCP_MIN_HEADER_LENGTH);
 			f->set_src_port(ntohs(tcp->src_port));
 			f->set_dst_port(ntohs(tcp->dst_port));
 			f->set_tcp_flags(tcp->flags);
@@ -115,6 +117,7 @@ namespace FeatureExtractor {
 
 		case UDP:
 			udp = (udp_header_t *)ip->get_sdu();
+			assert(f->get_ip_payload_length() >= udp->UDP_MIN_HEADER_LENGTH);
 			f->set_src_port(ntohs(udp->src_port));
 			f->set_dst_port(ntohs(udp->dst_port));
 			break;
@@ -191,6 +194,7 @@ namespace FeatureExtractor {
 
 			unsigned int sport = 0;
 			unsigned int dport = 0;
+			size_t ip_payload_length = 
 			// TCP
 			if (ip_test->protocol == TCP) {
 				tcp_header_t *tcp = (tcp_header_t *)ip_test->get_sdu();

@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 
 	IpFragment *frag;
 	while ((frag = p->next_frame()) != NULL) {
-		frag->print();
+		//frag->print();
 		datagr = reasm.reassemble(frag);
 		if (datagr && datagr->get_frame_count() > 1) {
 			cout << "==================================" << endl;

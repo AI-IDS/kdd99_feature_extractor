@@ -62,6 +62,8 @@ namespace FeatureExtractor {
 		uint32_t src_addr;
 		uint32_t dst_addr;
 
+		static const int IP_MIN_HEADER_LENGTH = 20;
+
 		uint8_t ihl() const;
 		size_t header_length() const;
 		uint8_t flags() const;
@@ -81,6 +83,8 @@ namespace FeatureExtractor {
 		uint16_t dst_port;
 		uint16_t length;
 		uint16_t checksum;
+
+		static const int UDP_MIN_HEADER_LENGTH = 8;
 	} udp_header_t;
 
 	/*
@@ -114,5 +118,7 @@ namespace FeatureExtractor {
 		uint16_t window_size;
 		uint16_t checksum;
 		uint16_t urgent_p;
+
+		static const int TCP_MIN_HEADER_LENGTH = 20;
 	} tcp_header_t;
 }
