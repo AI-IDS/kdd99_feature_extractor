@@ -18,6 +18,7 @@ namespace FeatureExtractor {
 		struct timeval first_frag_ts;
 		struct timeval last_frag_ts;
 		uint16_t frame_count;
+		size_t total_length;
 
 
 	public:

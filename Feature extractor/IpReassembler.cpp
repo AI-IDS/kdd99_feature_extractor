@@ -29,7 +29,7 @@ namespace FeatureExtractor {
 
 	Packet *IpReassembler::reassemble(IpFragment *frag)
 	{
-		bool is_fragmented = (frag->get_ip_flag_mf() || frag->get_ip_frag_offset != 0);
+		bool is_fragmented = (frag->get_ip_flag_mf() || frag->get_ip_frag_offset() != 0);
 
 		if (is_fragmented)
 			return add_fragment(frag);

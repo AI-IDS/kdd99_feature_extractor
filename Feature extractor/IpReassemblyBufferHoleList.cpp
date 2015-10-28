@@ -57,7 +57,7 @@ namespace FeatureExtractor {
 
 				// 5. New hole before fragment
 				if (frag_start > hole->start) {
-					Hole *new_hole = new Hole(hole->start, frag_end - 1, hole->next);
+					Hole *new_hole = new Hole(hole->start, frag_end - 1, next);
 					if (prev)
 						prev->next = new_hole;
 					else
@@ -65,9 +65,13 @@ namespace FeatureExtractor {
 					prev = new_hole;
 				}
 
-				// 6. New hole after fragment
-				if (frag_end < hole->end && !is_last_frag) {
-					Hole *new_hole = new Hole(frag_end + 1, hole->end, hole->next);
+				// 6. New hole after fragment; 
+				// If last fragment change update last hole end (initiated to infinity)
+				if (is_last_frag && !next) {
+					hole->end = frag_end;
+				}
+				if (frag_end < hole->end) {
+					Hole *new_hole = new Hole(frag_end + 1, hole->end, next);
 					if (prev)
 						prev->next = new_hole;
 					else
@@ -80,6 +84,10 @@ namespace FeatureExtractor {
 
 				// 1. Select the next hole  descriptor
 				hole = next;
+
+				// If no hole except the one to be deleted, the list is empty now
+				if (!prev && !next)
+					first_hole = nullptr;
 			}
 		}
 

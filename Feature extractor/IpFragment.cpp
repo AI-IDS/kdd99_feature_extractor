@@ -62,6 +62,7 @@ namespace FeatureExtractor {
 		
 		cout << "  ip.flag_mf=" << get_ip_flag_mf()
 			<< ", ip.frag_offset=" << get_ip_frag_offset() 
-			<< ", ip.id=0x" << hex << get_ip_id() << dec << endl;
+			<< ", ip.id=0x" << hex << get_ip_id() << dec 
+			<< ", payload_length=" << get_ip_payload_length() << endl;
 	}
 }
