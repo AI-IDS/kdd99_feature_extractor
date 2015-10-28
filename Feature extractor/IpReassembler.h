@@ -34,13 +34,14 @@ namespace FeatureExtractor {
 		typedef map<IpReassemblyBufferKey, IpReassemblyBuffer*> BufferMap;
 		BufferMap buffer_map;
 
+		IpDatagram *add_fragment(const IpFragment *fragment);
 
 	public:
 		IpReassembler();
 		~IpReassembler();
 
-
-		IpDatagram *add_fragment(const IpFragment *fragment);
+		
+		Packet *reassemble(IpFragment *fragment);
 
 	};
 }

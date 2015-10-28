@@ -27,11 +27,19 @@ namespace FeatureExtractor {
 	}
 
 
-
-	//todo: wrap in reassemble - leaving out reas for non-fragmented packets
-	IpDatagram *IpReassembler::add_fragment(const IpFragment *fragment)
+	Packet *IpReassembler::reassemble(IpFragment *frag)
 	{
-		IpReassemblyBufferKey key(fragment);
+		bool is_fragmented = (frag->get_ip_flag_mf() || frag->get_ip_frag_offset != 0);
+
+		if (is_fragmented)
+			return add_fragment(frag);
+
+		return frag;
+	}
+
+	IpDatagram *IpReassembler::add_fragment(const IpFragment *frag)
+	{
+		IpReassemblyBufferKey key(frag);
 		IpReassemblyBuffer *buffer = nullptr;
 
 		// Find or insert with single lookup: 
@@ -54,7 +62,7 @@ namespace FeatureExtractor {
 		}
 
 		// Call IP reassembly algorithm
-		IpDatagram *datagram = buffer->add_fragment(fragment);
+		IpDatagram *datagram = buffer->add_fragment(frag);
 
 		// If new IP datagram reassembled, destroy the buffer for it & return it
 		if (datagram) {

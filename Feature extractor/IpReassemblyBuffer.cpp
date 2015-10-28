@@ -33,7 +33,8 @@ namespace FeatureExtractor {
 		frame_count++;
 
 		// Fill holes with new fragment
-		hole_list.add_fragment(frag->get_ip_frag_offset(), frag->get_ip_payload_length);
+		bool is_last_frag = frag->get_ip_flag_mf();		// Flag MF = 0 only for last fragment
+		hole_list.add_fragment(frag->get_ip_frag_offset(), frag->get_ip_payload_length, is_last_frag);
 		
 		// If no hole left IP datagram is reassembled
 		if (hole_list.is_empty()) {
