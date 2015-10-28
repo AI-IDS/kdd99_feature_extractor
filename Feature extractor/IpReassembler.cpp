@@ -48,15 +48,13 @@ namespace FeatureExtractor {
 		BufferMap::iterator it = buffer_map.lower_bound(key);
 		if (it != buffer_map.end() && !(buffer_map.key_comp()(key, it->first)))
 		{
-			// Key already exists
-			// update lb->second if you care to
+			// Key already exists; update lb->second if you care to
 			buffer = it->second;
 
 		}
 		else {
 			// The key does not exist in the map
 			// Add it to the map + update iterator to point to new item
-
 			buffer = new IpReassemblyBuffer();
 			it = buffer_map.insert(it, BufferMap::value_type(key, buffer));
 		}

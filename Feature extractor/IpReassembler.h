@@ -2,7 +2,7 @@
 
 #include <map>
 #include "IpReassemblyBuffer.h"
-#include "Frame.h"
+#include "IpFragment.h"
 
 namespace FeatureExtractor {
 	using namespace std;
