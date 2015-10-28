@@ -48,6 +48,24 @@ namespace FeatureExtractor {
 
 			// 1.-3. Find hole that fragment fits
 			while (hole && (frag_start > hole->end || frag_end < hole->start)) {
+
+				// Part of 6. If last fragment change update last hole end (initiated to infinity)
+				if (is_last_frag && !hole->next) {
+					hole->end = frag_end;
+
+					// If hole makes no sense, destroy it
+					if (hole->start > hole->end) {
+						if (prev)
+							prev->next = hole->next;
+						else
+							first_hole = hole->next;
+						delete hole;
+						hole = nullptr;
+						break;
+					}
+				}
+
+				// 1. Select the next hole  descriptor  from  the  hole  descriptor list.
 				prev = hole;
 				hole = hole->next;
 			}
@@ -65,11 +83,7 @@ namespace FeatureExtractor {
 					prev = new_hole;
 				}
 
-				// 6. New hole after fragment; 
-				// If last fragment change update last hole end (initiated to infinity)
-				if (is_last_frag && !next) {
-					hole->end = frag_end;
-				}
+				// 6. New hole after fragment
 				if (frag_end < hole->end) {
 					Hole *new_hole = new Hole(frag_end + 1, hole->end, next);
 					if (prev)
@@ -93,7 +107,7 @@ namespace FeatureExtractor {
 
 		// 8: If the hole descriptor list is now empty, the datagram is now complete
 		if (this->is_empty()) {
-			//TODO: got the IP bitch!
+			//TODO: got the datagram bitch!
 		}
 	}
 }

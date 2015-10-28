@@ -54,12 +54,15 @@ namespace FeatureExtractor {
 	void IpDatagram::print() const
 	{
 		Packet::print();
-		struct tm *ltime;
-		char timestr[16];
-		time_t local_tv_sec;
-		local_tv_sec = get_end_ts().tv_sec;
-		ltime = localtime(&local_tv_sec);
-		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
-		cout << "  IP datagram end ts: " << timestr << endl;
+		if (get_eth_type() == IPV4) {
+			struct tm *ltime;
+			char timestr[16];
+			time_t local_tv_sec;
+			local_tv_sec = get_end_ts().tv_sec;
+			ltime = localtime(&local_tv_sec);
+			strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
+			cout << "  IP datagram end ts: " << timestr << endl;
+
+		}
 	}
 }

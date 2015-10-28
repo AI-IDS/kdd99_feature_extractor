@@ -144,13 +144,13 @@ namespace FeatureExtractor {
 
 		ss << (is_eth2() ? " ETHERNET II" : " NON-ETHERNET");
 		if (!is_eth2()) {
-			cout << ss.str() << endl;
+			cout << endl << ss.str() << endl;
 			return;
 		}
 		ss << (eth_type == IPV4 ? " > IP" : " > NON-IP");
 		if (eth_type != IPV4) {
 			ss << "(0x" << hex << eth_type << dec << ")";
-			cout << ss.str() << endl;
+			cout << endl << ss.str() << endl;
 			return;
 		}
 
@@ -188,12 +188,13 @@ namespace FeatureExtractor {
 			ss << endl;
 
 			if (ip_proto == TCP) {
-				ss << "  Flags(" << hex << (int) tcp_flags.flags << dec << "): ";
+				ss << "  Flags(0x" << hex << (int) tcp_flags.flags << dec << "): ";
 				ss << (tcp_flags.fin() ? "F" : "");
 				ss << (tcp_flags.syn() ? "S" : "");
 				ss << (tcp_flags.rst() ? "R" : "");
 				ss << (tcp_flags.ack() ? "A" : "");
 				ss << (tcp_flags.urg() ? "U" : "");
+				ss << endl;
 			}
 		}
 

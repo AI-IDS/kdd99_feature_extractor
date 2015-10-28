@@ -4,6 +4,9 @@
 #include "net.h"
 #include "Frame.h"
 
+// prevent localtime warning
+#pragma warning(disable : 4996)
+
 namespace FeatureExtractor {
 	
 	using namespace std;
@@ -22,6 +25,7 @@ namespace FeatureExtractor {
 		// Limit snapshot length
 		pcap_set_snaplen(this->handle, SNAPLEN);
 	}
+
 
 	PcapReader::PcapReader(int inum)
 	{
@@ -94,6 +98,7 @@ namespace FeatureExtractor {
 		f->set_ip_payload_length(ntohs(ip->total_length) - ip->header_length());
 
 		// Look for L4 headers only in first fragment
+		// TODO: assertion for the length of payload to be >= L4 header
 		if (f->get_ip_frag_offset() > 0)
 			return f;
 
@@ -127,7 +132,6 @@ namespace FeatureExtractor {
 
 
 
-//#pragma warning(disable : 4996)
 	int PcapReader::old_next_frame()
 		{
 		struct pcap_pkthdr *header;

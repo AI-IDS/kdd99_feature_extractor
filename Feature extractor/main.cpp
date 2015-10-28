@@ -47,7 +47,8 @@ int main(int argc, char* argv[])
 	//PcapReader p("ip_frag_source.pcap");
 	//PcapReader p("ip_frag_source.pcap");
 
-	p = new PcapReader("ip_frag_source.pcap");
+	//p = new PcapReader("ip_frag_source.pcap");
+	p = new PcapReader("t.cap");
 
 	IpReassembler reasm;
 	Packet *datagr;
@@ -56,10 +57,10 @@ int main(int argc, char* argv[])
 	while ((frag = p->next_frame()) != NULL) {
 		frag->print();
 		datagr = reasm.reassemble(frag);
-		if (datagr) {
-			cout << "^^^^^^^^" << endl;
+		if (datagr && datagr->get_frame_count() > 1) {
+			cout << "==================================" << endl;
 			datagr->print();
-			cout << "=================" << endl;
+			cout << "^^^^^^^^^^^^^" << endl << endl;
 		}
 
 
