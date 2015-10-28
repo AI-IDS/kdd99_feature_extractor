@@ -68,7 +68,7 @@ namespace FeatureExtractor {
 				// 1. Select the next hole  descriptor  from  the  hole  descriptor list.
 				prev = hole;
 				hole = hole->next;
-			}
+			} // End of 1.-3. Find hole...
 
 			if (hole) {
 				Hole *next = hole->next;
@@ -83,7 +83,11 @@ namespace FeatureExtractor {
 					prev = new_hole;
 				}
 
-				// 6. New hole after fragment
+				// 6. New hole after fragment 
+				// If last fragment change update last hole end (initiated to infinity)
+				if (is_last_frag && !next) {
+					hole->end = frag_end;
+				}
 				if (frag_end < hole->end) {
 					Hole *new_hole = new Hole(frag_end + 1, hole->end, next);
 					if (prev)
