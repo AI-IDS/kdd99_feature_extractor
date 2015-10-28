@@ -44,6 +44,10 @@ namespace FeatureExtractor {
 			datagram->set_end_ts(last_frag_ts);
 			datagram->set_frame_count(frame_count);
 
+			// TODO: do this or destroy object
+			IpDatagram *ret = datagram;
+			datagram = nullptr;
+
 			return datagram;
 		}
 

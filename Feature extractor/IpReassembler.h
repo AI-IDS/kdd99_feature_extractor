@@ -23,21 +23,24 @@ namespace FeatureExtractor {
 		class IpReassemblyBufferKey {
 			uint32_t src;
 			uint32_t dst;
-			ip_field_protocol_t protocol;
+			ip_field_protocol_t proto;
 			uint16_t id;
 		public:
 			IpReassemblyBufferKey();
-			IpReassemblyBufferKey(const Frame *frame);
+			IpReassemblyBufferKey(const IpFragment *fragment);
 			bool operator<(const IpReassemblyBufferKey& other) const; // Required for map<> key
 		};
 
-
-		map<IpReassemblyBufferKey, IpReassemblyBuffer> buffers;
+		typedef map<IpReassemblyBufferKey, IpReassemblyBuffer*> BufferMap;
+		BufferMap buffer_map;
 
 
 	public:
 		IpReassembler();
 		~IpReassembler();
+
+
+		IpDatagram *add_fragment(const IpFragment *fragment);
 
 	};
 }

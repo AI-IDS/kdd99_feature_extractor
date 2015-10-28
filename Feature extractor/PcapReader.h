@@ -19,7 +19,6 @@ namespace FeatureExtractor {
 		// Additional length = 4B = Ethernet II CRC size (CRC is not part of libpcap packet capture)
 		static const int ADDITIONAL_LEN = 4;
 
-
 	public:
 		PcapReader(char *fname);
 		PcapReader(int inum);
