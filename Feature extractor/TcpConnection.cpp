@@ -210,7 +210,10 @@ namespace FeatureExtractor {
 		if (packet->get_tcp_flags().urg())
 			urgent_packets++;
 
+		// Make state transitions according to packet
 		update_state(packet);	
+
+		return is_in_final_state();
 	}
 
 	void TcpConnection::update_state(const Packet *packet)
