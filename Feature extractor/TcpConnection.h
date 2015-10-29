@@ -85,8 +85,8 @@ namespace FeatureExtractor {
 		bool add_packet(const Packet *packet);
 
 		/**
-		* Output the class values (e.g. for debuging purposes)
-		*/
+		 * Output the class values (e.g. for debuging purposes)
+		 */
 		void print() const;
 		const char *get_state_str() const;
 

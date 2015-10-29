@@ -14,6 +14,8 @@ namespace FeatureExtractor {
 		uint16_t src_port;
 		uint16_t dst_port;
 		tcp_field_flags_t tcp_flags;
+		icmp_field_type_t icmp_type;
+		uint8_t icmp_code;
 		size_t length;
 
 	public:
@@ -47,6 +49,12 @@ namespace FeatureExtractor {
 
 		tcp_field_flags_t get_tcp_flags() const;
 		void set_tcp_flags(tcp_field_flags_t tcp_flags);
+
+		icmp_field_type_t get_icmp_type();
+		void set_icmp_type(icmp_field_type_t icmp_type);
+
+		uint8_t get_icmp_code();
+		void get_icmp_code(uint8_t icmp_code);
 
 		virtual size_t get_length() const;
 		virtual void set_length(size_t length);

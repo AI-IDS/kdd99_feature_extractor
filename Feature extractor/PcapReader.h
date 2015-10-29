@@ -14,10 +14,10 @@ namespace FeatureExtractor {
 		pcap_t *handle;
 
 		// Snapshot length = 14B Eth2 header + 60B - max IP header length + 20 TCP basic header
-		static const int SNAPLEN = 94;
+		static const size_t SNAPLEN = 94;
 
 		// Additional length = 4B = Ethernet II CRC size (CRC is not part of libpcap packet capture)
-		static const int ADDITIONAL_LEN = 0;// 4;// zero for debug
+		static const size_t ADDITIONAL_LEN = 0;// 4;// zero for debug
 
 	public:
 		PcapReader(char *fname);

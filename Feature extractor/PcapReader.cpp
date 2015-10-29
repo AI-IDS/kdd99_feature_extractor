@@ -104,25 +104,32 @@ namespace FeatureExtractor {
 			return f;
 
 		// L4 - TCP & UDP
-		tcp_header_t *tcp = NULL;
-		udp_header_t *udp = NULL;
+		tcp_header_t *tcp = nullptr;
+		udp_header_t *udp = nullptr;
+		icmp_header_t *icmp = nullptr;
 		switch (ip->protocol) {
 		case TCP:
-			tcp = (tcp_header_t *)ip->get_sdu();
 			assert(f->get_ip_payload_length() >= tcp->TCP_MIN_HEADER_LENGTH);
+			tcp = (tcp_header_t *)ip->get_sdu();
 			f->set_src_port(ntohs(tcp->src_port));
 			f->set_dst_port(ntohs(tcp->dst_port));
 			f->set_tcp_flags(tcp->flags);
 			break;
 
 		case UDP:
-			udp = (udp_header_t *)ip->get_sdu();
 			assert(f->get_ip_payload_length() >= udp->UDP_MIN_HEADER_LENGTH);
+			udp = (udp_header_t *)ip->get_sdu();
 			f->set_src_port(ntohs(udp->src_port));
 			f->set_dst_port(ntohs(udp->dst_port));
 			break;
 
 		case ICMP:
+			assert(f->get_ip_payload_length() >= icmp->ICMP_MIN_HEADER_LENGTH);
+			icmp = (icmp_header_t *)ip->get_sdu();
+			f->set_icmp_type(icmp->type);
+			f->get_icmp_code(icmp->code);
+			break;
+
 		default:
 			// No special handling
 			break;

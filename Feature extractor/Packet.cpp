@@ -8,7 +8,8 @@ namespace FeatureExtractor {
 	Packet::Packet()
 		: eth2(false), eth_type(TYPE_ZERO), ip_proto(PROTO_ZERO)
 		, src_ip(0), dst_ip(0), src_port(0), dst_port(0)
-		, tcp_flags(), length(0)
+		, tcp_flags(), icmp_type(ECHOREPLY), icmp_code(0)
+		, length(0)
 	{
 		start_ts.tv_sec = 0;
 		start_ts.tv_usec = 0;
@@ -114,6 +115,24 @@ namespace FeatureExtractor {
 		this->tcp_flags = tcp_flags;
 	}
 
+	icmp_field_type_t Packet::get_icmp_type()
+	{
+		return icmp_type;
+	}
+	void Packet::set_icmp_type(icmp_field_type_t icmp_type)
+	{
+		this->icmp_type = icmp_type;
+	}
+
+	uint8_t Packet::get_icmp_code()
+	{
+		return icmp_code;
+	}
+	void Packet::get_icmp_code(uint8_t icmp_code)
+	{
+		this->icmp_code = icmp_code;
+	}
+
 	size_t Packet::get_length() const
 	{
 		return length;
@@ -178,6 +197,9 @@ namespace FeatureExtractor {
 			if (get_frame_count() > 1)
 				ss << " frames=" << get_frame_count();
 			ss << endl;
+			if (ip_proto == ICMP) {
+				ss << "  icmp_type=" << icmp_type << " icmp_code=" << icmp_code << endl;
+			}
 		}
 		else {
 			ss << "  src=" << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3] << ":" << get_src_port();

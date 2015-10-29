@@ -30,7 +30,7 @@ namespace FeatureExtractor {
 		uint8_t src_addr[6];
 		eth_field_type_t type_length;
 
-		static const int ETH2_HEADER_LENGTH = 14;
+		static const size_t ETH2_HEADER_LENGTH = 14;
 
 		bool is_ethernet2() const;
 		bool is_type_ipv4() const;
@@ -84,7 +84,7 @@ namespace FeatureExtractor {
 		uint16_t length;
 		uint16_t checksum;
 
-		static const int UDP_MIN_HEADER_LENGTH = 8;
+		static const size_t UDP_MIN_HEADER_LENGTH = 8;
 	} udp_header_t;
 
 	/*
@@ -119,6 +119,41 @@ namespace FeatureExtractor {
 		uint16_t checksum;
 		uint16_t urgent_p;
 
-		static const int TCP_MIN_HEADER_LENGTH = 20;
+		static const size_t TCP_MIN_HEADER_LENGTH = 20;
 	} tcp_header_t;
+
+
+
+	/*
+	 * ICMP type field
+	 * Values from linux source code used
+	 * https://github.com/torvalds/linux/blob/master/include/uapi/linux/icmp.h
+	 */
+	enum icmp_field_type_t : uint8_t {
+		ECHOREPLY = 0,
+		DEST_UNREACH = 3,
+		SOURCE_QUENCH = 4,
+		REDIRECT = 5,
+		ECHO = 8,
+		TIME_EXCEEDED = 11,
+		PARAMETERPROB = 12,
+		TIMESTAMP = 13,
+		TIMESTAMPREPLY = 14,
+		INFO_REQUEST = 15,
+		INFO_REPLY = 16,
+		ADDRESS = 17,
+		ADDRESSREPLY = 18
+	};
+
+	/*
+	 * ICMP header
+	 */
+	typedef struct {
+		icmp_field_type_t type;
+		uint8_t code;
+		uint16_t checksum;
+		uint32_t checksum;
+
+		static const size_t ICMP_MIN_HEADER_LENGTH = 8;
+	} icmp_header_t;
 }
