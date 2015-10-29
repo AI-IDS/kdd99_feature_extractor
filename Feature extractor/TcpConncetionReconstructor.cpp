@@ -42,7 +42,7 @@ namespace FeatureExtractor {
 			return false;
 
 		// src ports are equal
-		return (dst_ip < other.dst_ip);
+		return (dst_port < other.dst_port);
 	}
 	TcpConncetionReconstructor::TcpConnectionKey TcpConncetionReconstructor::TcpConnectionKey::get_reversed()
 	{
