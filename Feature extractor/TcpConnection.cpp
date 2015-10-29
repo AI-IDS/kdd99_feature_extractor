@@ -1,7 +1,10 @@
+#include <sstream>
+#include <iostream>
 #include "TcpConnection.h"
 
 
 namespace FeatureExtractor {
+	using namespace std;
 
 	TcpConnection::TcpConnection()
 		: src_ip(0), dst_ip(0), src_port(0), dst_port(0)
@@ -39,19 +42,9 @@ namespace FeatureExtractor {
 		return src_ip;
 	}
 
-	void TcpConnection::set_src_ip(uint32_t src_ip)
-	{
-		this->src_ip = src_ip;
-	}
-
 	uint32_t TcpConnection::get_dst_ip() const
 	{
 		return dst_ip;
-	}
-
-	void TcpConnection::set_dst_ip(uint32_t dst_ip)
-	{
-		this->dst_ip = dst_ip;
 	}
 
 	uint16_t TcpConnection::get_src_port() const
@@ -59,19 +52,9 @@ namespace FeatureExtractor {
 		return src_port;
 	}
 
-	void TcpConnection::set_src_port(uint16_t src_port)
-	{
-		this->src_port = src_port;
-	}
-
 	uint16_t TcpConnection::get_dst_port() const
 	{
 		return dst_port;
-	}
-
-	void TcpConnection::set_dst_port(uint16_t dst_port)
-	{
-		this->dst_port = dst_port;
 	}
 
 
@@ -102,9 +85,20 @@ namespace FeatureExtractor {
 		return state;
 	}
 
-	void TcpConnection::set_state(TcpState state)
+	struct timeval TcpConnection::get_start_ts() const
 	{
-		this->state = state;
+		return start_ts;
+	}
+
+	struct timeval TcpConnection::get_last_ts() const
+	{
+		return last_ts;
+	}
+
+	uint32_t TcpConnection::get_duration_ms() const
+	{
+		return ((last_ts.tv_sec - start_ts.tv_sec) * 1000) +
+			((last_ts.tv_usec - start_ts.tv_usec) / 1000);
 	}
 
 	size_t TcpConnection::get_src_bytes() const
@@ -112,29 +106,9 @@ namespace FeatureExtractor {
 		return src_bytes;
 	}
 
-	void TcpConnection::set_src_bytes(size_t src_bytes)
-	{
-		this->src_bytes = src_bytes;
-	}
-
-	void TcpConnection::add_src_bytes(size_t src_bytes)
-	{
-		this->src_bytes += src_bytes;
-	}
-
 	size_t TcpConnection::get_dst_bytes() const
 	{
 		return dst_bytes;
-	}
-
-	void TcpConnection::set_dst_bytes(size_t dst_bytes)
-	{
-		this->dst_bytes = dst_bytes;
-	}
-
-	void TcpConnection::add_dst_bytes(size_t dst_bytes)
-	{
-		this->dst_bytes += dst_bytes;
 	}
 
 	uint32_t TcpConnection::get_packets() const
@@ -142,29 +116,9 @@ namespace FeatureExtractor {
 		return packets;
 	}
 
-	void TcpConnection::set_packets(uint32_t packets)
-	{
-		this->packets = packets;
-	}
-
-	void TcpConnection::inc_packets()
-	{
-		this->packets++;
-	}
-
 	uint32_t TcpConnection::get_wrong_fragments() const
 	{
 		return wrong_fragments;
-	}
-
-	void TcpConnection::set_wrong_fragments(uint32_t wrong_fragments)
-	{
-		this->wrong_fragments = wrong_fragments;
-	}
-
-	void TcpConnection::inc_wrong_fragments()
-	{
-		this->wrong_fragments++;
 	}
 
 	uint32_t TcpConnection::get_urgent_packets() const
@@ -172,17 +126,6 @@ namespace FeatureExtractor {
 		return urgent_packets;
 	}
 
-	void TcpConnection::set_urgent_packets(uint32_t urgent_packets)
-	{
-		this->urgent_packets = urgent_packets;
-	}
-
-	void TcpConnection::inc_urgent_packets()
-	{
-		this->urgent_packets++;
-	}
-
-	// TODO: remove watafak above
 
 	bool TcpConnection::land() const
 	{
@@ -210,13 +153,19 @@ namespace FeatureExtractor {
 		if (packet->get_tcp_flags().urg())
 			urgent_packets++;
 
-		// Make state transitions according to packet
-		update_state(packet);	
+		// Make state transitions according to packet if TCP,
+		// all other protocols will get to finalstate SH directly
+		if (packet->get_ip_proto == TCP)
+			update_tcp_state(packet);
+		else
+			state = SH;
+
+		// TODO: make universal connection
 
 		return is_in_final_state();
 	}
 
-	void TcpConnection::update_state(const Packet *packet)
+	void TcpConnection::update_tcp_state(const Packet *packet)
 	{
 		// Is the packet from originator or responder?
 		bool originator = (packet->get_src_ip() == src_ip);
@@ -365,4 +314,60 @@ namespace FeatureExtractor {
 		return true;
 	}
 
+	void TcpConnection::print() const
+	{
+		stringstream ss;
+
+		struct tm *ltime;
+		char timestr[16];
+		time_t local_tv_sec;
+		local_tv_sec = get_start_ts().tv_sec;
+		ltime = localtime(&local_tv_sec);
+		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
+		ss << "CONNECTION " << timestr;
+		ss << " duration=" << get_duration_ms() << "ms" << endl;
+
+		// Cast ips to arrays of octets
+		uint8_t *sip = (uint8_t *)&src_ip;
+		uint8_t *dip = (uint8_t *)&dst_ip;
+
+		ss << "  src=" << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3] << ":" << get_src_port();
+		ss << " dst=" << (int)dip[0] << "." << (int)dip[1] << "." << (int)dip[2] << "." << (int)dip[3] << ":" << get_dst_port() << endl;
+		ss << "  src_bytes=" << src_bytes << " dst_bytes=" << dst_bytes << " land=" << land() << endl;
+		ss << "  pkts=" << packets << " wrong_frags=" << wrong_fragments << " urg_pkts=" << urgent_packets;
+		ss << "  state=" << get_state_str() << " internal_state=" << state_to_str(state) << endl;
+		ss << endl;
+
+	}
+
+	const char *TcpConnection::get_state_str() const 
+	{
+		return state_to_str(get_state());
+	}
+		
+	const char *TcpConnection::state_to_str(TcpState state)
+	{
+		switch (state) {
+		case INIT: return "INIT"; break;
+		case S0: return "S0"; break;
+		case S1: return "S1"; break;
+		case S2: return "S2"; break;
+		case S3: return "S3"; break;
+		case SF: return "SF"; break;
+		case REJ: return "REJ"; break;
+		case RSTOS0: return "RSTOS0"; break;
+		case RSTO: return "RSTO"; break;
+		case RSTR: return "RSTR"; break;
+		case SH: return "SH"; break;
+		case RSTRH: return "RSTRH"; break;
+		case SHR: return "SHR"; break;
+		case OTH: return "OTH"; break;
+		case ESTAB: return "ESTAB"; break;
+		case S4: return "S4"; break;
+		case S2F: return "S2F"; break;
+		case S3F: return "S3F"; break;
+		}
+
+		return "UNKNOWN";
+	}
 }

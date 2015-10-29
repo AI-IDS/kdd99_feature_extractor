@@ -26,9 +26,6 @@ namespace FeatureExtractor {
 
 		IpFragment *next_frame();
 
-		//debug
-		int old_next_frame();
-
 	};
 }
 

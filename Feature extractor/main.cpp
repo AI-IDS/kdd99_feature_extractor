@@ -2,8 +2,10 @@
 //#pragma warning(default:4265)
 #include <iostream>
 #include <cstdlib>
-#include "IpReassembler.h"
 #include "PcapReader.h"
+#include "IpReassembler.h"
+#include "TcpConncetionReconstructor.h"
+
 
 using namespace std;
 using namespace FeatureExtractor;
@@ -51,16 +53,28 @@ int main(int argc, char* argv[])
 	//p = new PcapReader("t.cap");
 
 	IpReassembler reasm;
+	TcpConncetionReconstructor conn_reconstructor;
 	Packet *datagr;
 
 	IpFragment *frag;
+	TcpConnection *conn;
 	while ((frag = p->next_frame()) != NULL) {
 		//frag->print();
 		datagr = reasm.reassemble(frag);
-		if (datagr && datagr->get_frame_count() > 1) {
-			cout << "==================================" << endl;
-			datagr->print();
-			cout << "^^^^^^^^^^^^^" << endl << endl;
+		if (datagr) {
+			if (datagr->get_frame_count() > 1) {
+				cout << "----------------------------------" << endl;
+				datagr->print();
+				cout << "^^^^^^^^^^^^^" << endl << endl;
+			}
+
+			conn = conn_reconstructor.add_packet(datagr);
+			if (conn) {
+				cout << "==================================" << endl;
+				conn->print();
+				cout << "==================================" << endl;
+				cout << "^^^^^^^^^^^^^" << endl << endl;
+			}
 		}
 
 
