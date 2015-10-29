@@ -24,6 +24,26 @@ namespace FeatureExtractor {
 	bool IpReassembler::IpReassemblyBufferKey::operator<(const IpReassemblyBufferKey& other) const
 	{
 		return (src < other.src || dst < other.dst || id < other.id || proto < other.proto);
+
+		if (src < other.src)
+			return true;
+		if (src > other.src)
+			return false;
+
+		// src IPs are equal
+		if (dst < other.dst)
+			return true;
+		if (dst > other.dst)
+			return false;
+
+		// dst IPs are equal
+		if (id < other.id)
+			return true;
+		if (id > other.id)
+			return false;
+
+		// IDs are equal
+		return (proto < other.proto)
 	}
 
 

@@ -24,16 +24,33 @@ namespace FeatureExtractor {
 
 	bool TcpConncetionReconstructor::TcpConnectionKey::operator<(const TcpConnectionKey& other) const
 	{
-		return (src_ip < other.src_ip || dst_ip < other.dst_ip 
-			|| src_port < other.src_port || dst_port < other.dst_port);
+		if (src_ip < other.src_ip)
+			return true;
+		if (src_ip > other.src_ip)
+			return false;
+
+		// src IPs are equal
+		if (dst_ip < other.dst_ip)
+			return true;
+		if (dst_ip > other.dst_ip)
+			return false;
+
+		// dst IPs are equal
+		if (src_port < other.src_port)
+			return true;
+		if (src_port > other.src_port)
+			return false;
+
+		// src ports are equal
+		return (dst_ip < other.dst_ip);
 	}
 	TcpConncetionReconstructor::TcpConnectionKey TcpConncetionReconstructor::TcpConnectionKey::get_reversed()
 	{
 		TcpConnectionKey key;
-		key.src_ip = this->src_ip;
-		key.dst_ip = this->dst_ip;
-		key.src_port = this->src_port;
-		key.dst_port = this->dst_port;
+		key.src_ip = this->dst_ip;
+		key.dst_ip = this->src_ip;
+		key.src_port = this->dst_port;
+		key.dst_port = this->src_port;
 
 		return key;
 	}
@@ -51,7 +68,7 @@ namespace FeatureExtractor {
 		ConnectionMap::iterator it = conn_map.lower_bound(key);
 		if (it == conn_map.end() || (conn_map.key_comp()(key, it->first))) {
 			// If not found, try with opposite direction
-			ConnectionMap::iterator it = conn_map.lower_bound(key.get_reversed());
+			it = conn_map.lower_bound(key.get_reversed());
 		}
 
 		if (it != conn_map.end() && !(conn_map.key_comp()(key, it->first)))

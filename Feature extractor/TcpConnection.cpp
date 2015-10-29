@@ -155,7 +155,7 @@ namespace FeatureExtractor {
 
 		// Make state transitions according to packet if TCP,
 		// all other protocols will get to finalstate SH directly
-		if (packet->get_ip_proto == TCP)
+		if (packet->get_ip_proto() == TCP)
 			update_tcp_state(packet);
 		else
 			state = SH;

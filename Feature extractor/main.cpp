@@ -10,6 +10,27 @@
 using namespace std;
 using namespace FeatureExtractor;
 
+void debug_test()
+{
+	return;
+
+	TcpConncetionReconstructor rec;
+	Packet p;
+	p.set_src_ip(246853523);
+	p.set_dst_ip(832548755);
+	p.set_src_port(57642);
+	p.set_dst_port(22);
+
+	rec.add_packet(&p);
+
+
+	p.set_src_ip(832548755);
+	p.set_dst_ip(246853523);
+	p.set_src_port(22);
+	p.set_dst_port(57642);
+	rec.add_packet(&p);
+}
+
 int main(int argc, char* argv[])
 {
 	PcapReader *p = NULL;
@@ -45,11 +66,14 @@ int main(int argc, char* argv[])
 
 	}
 
+	debug_test();
+
 	//PcapReader p(1);
 	//PcapReader p("ip_frag_source.pcap");
 	//PcapReader p("ip_frag_source.pcap");
 
 	//p = new PcapReader("ip_frag_source.pcap");
+	p = new PcapReader("ssh.pcap");
 	//p = new PcapReader("t.cap");
 
 	IpReassembler reasm;
@@ -62,18 +86,19 @@ int main(int argc, char* argv[])
 		//frag->print();
 		datagr = reasm.reassemble(frag);
 		if (datagr) {
-			if (datagr->get_frame_count() > 1) {
-				cout << "----------------------------------" << endl;
-				datagr->print();
-				cout << "^^^^^^^^^^^^^" << endl << endl;
-			}
-
+			//cout << "----------------------------------" << endl;
+			datagr->print();
+			//cout << "^^^^^^^^^^^^^" << endl << endl;
+			cout << endl;
+			
+			// TODO: only TCP
 			conn = conn_reconstructor.add_packet(datagr);
 			if (conn) {
 				cout << "==================================" << endl;
 				conn->print();
-				cout << "==================================" << endl;
 				cout << "^^^^^^^^^^^^^" << endl << endl;
+
+				delete conn;
 			}
 		}
 
