@@ -6,13 +6,11 @@ namespace FeatureExtractor {
 	using namespace std;
 
 	Packet::Packet()
-		: eth2(false), eth_type(TYPE_ZERO), ip_proto(PROTO_ZERO)
+		: start_ts(), eth2(false), eth_type(TYPE_ZERO), ip_proto(PROTO_ZERO)
 		, src_ip(0), dst_ip(0), src_port(0), dst_port(0)
 		, tcp_flags(), icmp_type(ECHOREPLY), icmp_code(0)
 		, length(0)
 	{
-		start_ts.tv_sec = 0;
-		start_ts.tv_usec = 0;
 	}
 
 
@@ -20,19 +18,19 @@ namespace FeatureExtractor {
 	{
 	}
 
-	timeval Packet::get_start_ts() const
+	Timestamp Packet::get_start_ts() const
 	{
 		return start_ts;
 	}
 
-	void Packet::set_start_ts(timeval &start_ts)
+	void Packet::set_start_ts(Timestamp &start_ts)
 	{
 		this->start_ts = start_ts;
 	}
 
-	timeval Packet::get_end_ts() const
+	Timestamp Packet::get_end_ts() const
 	{
-		// Return the start timestamp
+		// Return the start timestamp by default
 		return start_ts;
 	}
 
@@ -156,7 +154,7 @@ namespace FeatureExtractor {
 		struct tm *ltime;
 		char timestr[16];
 		time_t local_tv_sec;
-		local_tv_sec = get_start_ts().tv_sec;
+		local_tv_sec = get_start_ts().get_timeval().tv_sec;
 		ltime = localtime(&local_tv_sec);
 		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
 		ss << timestr;

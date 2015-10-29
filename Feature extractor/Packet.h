@@ -1,11 +1,15 @@
 #pragma once
 
 #include "net.h"
+#include "Timestamp.h"
 
 namespace FeatureExtractor {
+	/**
+	 * Abstract Packet
+	 */
 	class Packet
 	{
-		struct timeval start_ts;
+		Timestamp start_ts;
 		bool eth2;
 		eth_field_type_t eth_type;
 		ip_field_protocol_t ip_proto;
@@ -22,9 +26,9 @@ namespace FeatureExtractor {
 		Packet();
 		~Packet();
 
-		timeval get_start_ts() const;
-		void set_start_ts(timeval &start_ts);
-		virtual timeval get_end_ts() const;
+		Timestamp get_start_ts() const;
+		void set_start_ts(Timestamp &start_ts);
+		virtual Timestamp get_end_ts() const;
 
 		bool is_eth2() const;
 		void set_eth2(bool is_eth2);

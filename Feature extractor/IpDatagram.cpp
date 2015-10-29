@@ -6,17 +6,13 @@ namespace FeatureExtractor {
 	using namespace std;
 
 	IpDatagram::IpDatagram() 
-		: Packet(), frame_count(0)
+		: Packet(), end_ts(), frame_count(0)
 	{
-		end_ts.tv_sec = 0;
-		end_ts.tv_usec = 0;
 	}
 
 	IpDatagram::IpDatagram(Packet const &packet)
-		: Packet(packet), frame_count(0)
+		: Packet(packet), end_ts(), frame_count(0)
 	{
-		end_ts.tv_sec = 0;
-		end_ts.tv_usec = 0;
 	}
 
 
@@ -25,11 +21,11 @@ namespace FeatureExtractor {
 	}
 
 
-	timeval IpDatagram::get_end_ts() const
+	Timestamp IpDatagram::get_end_ts() const
 	{
 		return this->end_ts;
 	}
-	void IpDatagram::set_end_ts(timeval &end_ts)
+	void IpDatagram::set_end_ts(Timestamp &end_ts)
 	{
 		this->end_ts = end_ts;
 	}

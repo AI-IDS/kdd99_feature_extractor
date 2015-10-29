@@ -6,14 +6,14 @@ namespace FeatureExtractor {
 	class IpDatagram :
 		public Packet
 	{
-		struct timeval end_ts;
+		Timestamp end_ts;
 		uint16_t frame_count;
 	public:
 		IpDatagram();
 		IpDatagram(Packet const &packet);
 		~IpDatagram();
 
-		timeval get_end_ts() const;
+		Timestamp get_end_ts() const;
 		void set_end_ts(timeval &end_ts);	// override
 
 		uint16_t get_frame_count() const;
