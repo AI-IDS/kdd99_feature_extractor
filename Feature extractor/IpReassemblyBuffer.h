@@ -20,7 +20,6 @@ namespace FeatureExtractor {
 		uint16_t frame_count;
 		size_t total_length;
 
-
 	public:
 		IpReassemblyBuffer();
 		~IpReassemblyBuffer();

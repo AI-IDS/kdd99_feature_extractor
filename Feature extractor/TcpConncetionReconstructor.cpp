@@ -42,7 +42,7 @@ namespace FeatureExtractor {
 	TcpConnection *TcpConncetionReconstructor::add_packet(const Packet *packet)
 	{
 		TcpConnectionKey key(packet);
-		TcpConnection *conn;
+		TcpConnection *conn = nullptr;
 
 		// Find or insert with single lookup: 
 		// http://stackoverflow.com/a/101980/3503528
@@ -61,11 +61,19 @@ namespace FeatureExtractor {
 		}
 		else {
 			// The key (connection) does not exist in the map
-			conn = new TcpConnection();
+			conn = new TcpConnection(packet);
 			it = conn_map.insert(it, ConnectionMap::value_type(key, conn));
 		}
 
 		// Pass new packet to connection
+		bool is_finished = conn->add_packet(packet);
 
+		// If connection is in final state, remove it from map & return it
+		if (is_finished) {
+			conn_map.erase(it);	
+			return conn;
+		}
+
+		return nullptr;
 	}
 }

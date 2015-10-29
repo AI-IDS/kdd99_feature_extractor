@@ -28,7 +28,7 @@ namespace FeatureExtractor {
 		};
 
 		typedef map<TcpConnectionKey, TcpConnection*> ConnectionMap;
-		ConnectionMap connection_map;
+		ConnectionMap conn_map;
 
 	public:
 		TcpConncetionReconstructor();
