@@ -62,6 +62,11 @@ namespace FeatureExtractor {
 		this->dst_port = dst_port;
 	}
 
+	bool FiveTuple::land() const
+	{
+		return (src_ip == dst_ip && src_port == dst_port);
+	}
+
 	bool FiveTuple::operator<(const FiveTuple& other) const
 	{
 		if (ip_proto < other.ip_proto)

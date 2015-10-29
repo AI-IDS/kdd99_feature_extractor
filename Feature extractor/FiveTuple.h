@@ -34,6 +34,11 @@ namespace FeatureExtractor {
 		void set_dst_port(uint16_t dst_port);
 
 		/**
+		 * Returns true if source endpoint (IP:port) is the same as destination
+		 */
+		bool land() const;
+
+		/**
 		 * Less than operator - can be used for map<> keyoperator 
 		 * Operator '<' is applied to field in this order:
 		 *  1. IP protocol

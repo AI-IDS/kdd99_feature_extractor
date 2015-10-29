@@ -51,14 +51,60 @@ namespace FeatureExtractor {
 		Timestamp start_ts;
 		Timestamp last_ts;
 
+		size_t src_bytes;
+		size_t dst_bytes;
+		uint32_t packets;
+		uint32_t src_packets;
+		uint32_t dst_packets;
+		uint32_t wrong_fragments;
+		uint32_t urgent_packets;
 
-
-
+		virtual void update_state(const Packet *packet);
+		static const char *state_to_str(ConversationState state);
 
 	public:
 		Conversation();
 		Conversation(const FiveTuple *tuple);
 		Conversation(const Packet *packet);
 		~Conversation();
+
+		/**
+		 * Returns five tuple identifying the connection 
+		 * (ip protocol, src ip, dst ip, src port, dst port)
+		 */
+		FiveTuple get_five_tuple() const;
+
+		/**
+		 * Returns const pointer to five tuple - see method get_five_tuple()
+		 */
+		const FiveTuple *get_five_tuple_ptr() const;
+
+		ConversationState get_state() const;
+		const char *get_state_str() const;
+		virtual bool is_in_final_state() const;
+
+		Timestamp get_start_ts() const;
+		Timestamp get_last_ts() const;
+		uint32_t get_duration_ms() const;
+		size_t get_src_bytes() const;
+		size_t get_dst_bytes() const;
+		uint32_t get_packets() const;
+		uint32_t get_src_packets() const;
+		uint32_t get_dst_packets() const;
+		uint32_t get_wrong_fragments() const;
+		uint32_t get_urgent_packets() const;
+		bool land() const;
+
+		/**
+		* Adds next packet to connection (without checking sequence number)
+		* Returns true if connection will get to final state
+		*/
+		bool add_packet(const Packet *packet);
+
+		/**
+		* Output the class values (e.g. for debuging purposes)
+		*/
+		void print() const;
+
 	};
 }

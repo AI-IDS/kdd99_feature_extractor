@@ -154,7 +154,7 @@ namespace FeatureExtractor {
 		struct tm *ltime;
 		char timestr[16];
 		time_t local_tv_sec;
-		local_tv_sec = get_start_ts().get_timeval().tv_sec;
+		local_tv_sec = start_ts.get_secs();
 		ltime = localtime(&local_tv_sec);
 		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
 		ss << timestr;

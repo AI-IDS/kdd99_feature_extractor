@@ -54,7 +54,7 @@ namespace FeatureExtractor {
 			struct tm *ltime;
 			char timestr[16];
 			time_t local_tv_sec;
-			local_tv_sec = get_end_ts().tv_sec;
+			local_tv_sec = end_ts.get_secs();
 			ltime = localtime(&local_tv_sec);
 			strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
 			cout << "  IP datagram end ts: " << timestr << endl;

@@ -30,17 +30,34 @@ namespace FeatureExtractor {
 
 	int64_t Timestamp::get_usecs() const
 	{
+		return ts.tv_usec;
+	}
+
+
+	int64_t Timestamp::get_secs() const
+	{
+		return ts.tv_sec;
+	}
+
+	int64_t Timestamp::get_total_usecs() const
+	{
 		return ts.tv_sec * 1000000 + ts.tv_sec;
 	}
 
 
-	int64_t Timestamp::get_msecs() const
+	int64_t Timestamp::get_total_msecs() const
 	{
 		return (ts.tv_sec * 1000) + (ts.tv_usec / 1000);
 	}
 
-	Timestamp Timestamp::operator-(const Timestamp &b)
+
+	 bool Timestamp::operator=(const Timestamp &b) const
 	{
-		return Timestamp(this->get_usecs() - b.get_usecs());
+		return (ts.tv_sec == b.ts.tv_sec && ts.tv_usec == b.ts.tv_usec);
+	}
+
+	Timestamp Timestamp::operator-(const Timestamp &b) const
+	{
+		return Timestamp(this->get_total_usecs() - b.get_total_usecs());
 	}
 }

@@ -152,7 +152,6 @@ namespace FeatureExtractor {
 		icmp_field_type_t type;
 		uint8_t code;
 		uint16_t checksum;
-		uint32_t checksum;
 
 		static const size_t ICMP_MIN_HEADER_LENGTH = 8;
 	} icmp_header_t;

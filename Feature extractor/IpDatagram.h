@@ -14,7 +14,7 @@ namespace FeatureExtractor {
 		~IpDatagram();
 
 		Timestamp get_end_ts() const;
-		void set_end_ts(timeval &end_ts);	// override
+		void set_end_ts(Timestamp &end_ts);	// override
 
 		uint16_t get_frame_count() const;
 		void set_frame_count(uint16_t frame_count);
