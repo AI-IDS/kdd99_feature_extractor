@@ -43,7 +43,7 @@ namespace FeatureExtractor {
 			return false;
 
 		// IDs are equal
-		return (proto < other.proto)
+		return (proto < other.proto);
 	}
 
 

@@ -41,6 +41,8 @@ namespace FeatureExtractor {
 		size_t src_bytes;
 		size_t dst_bytes;
 		uint32_t packets;
+		uint32_t src_packets;
+		uint32_t dst_packets;
 		uint32_t wrong_fragments;
 		uint32_t urgent_packets;
 
@@ -66,6 +68,8 @@ namespace FeatureExtractor {
 		size_t get_src_bytes() const;
 		size_t get_dst_bytes() const;
 		uint32_t get_packets() const;
+		uint32_t get_src_packets() const;
+		uint32_t get_dst_packets() const;
 		uint32_t get_wrong_fragments() const;
 		uint32_t get_urgent_packets() const;
 		bool land() const;

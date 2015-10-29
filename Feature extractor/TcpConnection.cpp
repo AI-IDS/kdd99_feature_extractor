@@ -9,7 +9,8 @@ namespace FeatureExtractor {
 	TcpConnection::TcpConnection()
 		: src_ip(0), dst_ip(0), src_port(0), dst_port(0)
 		, state(INIT), src_bytes(0), dst_bytes(0)
-		, packets(0), wrong_fragments(0), urgent_packets(0)
+		, packets(0), src_packets(0), dst_packets(0)
+		, wrong_fragments(0), urgent_packets(0)
 	{
 		start_ts.tv_sec = 0;
 		start_ts.tv_usec = 0;
@@ -19,7 +20,8 @@ namespace FeatureExtractor {
 
 	TcpConnection::TcpConnection(const Packet *packet)
 		: state(INIT), src_bytes(0), dst_bytes(0)
-		, packets(0), wrong_fragments(0), urgent_packets(0)
+		, packets(0), src_packets(0), dst_packets(0)
+		, wrong_fragments(0), urgent_packets(0)
 	{
 		start_ts.tv_sec = 0;
 		start_ts.tv_usec = 0;
@@ -116,6 +118,16 @@ namespace FeatureExtractor {
 		return packets;
 	}
 
+	uint32_t TcpConnection::get_src_packets() const
+	{
+		return src_packets;
+	}
+
+	uint32_t TcpConnection::get_dst_packets() const
+	{
+		return dst_packets;
+	}
+
 	uint32_t TcpConnection::get_wrong_fragments() const
 	{
 		return wrong_fragments;
@@ -142,9 +154,11 @@ namespace FeatureExtractor {
 		// Add byte counts for correct direction
 		if (packet->get_src_ip() == src_ip) {
 			src_bytes += packet->get_length();
+			src_packets++;
 		}
 		else {
 			dst_bytes += packet->get_length();
+			dst_packets++;
 		}
 
 		// Packet counts
@@ -314,32 +328,6 @@ namespace FeatureExtractor {
 		return true;
 	}
 
-	void TcpConnection::print() const
-	{
-		stringstream ss;
-
-		struct tm *ltime;
-		char timestr[16];
-		time_t local_tv_sec;
-		local_tv_sec = get_start_ts().tv_sec;
-		ltime = localtime(&local_tv_sec);
-		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
-		ss << "CONNECTION " << timestr;
-		ss << " duration=" << get_duration_ms() << "ms" << endl;
-
-		// Cast ips to arrays of octets
-		uint8_t *sip = (uint8_t *)&src_ip;
-		uint8_t *dip = (uint8_t *)&dst_ip;
-
-		ss << "  src=" << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3] << ":" << get_src_port();
-		ss << " dst=" << (int)dip[0] << "." << (int)dip[1] << "." << (int)dip[2] << "." << (int)dip[3] << ":" << get_dst_port() << endl;
-		ss << "  src_bytes=" << src_bytes << " dst_bytes=" << dst_bytes << " land=" << land() << endl;
-		ss << "  pkts=" << packets << " wrong_frags=" << wrong_fragments << " urg_pkts=" << urgent_packets;
-		ss << "  state=" << get_state_str() << " internal_state=" << state_to_str(state) << endl;
-		ss << endl;
-
-	}
-
 	const char *TcpConnection::get_state_str() const 
 	{
 		return state_to_str(get_state());
@@ -369,5 +357,33 @@ namespace FeatureExtractor {
 		}
 
 		return "UNKNOWN";
+	}
+
+	void TcpConnection::print() const
+	{
+		stringstream ss;
+
+		struct tm *ltime;
+		char timestr[16];
+		time_t local_tv_sec;
+		local_tv_sec = get_start_ts().tv_sec;
+		ltime = localtime(&local_tv_sec);
+		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
+		ss << "CONNECTION " << timestr;
+		ss << " duration=" << get_duration_ms() << "ms" << endl;
+
+		// Cast ips to arrays of octets
+		uint8_t *sip = (uint8_t *)&src_ip;
+		uint8_t *dip = (uint8_t *)&dst_ip;
+
+		ss << "  " << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3] << ":" << get_src_port();
+		ss << " --> " << (int)dip[0] << "." << (int)dip[1] << "." << (int)dip[2] << "." << (int)dip[3] << ":" << get_dst_port() << endl;
+		ss << "  src_bytes=" << src_bytes << " dst_bytes=" << dst_bytes << " land=" << land() << endl;
+		ss << "  pkts=" << packets << " src_pkts=" << src_packets << " dst_pkts=" << dst_packets << endl;
+		ss << "  wrong_frags = " << wrong_fragments << " urg_pkts = " << urgent_packets << endl;
+		ss << "  state=" << get_state_str() << " internal_state=" << state_to_str(state) << endl;
+		ss << endl;
+
+		cout << ss.str();
 	}
 }

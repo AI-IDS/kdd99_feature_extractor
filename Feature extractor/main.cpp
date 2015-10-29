@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
 	//PcapReader p("ip_frag_source.pcap");
 
 	//p = new PcapReader("ip_frag_source.pcap");
-	p = new PcapReader("ssh.pcap");
+	//p = new PcapReader("ssh.pcap");
 	//p = new PcapReader("t.cap");
 
 	IpReassembler reasm;
@@ -87,9 +87,9 @@ int main(int argc, char* argv[])
 		datagr = reasm.reassemble(frag);
 		if (datagr) {
 			//cout << "----------------------------------" << endl;
-			datagr->print();
+			//datagr->print();
 			//cout << "^^^^^^^^^^^^^" << endl << endl;
-			cout << endl;
+			//cout << endl;
 			
 			// TODO: only TCP
 			conn = conn_reconstructor.add_packet(datagr);

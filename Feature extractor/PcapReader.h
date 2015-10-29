@@ -17,7 +17,7 @@ namespace FeatureExtractor {
 		static const int SNAPLEN = 94;
 
 		// Additional length = 4B = Ethernet II CRC size (CRC is not part of libpcap packet capture)
-		static const int ADDITIONAL_LEN = 4;
+		static const int ADDITIONAL_LEN = 0;// 4;// zero for debug
 
 	public:
 		PcapReader(char *fname);
