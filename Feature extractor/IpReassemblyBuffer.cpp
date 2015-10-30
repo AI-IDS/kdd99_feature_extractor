@@ -5,12 +5,9 @@ namespace FeatureExtractor {
 	using namespace std;
 
 	IpReassemblyBuffer::IpReassemblyBuffer()
-		:datagram(nullptr), frame_count(0), total_length(0)
+		: datagram(nullptr), frame_count(0), total_length(0)
+		, first_frag_ts(), last_frag_ts()
 	{
-		first_frag_ts.tv_sec = 0;
-		first_frag_ts.tv_usec = 0;
-		last_frag_ts.tv_sec = 0;
-		last_frag_ts.tv_usec = 0;
 	}
 
 

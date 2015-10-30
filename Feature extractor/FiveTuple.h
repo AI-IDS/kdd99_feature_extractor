@@ -5,6 +5,7 @@
 namespace FeatureExtractor {
 	/**
 	 * 5-tuple identificator for conversation
+	 * <IP protocol, source IP, source port, destination IP, destination port>
 	 */
 	class FiveTuple
 	{

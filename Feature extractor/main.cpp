@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include "PcapReader.h"
 #include "IpReassembler.h"
-#include "TcpConncetionReconstructor.h"
+#include "ConversationReconstructor.h"
 
 
 using namespace std;
@@ -14,21 +14,18 @@ void debug_test()
 {
 	return;
 
-	TcpConncetionReconstructor rec;
-	Packet p;
-	p.set_src_ip(246853523);
-	p.set_dst_ip(832548755);
-	p.set_src_port(57642);
-	p.set_dst_port(22);
+	struct timeval tv;
+	tv.tv_sec = 10000;
+	tv.tv_usec = 20000;
 
-	rec.add_packet(&p);
+	Timestamp ts1(tv);
+	Timestamp ts2;
 
+	cout << endl << "---- before s =" << ts2.get_secs() << " new=" << ts1.get_secs() << endl;
 
-	p.set_src_ip(832548755);
-	p.set_dst_ip(246853523);
-	p.set_src_port(22);
-	p.set_dst_port(57642);
-	rec.add_packet(&p);
+	ts2 = ts1;
+	cout << "after s =" << ts2.get_secs() << endl;
+	return;
 }
 
 int main(int argc, char* argv[])
@@ -73,15 +70,15 @@ int main(int argc, char* argv[])
 	//PcapReader p("ip_frag_source.pcap");
 
 	//p = new PcapReader("ip_frag_source.pcap");
-	//p = new PcapReader("ssh.pcap");
+	p = new PcapReader("ssh.pcap");
 	//p = new PcapReader("t.cap");
 
 	IpReassembler reasm;
-	TcpConncetionReconstructor conn_reconstructor;
+	ConversationReconstructor conn_reconstructor;
 	Packet *datagr;
 
 	IpFragment *frag;
-	TcpConnection *conn;
+	Conversation *conv;
 	while ((frag = p->next_frame()) != NULL) {
 		//frag->print();
 		datagr = reasm.reassemble(frag);
@@ -92,13 +89,13 @@ int main(int argc, char* argv[])
 			//cout << endl;
 			
 			// TODO: only TCP
-			conn = conn_reconstructor.add_packet(datagr);
-			if (conn) {
+			conv = conn_reconstructor.add_packet(datagr);
+			if (conv) {
 				cout << "==================================" << endl;
-				conn->print();
+				conv->print();
 				cout << "^^^^^^^^^^^^^" << endl << endl;
 
-				delete conn;
+				delete conv;
 			}
 		}
 

@@ -3,6 +3,7 @@
 #include "IpReassemblyBufferHoleList.h"
 #include "IpFragment.h"
 #include "IpDatagram.h"
+#include "Timestamp.h"
 
 namespace FeatureExtractor {
 	/*
@@ -15,8 +16,8 @@ namespace FeatureExtractor {
 		IpReassemblyBufferHoleList hole_list;
 
 		IpDatagram *datagram;
-		struct timeval first_frag_ts;
-		struct timeval last_frag_ts;
+		Timestamp first_frag_ts;
+		Timestamp last_frag_ts;
 		uint16_t frame_count;
 		size_t total_length;
 

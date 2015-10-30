@@ -9,7 +9,7 @@ extern "C" {
 //#endif // _WIN32
 
 /*
- * Structs for parsing network headers
+ * Structs for parsing network protocol headers
  * Inspired by http://stackoverflow.com/a/16523804/3503528
  */
 namespace FeatureExtractor {

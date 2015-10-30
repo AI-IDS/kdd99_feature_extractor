@@ -2,6 +2,7 @@
 
 #include "net.h"
 #include "Timestamp.h"
+#include "FiveTuple.h"
 
 namespace FeatureExtractor {
 	/**
@@ -12,11 +13,10 @@ namespace FeatureExtractor {
 		Timestamp start_ts;
 		bool eth2;
 		eth_field_type_t eth_type;
-		ip_field_protocol_t ip_proto;
-		uint32_t src_ip;
-		uint32_t dst_ip;
-		uint16_t src_port;
-		uint16_t dst_port;
+
+		// <IP protocol, source IP, source port, destination IP, destination port>
+		FiveTuple five_tuple;
+
 		tcp_field_flags_t tcp_flags;
 		icmp_field_type_t icmp_type;
 		uint8_t icmp_code;
@@ -27,7 +27,7 @@ namespace FeatureExtractor {
 		~Packet();
 
 		Timestamp get_start_ts() const;
-		void set_start_ts(Timestamp &start_ts);
+		void set_start_ts(const Timestamp &start_ts);
 		virtual Timestamp get_end_ts() const;
 
 		bool is_eth2() const;
@@ -38,6 +38,9 @@ namespace FeatureExtractor {
 
 		ip_field_protocol_t get_ip_proto() const;
 		void set_ip_proto(ip_field_protocol_t ip_proto);
+
+		FiveTuple get_five_tuple() const;
+		void set_five_tuple(const FiveTuple &five_tuple);
 
 		uint32_t get_src_ip() const;
 		void set_src_ip(uint32_t src_ip);

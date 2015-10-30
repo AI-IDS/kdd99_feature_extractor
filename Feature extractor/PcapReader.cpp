@@ -76,7 +76,8 @@ namespace FeatureExtractor {
 		}
 
 		IpFragment *f = new IpFragment();
-		f->set_start_ts(Timestamp(header->ts));
+		Timestamp ts(header->ts);
+		f->set_start_ts(ts);
 		f->set_length(header->len + ADDITIONAL_LEN);	// Additional lenght for e.g. CRC of Ethernet
 
 		// Ethernet type/length field

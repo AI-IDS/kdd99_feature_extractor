@@ -12,7 +12,7 @@ namespace FeatureExtractor {
 
 	public:
 		Timestamp();
-		Timestamp(timeval ts);
+		Timestamp(const struct timeval &ts);
 		Timestamp(int64_t usecs);
 		~Timestamp();
 
@@ -22,7 +22,7 @@ namespace FeatureExtractor {
 		int64_t get_total_usecs() const;
 		int64_t get_total_msecs() const;
 
-		bool operator=(const Timestamp &b) const;
+		bool operator==(const Timestamp &b) const;
 		Timestamp operator-(const Timestamp &b) const;
 	};
 }
