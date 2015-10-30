@@ -93,7 +93,6 @@ int main(int argc, char* argv[])
 			//cout << "^^^^^^^^^^^^^" << endl << endl;
 			//cout << endl;
 			
-			// TODO: only TCP
 			conv = conn_reconstructor.add_packet(datagr);
 			if (conv) {
 				cout << "==================================" << endl;
