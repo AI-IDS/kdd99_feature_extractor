@@ -99,6 +99,7 @@ namespace FeatureExtractor {
 	FiveTuple FiveTuple::get_reversed() const
 	{
 		FiveTuple tuple;
+		tuple.ip_proto = this->ip_proto;
 		tuple.src_ip = this->dst_ip;
 		tuple.dst_ip = this->src_ip;
 		tuple.src_port = this->dst_port;

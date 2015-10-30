@@ -214,7 +214,17 @@ namespace FeatureExtractor {
 		local_tv_sec = start_ts.get_secs();
 		ltime = localtime(&local_tv_sec);
 		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
-		ss << "CONNECTION " << timestr;
+		ss << "CONVERSATION ";
+		if (five_tuple.get_ip_proto() == ICMP) {
+			ss << " > ICMP " << endl;
+		}
+		else if (five_tuple.get_ip_proto() == TCP) {
+			ss << " > TCP  " << endl;
+		}
+		else if (five_tuple.get_ip_proto() == UDP) {
+			ss << " > UDP  " << endl;
+		}
+		ss << timestr;
 		ss << " duration=" << get_duration_ms() << "ms" << endl;
 
 		// Cast ips to arrays of octets

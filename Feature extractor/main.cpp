@@ -70,7 +70,8 @@ int main(int argc, char* argv[])
 	//PcapReader p("ip_frag_source.pcap");
 
 	//p = new PcapReader("ip_frag_source.pcap");
-	p = new PcapReader("ssh.pcap");
+	//p = new PcapReader("ssh.pcap");
+	//p = new PcapReader("ssh_student.pcap");
 	//p = new PcapReader("t.cap");
 
 	IpReassembler reasm;
@@ -81,6 +82,10 @@ int main(int argc, char* argv[])
 	Conversation *conv;
 	while ((frag = p->next_frame()) != NULL) {
 		//frag->print();
+		ip_field_protocol_t ip_proto = frag->get_ip_proto();
+		if (ip_proto != TCP && ip_proto != UDP && ip_proto != ICMP)
+			continue;
+
 		datagr = reasm.reassemble(frag);
 		if (datagr) {
 			//cout << "----------------------------------" << endl;

@@ -34,7 +34,7 @@ namespace FeatureExtractor {
 
 		// Internal states (TCP-specific)
 		ESTAB,		// Established - ACK send by originator in S1 state; externally represented as S1
-		S4,			// SYN ACK seen - State between INIT and (RSTRH or SHR); externally represented as 
+		S4,			// SYN ACK seen - State between INIT and (RSTRH or SHR); externally represented as OTH
 		S2F,		// FIN send by responder in state S2 - waiting for final ACK; externally represented as S2
 		S3F			// FIN send by originator in state S3 - waiting for final ACK; externally represented as S3
 	};

@@ -2,7 +2,6 @@
 #include <iostream>
 #include "PcapReader.h"
 #include "net.h"
-#include "Frame.h"
 #include <assert.h>
 
 // prevent localtime warning
