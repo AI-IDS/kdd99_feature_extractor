@@ -216,14 +216,15 @@ namespace FeatureExtractor {
 		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
 		ss << "CONVERSATION ";
 		if (five_tuple.get_ip_proto() == ICMP) {
-			ss << " > ICMP " << endl;
+			ss << " > ICMP";
 		}
 		else if (five_tuple.get_ip_proto() == TCP) {
-			ss << " > TCP  " << endl;
+			ss << " > TCP ";
 		}
 		else if (five_tuple.get_ip_proto() == UDP) {
-			ss << " > UDP  " << endl;
+			ss << " > UDP ";
 		}
+		ss << "> " << get_service() << endl;
 		ss << timestr;
 		ss << " duration=" << get_duration_ms() << "ms" << endl;
 

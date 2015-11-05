@@ -2,6 +2,7 @@
 //#pragma warning(default:4265)
 #include <iostream>
 #include <cstdlib>
+#include <string>
 #include "PcapReader.h"
 #include "IpReassembler.h"
 #include "ConversationReconstructor.h"
@@ -54,7 +55,7 @@ int main(int argc, char* argv[])
 	}
 	else {
 		int inum = atoi(argv[1]);
-		if (inum) {
+		if (inum && to_string(inum) == argv[1]) {
 			p = new PcapReader(inum);
 		}
 		else {
