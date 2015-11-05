@@ -1,4 +1,4 @@
-
+	
 //#pragma warning(default:4265)
 #include <iostream>
 #include <cstdlib>
@@ -88,6 +88,7 @@ int main(int argc, char* argv[])
 
 		datagr = reasm.reassemble(frag);
 		if (datagr) {
+			// WTF debug
 			//cout << "----------------------------------" << endl;
 			//datagr->print();
 			//cout << "^^^^^^^^^^^^^" << endl << endl;
@@ -97,7 +98,7 @@ int main(int argc, char* argv[])
 			if (conv) {
 				cout << "==================================" << endl;
 				conv->print();
-				cout << "^^^^^^^^^^^^^" << endl << endl;
+				//cout << "^^^^^^^^^^^^^" << endl << endl;
 
 				delete conv;
 			}

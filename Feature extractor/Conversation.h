@@ -40,7 +40,7 @@ namespace FeatureExtractor {
 	};
 
 	/**
-	 * Abstract Conversation (incorrectly called connection)
+	 * Abstract Conversation (incorrectly called connection when not talking about TCP)
 	 */
 	class Conversation
 	{
@@ -94,16 +94,17 @@ namespace FeatureExtractor {
 		uint32_t get_wrong_fragments() const;
 		uint32_t get_urgent_packets() const;
 		bool land() const;
+		virtual const char *get_service() const = 0;	// Pure virtual function
 
 		/**
-		* Adds next packet to connection (without checking sequence number)
-		* Returns true if connection will get to final state
-		*/
+		 * Adds next packet to connection (without checking sequence number)
+		 * Returns true if connection will get to final state
+		 */
 		bool add_packet(const Packet *packet);
 
 		/**
-		* Output the class values (e.g. for debuging purposes)
-		*/
+		 * Output the class values (e.g. for debuging purposes)
+		 */
 		void print() const;
 
 	};

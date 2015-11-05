@@ -8,6 +8,7 @@ namespace FeatureExtractor {
 	 * Overrides default state transition behaviour in these points:
      *  - state transition behaviour (employ all states for TCP)
 	 *  - evaluates whether connection is finished depending on the state 
+	 *  - service name is specific for TCP and dependent od destination port
 	 */
 	class TcpConnection : public Conversation
 	{
@@ -20,6 +21,7 @@ namespace FeatureExtractor {
 		~TcpConnection();
 
 		bool is_in_final_state() const;
+		const char *get_service() const;
 	};
 }
 

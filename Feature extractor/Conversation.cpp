@@ -237,7 +237,7 @@ namespace FeatureExtractor {
 		ss << " --> " << (int)dip[0] << "." << (int)dip[1] << "." << (int)dip[2] << "." << (int)dip[3] << ":" << five_tuple.get_dst_port() << endl;
 		ss << "  src_bytes=" << src_bytes << " dst_bytes=" << dst_bytes << " land=" << land() << endl;
 		ss << "  pkts=" << packets << " src_pkts=" << src_packets << " dst_pkts=" << dst_packets << endl;
-		ss << "  wrong_frags = " << wrong_fragments << " urg_pkts = " << urgent_packets << endl;
+		ss << "  wrong_frags=" << wrong_fragments << " urg_pkts=" << urgent_packets << endl;
 		ss << "  state=" << get_state_str() << " internal_state=" << state_to_str(state) << endl;
 		ss << endl;
 

@@ -1,5 +1,6 @@
 #include "ConversationReconstructor.h"
 #include "TcpConnection.h"
+#include "IcmpConversation.h"
 
 namespace FeatureExtractor {
 
@@ -46,6 +47,8 @@ namespace FeatureExtractor {
 		if (!conversation) {
 			if (ip_proto == TCP)
 				conversation = new TcpConnection(packet);
+			else if (ip_proto == ICMP)
+				conversation = new IcmpConversation(packet);
 			else
 				conversation = new Conversation(packet);
 
