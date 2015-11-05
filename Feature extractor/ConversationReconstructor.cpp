@@ -1,6 +1,8 @@
 #include "ConversationReconstructor.h"
 #include "TcpConnection.h"
+#include "UdpConversation.h"
 #include "IcmpConversation.h"
+#include <assert.h>
 
 namespace FeatureExtractor {
 
@@ -45,13 +47,22 @@ namespace FeatureExtractor {
 			
 		// The key (connection) does not exist in the map
 		if (!conversation) {
-			if (ip_proto == TCP)
+			switch (ip_proto)
+			{
+			case TCP:
 				conversation = new TcpConnection(packet);
-			else if (ip_proto == ICMP)
-				conversation = new IcmpConversation(packet);
-			else
-				conversation = new Conversation(packet);
+				break;
 
+			case UDP:
+				conversation = new UdpConversation(packet);
+				break;
+
+			case ICMP:
+				conversation = new IcmpConversation(packet);
+				break;
+			}
+			assert(conversation != nullptr);
+			
 			it = conn_map.insert(it, ConnectionMap::value_type(key, conversation));
 		}
 

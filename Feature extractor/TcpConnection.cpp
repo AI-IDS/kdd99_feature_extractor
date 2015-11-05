@@ -177,6 +177,8 @@ namespace FeatureExtractor {
 
 	const char *TcpConnection::get_service() const
 	{
+		// Service ports assigned according to IANA Service Name and Transport Protocol Port Number Registry
+		// https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xml
 		switch (five_tuple.get_dst_port())
 		{
 		case 194: // Internet Relay Chat Protocol
@@ -361,10 +363,10 @@ namespace FeatureExtractor {
 			return "gopher";
 			break;
 
-		// TODO: harvest server port number
-		//case ??: // 
-		//	return "harvest";
-		//	break;
+			// TODO: harvest server port number
+			//case ??: // 
+			//	return "harvest";
+			//	break;
 
 		case 101: // NIC Host Name Server
 			return "hostnames";
@@ -456,10 +458,10 @@ namespace FeatureExtractor {
 			return "nntp";
 			break;
 
-		// TODO: pm_dump server port number
-		//case ??: // 
-		//	return "pm_dump";
-		//	break;
+			// TODO: pm_dump server port number
+			//case ??: // 
+			//	return "pm_dump";
+			//	break;
 
 		case 109: // Post Office Protocol Version 2
 			return "pop_2";
@@ -541,8 +543,8 @@ namespace FeatureExtractor {
 			break;
 
 		default:
-			// Defined by IANA in RFC 6335 section 6:
-			// the Dynamic Ports, also known as the Private or Ephemeral Ports,
+			// Private ports defined by IANA in RFC 6335 section 6:
+			// Dynamic Ports, also known as the Private or Ephemeral Ports,
 			// from 49152 - 65535 (never assigned)
 			if (five_tuple.get_dst_port() >= 49152)
 				return "private"; // or other?
