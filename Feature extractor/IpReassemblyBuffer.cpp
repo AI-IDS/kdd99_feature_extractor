@@ -13,6 +13,12 @@ namespace FeatureExtractor {
 
 	IpReassemblyBuffer::~IpReassemblyBuffer()
 	{
+		// Datagram is returned by calling method add_fragment() or& must be deallocated by caller
+	}
+
+	Timestamp IpReassemblyBuffer::get_last_fragment_ts() const
+	{
+		return last_frag_ts;
 	}
 
 	IpDatagram *IpReassemblyBuffer::add_fragment(const IpFragment *frag)

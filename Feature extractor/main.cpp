@@ -87,8 +87,8 @@ int main(int argc, char* argv[])
 		if (ip_proto != TCP && ip_proto != UDP && ip_proto != ICMP)
 			continue;
 
-		datagr = reasm.reassemble(frag);
-		if (datagr) {
+		reasm.pass_new_fragment(frag);
+		while ((datagr = reasm.get_next_datagram()) != nullptr) {
 			// WTF debug
 			//cout << "----------------------------------" << endl;
 			//datagr->print();

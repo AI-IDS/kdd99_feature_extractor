@@ -25,6 +25,8 @@ namespace FeatureExtractor {
 		IpReassemblyBuffer();
 		~IpReassemblyBuffer();
 
+		Timestamp get_last_fragment_ts() const;
+
 		IpDatagram *add_fragment(const IpFragment *fragment);
 	};
 }

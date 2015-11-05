@@ -56,8 +56,52 @@ namespace FeatureExtractor {
 		return (ts.tv_sec == b.ts.tv_sec && ts.tv_usec == b.ts.tv_usec);
 	}
 
+	bool Timestamp::operator!=(const Timestamp &b) const
+	{
+		return (ts.tv_sec != b.ts.tv_sec || ts.tv_usec != b.ts.tv_usec);
+	}
+
+	bool Timestamp::operator<(const Timestamp &b) const
+	{
+		return (ts.tv_sec < b.ts.tv_sec
+			|| (ts.tv_sec == b.ts.tv_sec && ts.tv_usec < b.ts.tv_usec));
+	}
+
+	bool Timestamp::operator<=(const Timestamp &b) const
+	{
+		return (ts.tv_sec < b.ts.tv_sec
+			|| (ts.tv_sec == b.ts.tv_sec && ts.tv_usec <= b.ts.tv_usec));
+	}
+
+	bool Timestamp::operator>(const Timestamp &b) const
+	{
+		return (ts.tv_sec > b.ts.tv_sec
+			|| (ts.tv_sec == b.ts.tv_sec && ts.tv_usec > b.ts.tv_usec));
+	}
+
+	bool Timestamp::operator<=(const Timestamp &b) const
+	{
+		return (ts.tv_sec > b.ts.tv_sec
+			|| (ts.tv_sec == b.ts.tv_sec && ts.tv_usec >= b.ts.tv_usec));
+	}
+
+	Timestamp Timestamp::operator+(const Timestamp &b) const
+	{
+		return Timestamp(this->get_total_usecs() + b.get_total_usecs());
+	}
+
 	Timestamp Timestamp::operator-(const Timestamp &b) const
 	{
 		return Timestamp(this->get_total_usecs() - b.get_total_usecs());
+	}
+
+	Timestamp Timestamp::operator+(int64_t b) const
+	{
+		return Timestamp(this->get_total_usecs() + b);
+	}
+
+	Timestamp Timestamp::operator-(int64_t b) const
+	{
+		return Timestamp(this->get_total_usecs() - b);
 	}
 }

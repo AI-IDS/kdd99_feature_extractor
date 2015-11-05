@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 #include <pcap.h>
 
 namespace FeatureExtractor {
@@ -23,7 +24,15 @@ namespace FeatureExtractor {
 		int64_t get_total_msecs() const;
 
 		bool operator==(const Timestamp &b) const;
+		bool operator!=(const Timestamp &b) const;
+		bool operator<(const Timestamp &b) const;
+		bool operator>(const Timestamp &b) const;
+		bool operator<=(const Timestamp &b) const;
+		bool operator>=(const Timestamp &b) const;
+		Timestamp operator+(const Timestamp &b) const;
 		Timestamp operator-(const Timestamp &b) const;
+		Timestamp operator+(int64_t b) const;	// Add usecs
+		Timestamp operator-(int64_t b) const;	// Substract usecs
 	};
 }
 

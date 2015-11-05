@@ -2,12 +2,26 @@
 
 
 namespace FeatureExtractor {
+	// 
+	
 	IpReassembler::IpReassembler()
+		: ipfrag_time(30)				// IP Fragmentation timeout 30s (Linux default)
+										// http://www.linuxinsight.com/proc_sys_net_ipv4_ipfrag_time.html
+		, timeout_interval(1 * 1000000)	// Check for timeouts every second
 	{
 	}
 
+	IpReassembler::IpReassembler(uint32_t ipfrag_time, uint64_t timeout_check_interval)
+		: ipfrag_time(ipfrag_time)
+		, timeout_interval(timeout_check_interval)
+	{
+	}
+
+
 	IpReassembler::~IpReassembler()
 	{
+		// TODO: release buffer_map, output_queue
+
 	}
 
 	IpReassembler::IpReassemblyBufferKey::IpReassemblyBufferKey()
@@ -47,17 +61,26 @@ namespace FeatureExtractor {
 	}
 
 
-	Packet *IpReassembler::reassemble(IpFragment *frag)
+	Packet *IpReassembler::pass_new_fragment(IpFragment *frag)
 	{
+		// Removes timed out reassembly buffers once per interval
+		Timestamp now = frag->get_end_ts();
+		if (timeout_interval.is_timedout(now))
+			check_timeouts(now);
+		timeout_interval.update_time(now);
+
+		// Check whether packet is part of fragmented datagram
 		bool is_fragmented = (frag->get_ip_flag_mf() || frag->get_ip_frag_offset() != 0);
 
+		// If fragmented forward to correct reassembly buffer
 		if (is_fragmented)
-			return add_fragment(frag);
-
+			return forward_to_buffer(frag);
+		
+		// Not fragmented, nothing to do 
 		return frag;
 	}
 
-	IpDatagram *IpReassembler::add_fragment(const IpFragment *frag)
+	IpDatagram *IpReassembler::forward_to_buffer(IpFragment *frag)
 	{
 		IpReassemblyBufferKey key(frag);
 		IpReassemblyBuffer *buffer = nullptr;
@@ -81,12 +104,53 @@ namespace FeatureExtractor {
 		// Call IP reassembly algorithm
 		IpDatagram *datagram = buffer->add_fragment(frag);
 
-		// If new IP datagram reassembled, destroy the buffer for it & return it
+		// If new IP datagram reassembled, destroy the buffer for it
+		// and enqueue datagram to output queue
 		if (datagram) {
 			buffer_map.erase(it);
 			delete buffer;
+			output_queue.push(datagram);
 		}
 
+		// Free fragment from memory
+		delete frag;
+
 		return datagram;
+	}
+
+	void IpReassembler::check_timeouts(const Timestamp &now)
+	{
+		// find, sort, add to queue
+
+		// Maximal timestamp that timedout buffer can have
+		Timestamp max_timeout_ts = now - (ipfrag_time * 1000000);
+
+		// Erasing during iteration available since C++11
+		// http://stackoverflow.com/a/263958/3503528
+		BufferMap::iterator it = buffer_map.begin();
+		while (it != buffer_map.end()) {
+
+			// If buffer is timed out, DROP the incomplete datagram
+			if (it->second->get_last_fragment_ts() <= max_timeout_ts) {
+				// Erase
+				buffer_map.erase(it++);  // Use iterator + post increment
+			}
+			else {
+				++it;
+			}
+		} // end of while(it..
+
+	}
+
+
+	//TODO: remove
+	Packet *IpReassembler::get_next_datagram()
+	{
+		if (output_queue.empty())
+			return nullptr;
+
+		Packet *p = output_queue.front();
+		output_queue.pop();
+		return p;
 	}
 }

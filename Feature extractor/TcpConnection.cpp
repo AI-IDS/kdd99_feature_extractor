@@ -367,10 +367,10 @@ namespace FeatureExtractor {
 			return "gopher";
 			break;
 
-			// TODO: harvest server port number
-			//case ??: // 
-			//	return "harvest";
-			//	break;
+		// TODO: harvest server port number
+		//case ??: // 
+		//	return "harvest";
+		//	break;
 
 		case 101: // NIC Host Name Server
 			return "hostnames";
@@ -462,10 +462,10 @@ namespace FeatureExtractor {
 			return "nntp";
 			break;
 
-			// TODO: pm_dump server port number
-			//case ??: // 
-			//	return "pm_dump";
-			//	break;
+		// TODO: pm_dump server port number
+		//case ??: // 
+		//	return "pm_dump";
+		//	break;
 
 		case 109: // Post Office Protocol Version 2
 			return "pop_2";

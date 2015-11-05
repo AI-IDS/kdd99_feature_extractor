@@ -1,8 +1,10 @@
 #pragma once
 
 #include <map>
+#include <queue>
 #include "IpReassemblyBuffer.h"
 #include "IpFragment.h"
+#include "IntervalKeeper.h"
 
 namespace FeatureExtractor {
 	using namespace std;
@@ -13,7 +15,7 @@ namespace FeatureExtractor {
 	 */
 	class IpReassembler
 	{
-		/*
+		/**
 		 * Reassembly buffer identification (key for map)
 		 * RFC 815 Section 7:
 		 * The correct reassembly buffer is identified by an equality of the following 
@@ -31,17 +33,56 @@ namespace FeatureExtractor {
 			bool operator<(const IpReassemblyBufferKey& other) const; // Required for map<> key
 		};
 
+		// IP Reassembly buffers
 		typedef map<IpReassemblyBufferKey, IpReassemblyBuffer*> BufferMap;
 		BufferMap buffer_map;
 
-		IpDatagram *add_fragment(const IpFragment *fragment);
+		// Queue of reassembled datagrams/packets
+		queue<Packet *>output_queue;
+
+		// Time in seconds to keep an IP fragment in memory
+		uint32_t ipfrag_time;
+
+		// Interval for checking timed out reassembly buffers
+		IntervalKeeper timeout_interval;
+
+		/**
+		 * Forwards fragment of fragmented datagram to correct buffer for reassembly.
+		 *
+		 * If reassembly is completed, datagram is returned. Otherwise the return
+		 * values is nullptr.
+		 */
+		IpDatagram *forward_to_buffer(IpFragment *fragment);
+
+		/**
+		 * Removes timed out reassembly buffers - "drops incomplete datagrams"
+		 */
+		void check_timeouts(const Timestamp &now);
 
 	public:
 		IpReassembler();
+		IpReassembler(uint32_t ipfrag_time, uint64_t timeout_check_interval);
 		~IpReassembler();
 
-		
-		Packet *reassemble(IpFragment *fragment);
+		/**
+		 * Pass fragment to IP reassembler. 
+		 *
+		 * If new datagram/packet is successfully reassembled, it is returned.
+		 * Otherwise nullpter is returned.
+		 * IpFragment object passed by pointer might be deleted after reassembly,
+		 * thus it must not be used after this call. Caller must take care 
+		 * of erasing the returned object.
+		 */
+		Packet *pass_new_fragment(IpFragment *fragment);
+
+
+		//TODO: remove
+		/**
+		 * Returns next reassembled datagram/packet from internal queue. If the queue 
+		 * is empty nullptr is returned.
+		 * Caller must take care of deallocation of returned object.
+		 */
+		Packet *get_next_datagram();
 
 	};
 }
