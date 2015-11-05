@@ -177,6 +177,12 @@ namespace FeatureExtractor {
 
 	const char *TcpConnection::get_service() const
 	{
+		// Identify FTP data in active FTP can be identified by source port
+		// TODO: passive FTP (only through FTP control payload inspection?)
+		if (five_tuple.get_src_port() == 20) {
+			return "ftp_data";
+		}
+
 		// Service ports assigned according to IANA Service Name and Transport Protocol Port Number Registry
 		// https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xml
 		switch (five_tuple.get_dst_port())
@@ -355,9 +361,7 @@ namespace FeatureExtractor {
 			return "ftp";
 			break;
 
-		case 20: // File Transfer [Default Data] (TODO)
-			return "ftp_data";
-			break;
+		// FTP data (20) is identified according to source port or FTP control payload inspection
 
 		case 70: // Gopher
 			return "gopher";

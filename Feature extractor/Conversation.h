@@ -8,11 +8,11 @@
 namespace FeatureExtractor {
 
 	/**
-	* Conversatiov states 
-	*	- INIT & SF for all protocols except TCP
-	*	- other states specific to TCP
-	* Description from https://www.bro.org/sphinx/scripts/base/protocols/conn/main.bro.html
-	*/
+	 * Conversatiov states 
+	 *	- INIT & SF for all protocols except TCP
+	 *	- other states specific to TCP
+	 * Description from https://www.bro.org/sphinx/scripts/base/protocols/conn/main.bro.html
+	 */
 	enum ConversationState {
 		// General states
 		INIT,		// Nothing happened yet.

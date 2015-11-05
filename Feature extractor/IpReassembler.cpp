@@ -70,7 +70,6 @@ namespace FeatureExtractor {
 		{
 			// Key already exists; update lb->second if you care to
 			buffer = it->second;
-
 		}
 		else {
 			// The key does not exist in the map
