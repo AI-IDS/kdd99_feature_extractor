@@ -15,8 +15,10 @@ namespace FeatureExtractor {
 	{
 	}
 
-	Conversation *ConversationReconstructor::add_packet(const Packet *packet)
+	void ConversationReconstructor::add_packet(const Packet *packet)
 	{
+		// TODO: check timeouts here
+
 		FiveTuple key = packet->get_five_tuple();
 		Conversation *conversation = nullptr;
 		ip_field_protocol_t ip_proto = key.get_ip_proto();
@@ -69,12 +71,45 @@ namespace FeatureExtractor {
 		// Pass new packet to connection
 		bool is_finished = conversation->add_packet(packet);
 
-		// If connection is in final state, remove it from map & return it
+		// If connection is in final state, remove it from map & enqueue to output
 		if (is_finished) {
 			conn_map.erase(it);	
-			return conversation;
+			output_queue.push(conversation);
 		}
+	}
 
-		return nullptr;
+	Conversation *ConversationReconstructor::get_next_conversation()
+	{
+		if (output_queue.empty())
+			return nullptr;
+
+		Conversation *conv = output_queue.front();
+		output_queue.pop();
+		return conv;
+	}
+
+
+	void ConversationReconstructor::check_timeouts(const Timestamp &now)
+	{
+		// find, sort, add to queue
+
+		// Maximal timestamp that timedout connection can have
+		Timestamp max_timeout_ts = now - (ipfrag_time * 1000000);
+
+		// Erasing during iteration available since C++11
+		// http://stackoverflow.com/a/263958/3503528
+		ConnectionMap::iterator it = conn_map.begin();
+		while (it != conn_map.end()) {
+
+			//// If buffer is timed out, DROP the incomplete datagram
+			//if (it->second->get_last_fragment_ts() <= max_timeout_ts) {
+			//	// Erase
+			//	buffer_map.erase(it++);  // Use iterator + post increment
+			//}
+			//else {
+			//	++it;
+			//}
+		} // end of while(it..
+
 	}
 }

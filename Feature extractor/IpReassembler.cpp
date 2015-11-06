@@ -109,7 +109,6 @@ namespace FeatureExtractor {
 		if (datagram) {
 			buffer_map.erase(it);
 			delete buffer;
-			output_queue.push(datagram);
 		}
 
 		// Free fragment from memory
@@ -142,15 +141,4 @@ namespace FeatureExtractor {
 
 	}
 
-
-	//TODO: remove
-	Packet *IpReassembler::get_next_datagram()
-	{
-		if (output_queue.empty())
-			return nullptr;
-
-		Packet *p = output_queue.front();
-		output_queue.pop();
-		return p;
-	}
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-#include <queue>
 #include "IpReassemblyBuffer.h"
 #include "IpFragment.h"
 #include "IntervalKeeper.h"
@@ -37,8 +36,6 @@ namespace FeatureExtractor {
 		typedef map<IpReassemblyBufferKey, IpReassemblyBuffer*> BufferMap;
 		BufferMap buffer_map;
 
-		// Queue of reassembled datagrams/packets
-		queue<Packet *>output_queue;
 
 		// Time in seconds to keep an IP fragment in memory
 		uint32_t ipfrag_time;
