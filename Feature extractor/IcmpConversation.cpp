@@ -13,7 +13,9 @@ namespace FeatureExtractor {
 	}
 
 	IcmpConversation::IcmpConversation(const Packet *packet)
-		: Conversation(packet), icmp_type(ECHOREPLY), icmp_code(0)
+		: Conversation(packet)
+		, icmp_type(packet->get_icmp_type())
+		, icmp_code(packet->get_icmp_code())
 	{
 	}
 
@@ -41,11 +43,11 @@ namespace FeatureExtractor {
 			break;
 
 		case REDIRECT:
-			return "ecr_i";		// Redirect message (5)
+			return "red_i";		// Redirect message (5)
 			break;
 
 		case ECHO:
-			return "red_i";		// Echo Request (8)
+			return "eco_i";		// Echo Request (8)
 			break;
 
 		case TIME_EXCEEDED:		// Time Exceeded (11)

@@ -66,11 +66,7 @@ int main(int argc, char* argv[])
 
 	debug_test();
 
-	//PcapReader p(1);
-	//PcapReader p("ip_frag_source.pcap");
-	//PcapReader p("ip_frag_source.pcap");
-
-	//p = new PcapReader("ip_frag_source.pcap");
+	p = new PcapReader("ip_frag_source.pcap");
 	//p = new PcapReader("ssh.pcap");
 	//p = new PcapReader("ssh_student.pcap");
 	//p = new PcapReader("t.cap");

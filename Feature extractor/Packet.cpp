@@ -121,7 +121,7 @@ namespace FeatureExtractor {
 		this->tcp_flags = tcp_flags;
 	}
 
-	icmp_field_type_t Packet::get_icmp_type()
+	icmp_field_type_t Packet::get_icmp_type() const
 	{
 		return icmp_type;
 	}
@@ -130,11 +130,11 @@ namespace FeatureExtractor {
 		this->icmp_type = icmp_type;
 	}
 
-	uint8_t Packet::get_icmp_code()
+	uint8_t Packet::get_icmp_code() const
 	{
 		return icmp_code;
 	}
-	void Packet::get_icmp_code(uint8_t icmp_code)
+	void Packet::set_icmp_code(uint8_t icmp_code)
 	{
 		this->icmp_code = icmp_code;
 	}

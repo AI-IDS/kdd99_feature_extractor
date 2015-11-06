@@ -127,7 +127,7 @@ namespace FeatureExtractor {
 			assert(f->get_ip_payload_length() >= icmp->ICMP_MIN_HEADER_LENGTH);
 			icmp = (icmp_header_t *)ip->get_sdu();
 			f->set_icmp_type(icmp->type);
-			f->get_icmp_code(icmp->code);
+			f->set_icmp_code(icmp->code);
 			break;
 
 		default:
