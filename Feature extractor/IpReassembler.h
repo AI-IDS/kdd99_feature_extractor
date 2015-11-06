@@ -4,6 +4,7 @@
 #include "IpReassemblyBuffer.h"
 #include "IpFragment.h"
 #include "IntervalKeeper.h"
+#include "TimeoutValues.h"
 
 namespace FeatureExtractor {
 	using namespace std;
@@ -36,11 +37,8 @@ namespace FeatureExtractor {
 		typedef map<IpReassemblyBufferKey, IpReassemblyBuffer*> BufferMap;
 		BufferMap buffer_map;
 
-
-		// Time in seconds to keep an IP fragment in memory
-		uint32_t ipfrag_time;
-
-		// Interval for checking timed out reassembly buffers
+		// Timeout values & timeout check interval
+		TimeoutValues timeouts;
 		IntervalKeeper timeout_interval;
 
 		/**
@@ -58,7 +56,7 @@ namespace FeatureExtractor {
 
 	public:
 		IpReassembler();
-		IpReassembler(uint32_t ipfrag_time, uint64_t timeout_check_interval);
+		IpReassembler(TimeoutValues &timeouts);
 		~IpReassembler();
 
 		/**

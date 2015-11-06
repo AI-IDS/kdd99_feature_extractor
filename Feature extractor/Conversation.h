@@ -80,6 +80,7 @@ namespace FeatureExtractor {
 		const FiveTuple *get_five_tuple_ptr() const;
 
 		ConversationState get_state() const;
+		ConversationState get_internal_state() const;
 		const char *get_state_str() const;
 		virtual bool is_in_final_state() const;
 
@@ -106,6 +107,12 @@ namespace FeatureExtractor {
 		 * Output the class values (e.g. for debuging purposes)
 		 */
 		void print() const;
+
+		/**
+		 * Compares using get_end_ts() values, used to sort conversation by last 
+		 * fragment timestamp
+		 */
+		bool operator<(const Conversation& other) const;
 
 	};
 }

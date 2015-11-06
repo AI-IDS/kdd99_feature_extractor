@@ -49,6 +49,11 @@ namespace FeatureExtractor {
 
 	ConversationState Conversation::get_state() const
 	{
+		return state;
+	}
+
+	ConversationState Conversation::get_state() const
+	{
 		// Replace internal states
 		switch (state) {
 		case ESTAB:
@@ -202,6 +207,11 @@ namespace FeatureExtractor {
 		}
 
 		return "UNKNOWN";
+	}
+	
+	bool Conversation::operator<(const Conversation& other) const
+	{
+		return (this->get_last_ts() < other.get_last_ts());
 	}
 
 	void Conversation::print() const

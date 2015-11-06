@@ -168,6 +168,16 @@ namespace FeatureExtractor {
 			return false;
 			break;
 
+		// States ended with RST should get additional timeout
+		// to process delayed packets
+		// TODO: consider adding RSTRH
+		case REJ:
+		case RSTO:
+		case RSTR:
+		case RSTOS0:
+			return false;
+			break;
+
 		default:
 			return true;
 			break;

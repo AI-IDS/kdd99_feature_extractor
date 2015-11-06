@@ -5,15 +5,14 @@ namespace FeatureExtractor {
 	// 
 	
 	IpReassembler::IpReassembler()
-		: ipfrag_time(30)				// IP Fragmentation timeout 30s (Linux default)
-										// http://www.linuxinsight.com/proc_sys_net_ipv4_ipfrag_time.html
-		, timeout_interval(1 * 1000000)	// Check for timeouts every second
+		: timeouts()
+		, timeout_interval(timeouts.get_conversation_check_interval())
 	{
 	}
 
-	IpReassembler::IpReassembler(uint32_t ipfrag_time, uint64_t timeout_check_interval)
-		: ipfrag_time(ipfrag_time)
-		, timeout_interval(timeout_check_interval)
+	IpReassembler::IpReassembler(TimeoutValues &timeouts)
+		: timeouts(timeouts)
+		, timeout_interval(timeouts.get_conversation_check_interval())
 	{
 	}
 
@@ -21,7 +20,6 @@ namespace FeatureExtractor {
 	IpReassembler::~IpReassembler()
 	{
 		// TODO: release buffer_map, output_queue
-
 	}
 
 	IpReassembler::IpReassemblyBufferKey::IpReassemblyBufferKey()
@@ -63,11 +61,9 @@ namespace FeatureExtractor {
 
 	Packet *IpReassembler::pass_new_fragment(IpFragment *frag)
 	{
-		// Removes timed out reassembly buffers once per interval
+		// Remove timed out reassembly buffers
 		Timestamp now = frag->get_end_ts();
-		if (timeout_interval.is_timedout(now))
-			check_timeouts(now);
-		timeout_interval.update_time(now);
+		check_timeouts(now);
 
 		// Check whether packet is part of fragmented datagram
 		bool is_fragmented = (frag->get_ip_flag_mf() || frag->get_ip_frag_offset() != 0);
@@ -119,10 +115,15 @@ namespace FeatureExtractor {
 
 	void IpReassembler::check_timeouts(const Timestamp &now)
 	{
-		// find, sort, add to queue
+		// Run no more often than once per timeout check interval
+		if (!timeout_interval.is_timedout(now)) {
+			timeout_interval.update_time(now);
+			return;
+		}
+		timeout_interval.update_time(now);
 
-		// Maximal timestamp that timedout buffer can have
-		Timestamp max_timeout_ts = now - (ipfrag_time * 1000000);
+		// Maximal timestamps that timedout conversation in given state can have
+		Timestamp max_timeout_ts = now - (timeouts.get_ipfrag() * 1000000);
 
 		// Erasing during iteration available since C++11
 		// http://stackoverflow.com/a/263958/3503528

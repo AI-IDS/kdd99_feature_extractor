@@ -5,6 +5,8 @@
 #include "net.h"
 #include "Packet.h"
 #include "Conversation.h"
+#include "TimeoutValues.h"
+#include "IntervalKeeper.h"
 
 namespace FeatureExtractor {
 	using namespace std;
@@ -21,12 +23,17 @@ namespace FeatureExtractor {
 		// Queue of reconstructed conversations prepared to output
 		queue<Conversation *>output_queue;
 
+		// Timeout values & timeout check interval
+		TimeoutValues timeouts;
+		IntervalKeeper timeout_interval;
+
 		/**
 		* Removes timed out reassembly buffers - "drops incomplete datagrams"
 		*/
 		void check_timeouts(const Timestamp &now);
 	public:
 		ConversationReconstructor();
+		ConversationReconstructor(TimeoutValues &timeouts);
 		~ConversationReconstructor();
 
 		 void add_packet(const Packet *packet);

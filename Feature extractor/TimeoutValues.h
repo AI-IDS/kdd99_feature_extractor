@@ -12,11 +12,11 @@ namespace FeatureExtractor {
 		uint32_t ipfrag;
 		uint32_t ipfrag_check_interval;
 
-		uint32_t tcp_syn;
-		uint32_t tcp_estab;
-		uint32_t tcp_rst;
-		uint32_t tcp_fin;
-		uint32_t tcp_last_ack;
+		uint32_t tcp_syn;		// S0, S1
+		uint32_t tcp_estab;		// ESTAB
+		uint32_t tcp_rst;		// REJ, RSTO, RSTR, RSTOS0
+		uint32_t tcp_fin;		// S2, S3
+		uint32_t tcp_last_ack;	// S2F, S2F
 		uint32_t udp;
 		uint32_t icmp;
 		uint32_t conversation_check_interval;
