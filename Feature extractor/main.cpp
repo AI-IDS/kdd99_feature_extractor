@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 		Packet *datagr = nullptr;
 
 		IpFragment *frag = p->next_frame();
-		has_more_traffic = (frag == NULL);
+		has_more_traffic = (frag != NULL);
 
 		if (has_more_traffic)  {
 			//frag->print();
@@ -101,8 +101,7 @@ int main(int argc, char* argv[])
 			//// WTF debug
 			//cout << "----------------------------------" << endl;
 			//datagr->print();
-			//cout << "^^^^^^^^^^^^^" << endl << endl;
-			//cout << endl;
+			//cout << "----------------------------------" << endl << endl;
 
 			conv_reconstructor.add_packet(datagr);
 		}
@@ -112,7 +111,7 @@ int main(int argc, char* argv[])
 		while ((conv = conv_reconstructor.get_next_conversation()) != nullptr) {
 			cout << "==================================" << endl;
 			conv->print();
-			//cout << "^^^^^^^^^^^^^" << endl << endl;
+			//cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl << endl;
 
 			delete conv;
 		}

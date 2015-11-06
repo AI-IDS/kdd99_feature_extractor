@@ -234,7 +234,7 @@ namespace FeatureExtractor {
 		else if (five_tuple.get_ip_proto() == UDP) {
 			ss << " > UDP ";
 		}
-		ss << "> " << get_service() << endl;
+		ss << " > " << get_service() << endl;
 		ss << timestr;
 		ss << " duration=" << get_duration_ms() << "ms" << endl;
 
