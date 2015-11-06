@@ -47,7 +47,7 @@ namespace FeatureExtractor {
 		return &five_tuple;
 	}
 
-	ConversationState Conversation::get_state() const
+	ConversationState Conversation::get_internal_state() const
 	{
 		return state;
 	}

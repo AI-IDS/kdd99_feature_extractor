@@ -79,7 +79,7 @@ namespace FeatureExtractor {
 			|| (ts.tv_sec == b.ts.tv_sec && ts.tv_usec > b.ts.tv_usec));
 	}
 
-	bool Timestamp::operator<=(const Timestamp &b) const
+	bool Timestamp::operator>=(const Timestamp &b) const
 	{
 		return (ts.tv_sec > b.ts.tv_sec
 			|| (ts.tv_sec == b.ts.tv_sec && ts.tv_usec >= b.ts.tv_usec));

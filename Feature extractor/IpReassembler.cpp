@@ -19,7 +19,11 @@ namespace FeatureExtractor {
 
 	IpReassembler::~IpReassembler()
 	{
-		// TODO: release buffer_map, output_queue
+		// Deallocate leftover active buffers
+		for (BufferMap::iterator it = buffer_map.begin(); it != buffer_map.end(); ++it) {
+			delete it->second;
+		}
+
 	}
 
 	IpReassembler::IpReassemblyBufferKey::IpReassemblyBufferKey()
@@ -59,7 +63,7 @@ namespace FeatureExtractor {
 	}
 
 
-	Packet *IpReassembler::pass_new_fragment(IpFragment *frag)
+	Packet *IpReassembler::reassemble(IpFragment *frag)
 	{
 		// Remove timed out reassembly buffers
 		Timestamp now = frag->get_end_ts();

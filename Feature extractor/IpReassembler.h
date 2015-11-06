@@ -68,17 +68,7 @@ namespace FeatureExtractor {
 		 * thus it must not be used after this call. Caller must take care 
 		 * of erasing the returned object.
 		 */
-		Packet *pass_new_fragment(IpFragment *fragment);
-
-
-		//TODO: remove
-		/**
-		 * Returns next reassembled datagram/packet from internal queue. If the queue 
-		 * is empty nullptr is returned.
-		 * Caller must take care of deallocation of returned object.
-		 */
-		Packet *get_next_datagram();
-
+		Packet *reassemble(IpFragment *fragment);
 	};
 }
 

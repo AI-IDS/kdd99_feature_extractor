@@ -3,7 +3,7 @@
 #include "UdpConversation.h"
 #include "IcmpConversation.h"
 #include <assert.h>
-#include <sort>
+#include <algorithm>
 
 namespace FeatureExtractor {
 	using namespace std;
@@ -22,7 +22,16 @@ namespace FeatureExtractor {
 
 	ConversationReconstructor::~ConversationReconstructor()
 	{
-		// TODO: release conn_map, output_queue
+		// Deallocate leftover conversations in output queue
+		while (!output_queue.empty()) {
+			delete output_queue.back();
+			output_queue.pop();
+		}
+
+		// Deallocate leftover active conversations
+		for (ConnectionMap::iterator it = conn_map.begin(); it != conn_map.end(); ++it) {
+			delete it->second;
+		}
 	}
 
 	void ConversationReconstructor::add_packet(const Packet *packet)
@@ -182,6 +191,30 @@ namespace FeatureExtractor {
 				++it;
 			}
 		} // end of while(it..
+
+		// Sort timed out conversations by timestamp of last fragmet seen
+		// Overriden operator '<' of class Conversation is used
+		sort(timedout_convs.begin(), timedout_convs.end());
+
+		// Add timeout conversation to output queue in order of their last timestamp
+		for (vector<Conversation *>::iterator it = timedout_convs.begin(); it != timedout_convs.end(); ++it) {
+			output_queue.push(*it);
+		}
+	}
+
+	void ConversationReconstructor::finish_all_conversations()
+	{
+		// Temporary list of timed out conversations
+		vector<Conversation *> timedout_convs;
+
+		// Erasing during iteration available since C++11
+		// http://stackoverflow.com/a/263958/3503528
+		ConnectionMap::iterator it = conn_map.begin();
+		while (it != conn_map.end()) {
+			Conversation *conv = it->second;
+			timedout_convs.push_back(conv);
+			conn_map.erase(it++);
+		}
 
 		// Sort timed out conversations by timestamp of last fragmet seen
 		// Overriden operator '<' of class Conversation is used

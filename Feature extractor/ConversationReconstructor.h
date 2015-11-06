@@ -36,6 +36,9 @@ namespace FeatureExtractor {
 		ConversationReconstructor(TimeoutValues &timeouts);
 		~ConversationReconstructor();
 
+		/**
+		 * Send next packet to conversation reconstruction engine
+		 */
 		 void add_packet(const Packet *packet);
 
 
@@ -46,6 +49,12 @@ namespace FeatureExtractor {
 		 * Caller must take care of deallocation of returned object.
 		 */
 		Conversation *get_next_conversation();
+
+		/**
+		 * Places timeout on all active conversations
+		 * Can be used to get unfinished conversations when no more traffic available
+		 */
+		void finish_all_conversations();
 	};
 }
 

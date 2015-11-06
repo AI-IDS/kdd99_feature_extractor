@@ -1,4 +1,4 @@
-	
+
 //#pragma warning(default:4265)
 #include <iostream>
 #include <cstdlib>
@@ -76,39 +76,48 @@ int main(int argc, char* argv[])
 	//p = new PcapReader("t.cap");
 
 	IpReassembler reasm;
-	ConversationReconstructor conn_reconstructor;
-	Packet *datagr;
+	ConversationReconstructor conv_reconstructor;
 
-	IpFragment *frag;
-	Conversation *conv;
-	while ((frag = p->next_frame()) != NULL) {
-		//frag->print();
-		ip_field_protocol_t ip_proto = frag->get_ip_proto();
-		if (ip_proto != TCP && ip_proto != UDP && ip_proto != ICMP)
-			continue;
+	bool has_more_traffic = true;
+	while (has_more_traffic) {
+		Packet *datagr = nullptr;
 
-		reasm.pass_new_fragment(frag);
-		while ((datagr = reasm.get_next_datagram()) != nullptr) {
-			// WTF debug
+		IpFragment *frag = p->next_frame();
+		has_more_traffic = (frag == NULL);
+
+		if (has_more_traffic)  {
+			//frag->print();
+			ip_field_protocol_t ip_proto = frag->get_ip_proto();
+			if (ip_proto != TCP && ip_proto != UDP && ip_proto != ICMP)
+				continue;
+
+			datagr = reasm.reassemble(frag);
+		}
+		else {
+			conv_reconstructor.finish_all_conversations();
+		}
+
+		if (datagr) {
+			//// WTF debug
 			//cout << "----------------------------------" << endl;
 			//datagr->print();
 			//cout << "^^^^^^^^^^^^^" << endl << endl;
 			//cout << endl;
-			
-			conv = conn_reconstructor.add_packet(datagr);
-			if (conv) {
-				cout << "==================================" << endl;
-				conv->print();
-				//cout << "^^^^^^^^^^^^^" << endl << endl;
 
-				delete conv;
-			}
+			conv_reconstructor.add_packet(datagr);
 		}
 
+		// Output conversations
+		Conversation *conv;
+		while ((conv = conv_reconstructor.get_next_conversation()) != nullptr) {
+			cout << "==================================" << endl;
+			conv->print();
+			//cout << "^^^^^^^^^^^^^" << endl << endl;
 
-		delete frag;
+			delete conv;
+		}
 	}
-		
+
 
 	cout << endl;
 	//system("pause");
