@@ -6,7 +6,8 @@ namespace FeatureExtractor {
 	using namespace std;
 
 	Conversation::Conversation()
-		: five_tuple(), state(INIT)
+		: reference_count(0)
+		, five_tuple(), state(INIT)
 		, start_ts(), last_ts()
 		, src_bytes(0), dst_bytes(0)
 		, packets(0), src_packets(0), dst_packets(0)
@@ -15,7 +16,8 @@ namespace FeatureExtractor {
 	}
 
 	Conversation::Conversation(const FiveTuple *tuple)
-		: five_tuple(*tuple), state(INIT)
+		: reference_count(0)
+		, five_tuple(*tuple), state(INIT)
 		, start_ts(), last_ts()
 		, src_bytes(0), dst_bytes(0)
 		, packets(0), src_packets(0), dst_packets(0)
@@ -24,7 +26,8 @@ namespace FeatureExtractor {
 	}
 
 	Conversation::Conversation(const Packet *packet)
-		: five_tuple(packet->get_five_tuple()), state(INIT)
+		: reference_count(0)
+		, five_tuple(packet->get_five_tuple()), state(INIT)
 		, start_ts(), last_ts()
 		, src_bytes(0), dst_bytes(0)
 		, packets(0), src_packets(0), dst_packets(0)
@@ -35,6 +38,19 @@ namespace FeatureExtractor {
 
 	Conversation::~Conversation()
 	{
+	}
+
+
+	void Conversation::register_reference() 
+	{
+		reference_count++;
+	}
+
+	void Conversation::deregister_reference() 
+	{
+		// If no more references, commit suicide (hahaha)
+		if (!reference_count--)
+			delete this;
 	}
 
 	FiveTuple Conversation::get_five_tuple() const
@@ -140,6 +156,25 @@ namespace FeatureExtractor {
 	bool Conversation::land() const
 	{
 		return five_tuple.land();
+	}
+
+	bool Conversation::is_serror() const
+	{
+		switch (get_state()) {
+		case S0:
+		case S1:
+		case S2:
+		case S3:
+			return true;
+			break;
+		}
+
+		return false;
+	}
+
+	bool Conversation::is_rerror() const
+	{
+		return (get_state() == REJ);
 	}
 
 	bool Conversation::add_packet(const Packet *packet)

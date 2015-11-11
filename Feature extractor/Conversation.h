@@ -41,9 +41,15 @@ namespace FeatureExtractor {
 
 	/**
 	 * Abstract Conversation (incorrectly called connection when not talking about TCP)
+	 * 
+	 * Every instance can keep the number of references(pointers) to itself. If the this number
+	 * reaches zero after deregistering a reference, the object commits suicide (delete this).
+	 * See methods register_reference(), deregister_reference().
 	 */
 	class Conversation
 	{
+		int reference_count;	// Number of references (pointers) to this objects
+
 	protected:
 		FiveTuple five_tuple;
 		ConversationState state;
@@ -67,6 +73,17 @@ namespace FeatureExtractor {
 		Conversation(const FiveTuple *tuple);
 		Conversation(const Packet *packet);
 		~Conversation();
+
+		/**
+		 * Increment the number of references to this object
+		 */
+		void register_reference();
+
+		/**
+		 * Decrement the number of references to this object
+		 * If the number of references reaches 0, commit suicide (delete this). 
+		 */
+		void deregister_reference();
 
 		/**
 		 * Returns five tuple identifying the connection 
@@ -94,8 +111,11 @@ namespace FeatureExtractor {
 		uint32_t get_dst_packets() const;
 		uint32_t get_wrong_fragments() const;
 		uint32_t get_urgent_packets() const;
-		bool land() const;
+		
 		virtual const char *get_service() const = 0;	// Pure virtual function
+		bool land() const;
+		bool is_serror() const;
+		bool is_rerror() const;
 
 		/**
 		 * Adds next packet to connection (without checking sequence number)
@@ -113,6 +133,5 @@ namespace FeatureExtractor {
 		 * fragment timestamp
 		 */
 		bool operator<(const Conversation& other) const;
-
 	};
 }

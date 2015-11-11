@@ -13,6 +13,11 @@ namespace FeatureExtractor {
 	}
 
 
+	const Conversation *ConversationFeatures::get_conversation()
+	{
+		return conv;
+	}
+
 	/**
 	 * Getters, setters, inc & dec for derived feature values
 	 */
@@ -22,24 +27,12 @@ namespace FeatureExtractor {
 	inline void ConversationFeatures::set_count(uint32_t count) {
 		this->count = count;
 	}
-	inline void ConversationFeatures::inc_count() {
-		count++;
-	}
-	inline void ConversationFeatures::dec_count() {
-		count--;
-	}
 
 	inline uint32_t ConversationFeatures::get_srv_count() const {
 		return srv_count;
 	}
 	inline void ConversationFeatures::set_srv_count(uint32_t srv_count) {
 		this->srv_count = srv_count;
-	}
-	inline void ConversationFeatures::inc_srv_count(){
-		srv_count++;
-	}
-	inline void ConversationFeatures::dec_srv_count() {
-		srv_count--;
 	}
 
 	inline double ConversationFeatures::get_serror_rate() const {
@@ -97,24 +90,12 @@ namespace FeatureExtractor {
 	inline void ConversationFeatures::set_dst_host_count(uint32_t dst_host_count) {
 		this->dst_host_count = dst_host_count;
 	}
-	inline void ConversationFeatures::inc_dst_host_count() {
-		dst_host_count++;
-	}
-	inline void ConversationFeatures::dec_dst_host_count() {
-		dst_host_count--;
-	}
 
 	inline uint32_t ConversationFeatures::get_dst_host_srv_count() const {
 		return dst_host_srv_count;
 	}
 	inline void ConversationFeatures::set_dst_host_srv_count(uint32_t dst_host_srv_count)	{
 		this->dst_host_srv_count = dst_host_srv_count;
-	}
-	inline void ConversationFeatures::inc_dst_host_srv_count() {
-		dst_host_srv_count++;
-	}
-	inline void ConversationFeatures::dec_dst_host_srv_count() {
-		dst_host_srv_count--;
 	}
 
 	inline double ConversationFeatures::get_dst_host_same_srv_rate() const {

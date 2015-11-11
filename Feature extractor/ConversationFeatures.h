@@ -10,7 +10,7 @@ namespace FeatureExtractor {
 	 */
 	class ConversationFeatures
 	{
-		// Derived features are extracted directly from conversation object
+		// Intrinsic features are extracted directly from conversation object
 		const Conversation *conv;
 
 		/**
@@ -27,8 +27,8 @@ namespace FeatureExtractor {
 		double srv_diff_host_rate;
 
 		/**
-		* Derived features for 100 connection window
-		*/
+		 * Derived features for 100 connection window
+		 */
 		uint32_t dst_host_count;
 		uint32_t dst_host_srv_count;
 		double dst_host_same_srv_rate;
@@ -44,15 +44,13 @@ namespace FeatureExtractor {
 		ConversationFeatures(Conversation *);
 		~ConversationFeatures();
 
+		const Conversation *get_conversation();
+
 		uint32_t get_count() const;
 		void set_count(uint32_t count);
-		void inc_count();
-		void dec_count();
 
 		uint32_t get_srv_count() const;
 		void set_srv_count(uint32_t srv_count);
-		void inc_srv_count();
-		void dec_srv_count();
 
 		double get_serror_rate() const;
 		void set_serror_rate(double serror_rate);
@@ -77,13 +75,9 @@ namespace FeatureExtractor {
 
 		uint32_t get_dst_host_count() const;
 		void set_dst_host_count(uint32_t dst_host_count);
-		void inc_dst_host_count();
-		void dec_dst_host_count();
 
 		uint32_t get_dst_host_srv_count() const;
 		void set_dst_host_srv_count(uint32_t dst_host_srv_count);
-		void inc_dst_host_srv_count();
-		void dec_dst_host_srv_count();
 
 		double get_dst_host_same_srv_rate() const;
 		void set_dst_host_same_srv_rate(double dst_host_same_srv_rate);
