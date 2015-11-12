@@ -61,7 +61,6 @@ namespace FeatureExtractor {
 		SRV_RED_I,
 		SRV_ECO_I,
 		SRV_TIM_I,
-		SRV_OTH_I,
 
 		// UDP
 		SRV_DOMAIN_U,
@@ -148,6 +147,8 @@ namespace FeatureExtractor {
 
 		// Array for mapping service_t to string (char *)
 		static const char* const SERVICE_NAMES[NUMBER_OF_SERVICES];
+		static_assert(sizeof(Conversation::SERVICE_NAMES) / sizeof(char *) == NUMBER_OF_SERVICES, 
+			"Mapping of services to string failed: number of string does not match number of values");
 
 	protected:
 		FiveTuple five_tuple;
@@ -205,7 +206,7 @@ namespace FeatureExtractor {
 
 		Timestamp get_start_ts() const;
 		Timestamp get_last_ts() const;
-		uint32_t get_duration_ms() const;
+		uint64_t get_duration_ms() const;
 		size_t get_src_bytes() const;
 		size_t get_dst_bytes() const;
 		uint32_t get_packets() const;

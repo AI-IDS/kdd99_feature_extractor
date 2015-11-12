@@ -8,11 +8,14 @@ namespace FeatureExtractor {
 	// Array for mapping service_t to string (char *)
 	// ! Update with enum service_t
 	const char* const Conversation::SERVICE_NAMES[NUMBER_OF_SERVICES] = {
+		// General
+		"other",
+		"private",
+
 		// ICMP
 		"ecr_i",
 		"urp_i",
 		"urp_i",
-		"oth_i",
 		"red_i",
 		"eco_i",
 		"tim_i",
@@ -193,7 +196,7 @@ namespace FeatureExtractor {
 		return last_ts;
 	}
 
-	uint32_t Conversation::get_duration_ms() const
+	uint64_t Conversation::get_duration_ms() const
 	{
 		return (last_ts - start_ts).get_total_msecs();
 	}
@@ -303,7 +306,7 @@ namespace FeatureExtractor {
 		return state_to_str(get_state());
 	}
 
-	// TODO: use mapping by array fo char* s
+	// TODO: use mapping by array fo char*s ?
 	const char *Conversation::state_to_str(conversation_state_t state)
 	{
 		switch (state) {
@@ -360,6 +363,7 @@ namespace FeatureExtractor {
 		ss << " duration=" << get_duration_ms() << "ms" << endl;
 
 		// Cast ips to arrays of octets
+		// TODO: WTF ugly code, aaah..
 		uint32_t src_ip = five_tuple.get_src_ip();
 		uint32_t dst_ip = five_tuple.get_dst_ip();
 		uint8_t *sip = (uint8_t *)&src_ip;
