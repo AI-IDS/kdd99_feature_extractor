@@ -2,21 +2,40 @@
 
 #include <stdint.h>
 #include "Stats.h"
+#include "FeatureUpdater.h"
 
 namespace FeatureExtractor {
+	/**
+	 * Statistics per one host (IP address)
+	 */
 	class StatsPerHost : public Stats
 	{
-		uint32_t count;
-		uint32_t serror_count;
-		uint32_t rerror_count;
+		FeatureUpdater *feature_updater;	// Used to update features in ConversationFeatures object
 
-		// TODO: move these to host-service stats
-		uint32_t same_srv_count;
-		/* diff_srv_count = count - same_srv_count */
+		// 23: # of conversations to same destination IP
+		uint32_t count;				
+
+		// 25: Number of conversations that have activated the flag
+		//     S0, S1, S2 or S3 among conv. in count (23)
+		uint32_t serror_count;		
+
+		// 27: Number of conversations that have activated the flag REJ among 
+		//     conv. in count (23)
+		uint32_t rerror_count;		
+		
+		// 29: Number of conversations for each service (23 split by service)
+		//     Feature 30 can be derived from this: 
+		//       diff_srv_rate = (1 - same_srv_rate)
+		// TODO: consider using map<service_t, uint32_t>
+		uint32_t same_srv_counts[NUMBER_OF_SERVICES];
 		
 	public:
-		StatsPerHost();
+		StatsPerHost(FeatureUpdater *feature_updater);
 		~StatsPerHost();
+
+		void report_conversation_removal(const Conversation *conv);
+		void report_new_conversation(ConversationFeatures *cf);
+
 
 
 	};

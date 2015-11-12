@@ -17,7 +17,7 @@ namespace FeatureExtractor {
 		/**
 		 * Notify statitics about new conversation being added to window
 		 */
-		virtual void report_new_conversation(Conversation *conv) = 0;
+		virtual void report_new_conversation(ConversationFeatures *cf) = 0;
 	};
 }
 

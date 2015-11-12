@@ -40,10 +40,6 @@ namespace FeatureExtractor {
 		S3F			// FIN send by originator in state S3 - waiting for final ACK; externally represented as S3
 	};
 
-
-
-	// todo: conversion to strings http://stackoverflow.com/a/9150589/3503528 + static_assert
-
 	/**
 	 * Services
 	 * ! order & number of services must be the same in string mapping
