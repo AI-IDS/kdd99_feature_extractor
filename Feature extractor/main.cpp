@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <string>
-#include "PcapReader.h"
+#include "Sniffer.h"
 #include "IpReassembler.h"
 #include "ConversationReconstructor.h"
 
@@ -31,7 +31,7 @@ void debug_test()
 
 int main(int argc, char* argv[])
 {
-	PcapReader *p = NULL;
+	Sniffer *p = NULL;
 
 
 	//// TCP flag debug
@@ -51,25 +51,25 @@ int main(int argc, char* argv[])
 	//return 0;
 
 	if (argc <= 1) {
-		p = new PcapReader(1);
+		p = new Sniffer(1);
 	}
 	else {
 		int inum = atoi(argv[1]);
 		if (inum && to_string(inum) == argv[1]) {
-			p = new PcapReader(inum);
+			p = new Sniffer(inum);
 		}
 		else {
-			p = new PcapReader(argv[1]);
+			p = new Sniffer(argv[1]);
 		}
 
 	}
 
 	debug_test();
 
-	//p = new PcapReader("ip_frag_source.pcap");
-	//p = new PcapReader("ssh.pcap");
-	//p = new PcapReader("ssh_student.pcap");
-	//p = new PcapReader("t.cap");
+	//p = new Sniffer("ip_frag_source.pcap");
+	//p = new Sniffer("ssh.pcap");
+	//p = new Sniffer("ssh_student.pcap");
+	//p = new Sniffer("t.cap");
 
 	IpReassembler reasm;
 	ConversationReconstructor conv_reconstructor;

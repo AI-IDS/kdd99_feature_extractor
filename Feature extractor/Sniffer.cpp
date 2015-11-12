@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include "PcapReader.h"
+#include "Sniffer.h"
 #include "net.h"
 #include <assert.h>
 
@@ -11,7 +11,7 @@ namespace FeatureExtractor {
 	
 	using namespace std;
 
-	PcapReader::PcapReader(char *fname)
+	Sniffer::Sniffer(char *fname)
 	{
 		char errbuf[PCAP_ERRBUF_SIZE];
 
@@ -27,7 +27,7 @@ namespace FeatureExtractor {
 	}
 
 
-	PcapReader::PcapReader(int inum)
+	Sniffer::Sniffer(int inum)
 	{
 		pcap_if_t *alldevs;
 		pcap_if_t *d;
@@ -64,7 +64,7 @@ namespace FeatureExtractor {
 		pcap_freealldevs(alldevs);
 	}
 
-	IpFragment *PcapReader::next_frame()
+	IpFragment *Sniffer::next_frame()
 	{
 		struct pcap_pkthdr *header;
 		const u_char *data;
@@ -138,7 +138,7 @@ namespace FeatureExtractor {
 		return f;
 	}
 
-	PcapReader::~PcapReader()
+	Sniffer::~Sniffer()
 	{
 	}
 }

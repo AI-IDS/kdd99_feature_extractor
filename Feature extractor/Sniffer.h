@@ -9,7 +9,7 @@ extern "C" {
 
 
 namespace FeatureExtractor {
-	class PcapReader
+	class Sniffer
 	{
 		pcap_t *handle;
 
@@ -20,9 +20,9 @@ namespace FeatureExtractor {
 		static const size_t ADDITIONAL_LEN = 0;// 4;// zero for debug to compare with wireshark
 
 	public:
-		PcapReader(char *fname);
-		PcapReader(int inum);
-		~PcapReader();
+		Sniffer(char *fname);
+		Sniffer(int inum);
+		~Sniffer();
 
 		IpFragment *next_frame();
 
