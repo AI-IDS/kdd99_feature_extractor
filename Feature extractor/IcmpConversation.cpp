@@ -25,40 +25,40 @@ namespace FeatureExtractor {
 	}
 
 
-	const char *IcmpConversation::get_service() const
+	service_t IcmpConversation::get_service() const
 	{
 		switch (icmp_type)
 		{
 		case ECHOREPLY:
-			return "ecr_i";		// Echo Reply (0)
+			return SRV_ECR_I;	// Echo Reply (0)
 			break;
 
 		case DEST_UNREACH:
 			if (icmp_code == 0)			// Destination network unreachable
-				return "urp_i";
+				return SRV_URP_I;
 			else if (icmp_code == 1)	// Destination host unreachable
-				return "urp_i";
+				return SRV_URH_I;
 			else
-				return "oth_i";			// Other ICMP messages;
+				return SRV_OTH_I;		// Other ICMP messages;
 			break;
 
 		case REDIRECT:
-			return "red_i";		// Redirect message (5)
+			return SRV_RED_I;	// Redirect message (5)
 			break;
 
 		case ECHO:
-			return "eco_i";		// Echo Request (8)
+			return SRV_ECO_I;	// Echo Request (8)
 			break;
 
 		case TIME_EXCEEDED:		// Time Exceeded (11)
-			return "tim_i";
+			return SRV_TIM_I;
 			break;
 
 		default:
-			return "oth_i";		// Other ICMP messages;
+			return SRV_OTH_I;	// Other ICMP messages;
 			break;
 		}
 
-		return "oth_i";			// Other ICMP messages;
+		return SRV_OTH_I;		// Other ICMP messages;
 	}
 }

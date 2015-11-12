@@ -16,7 +16,7 @@ namespace FeatureExtractor {
 		UdpConversation(const Packet *packet);
 		~UdpConversation();
 
-		const char *get_service() const;
+		service_t get_service() const;
 	};
 
 }

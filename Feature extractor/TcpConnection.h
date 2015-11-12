@@ -21,7 +21,7 @@ namespace FeatureExtractor {
 		~TcpConnection();
 
 		bool is_in_final_state() const;
-		const char *get_service() const;
+		service_t get_service() const;
 	};
 }
 

@@ -5,6 +5,87 @@
 namespace FeatureExtractor {
 	using namespace std;
 
+	// Array for mapping service_t to string (char *)
+	// ! Update with enum service_t
+	const char* const Conversation::SERVICE_NAMES[NUMBER_OF_SERVICES] = {
+		// ICMP
+		"ecr_i",
+		"urp_i",
+		"urp_i",
+		"oth_i",
+		"red_i",
+		"eco_i",
+		"tim_i",
+		"oth_i",
+
+		// UDP
+		"domain_u",
+		"tftp_u",
+		"ntp_u"
+
+		// TCP
+		"IRC",
+		"X11",
+		"Z39_50",
+		"aol",
+		"auth",
+		"bgp",
+		"courier",
+		"csnet_ns",
+		"ctf",
+		"daytime",
+		"discard",
+		"domain",
+		"echo",
+		"efs",
+		"exec",
+		"finger",
+		"ftp",
+		"ftp_data",
+		"gopher",
+		"harvest",
+		"hostnames",
+		"http",
+		"http_2784",
+		"http_443",
+		"http_8001",
+		"icmp",
+		"imap4",
+		"iso_tsap",
+		"klogin",
+		"kshell",
+		"ldap",
+		"link",
+		"login",
+		"mtp",
+		"name",
+		"netbios_dgm",
+		"netbios_ns",
+		"netbios_ssn",
+		"netstat",
+		"nnsp",
+		"nntp",
+		"pm_dump",
+		"pop_2",
+		"pop_3",
+		"printer",
+		"remote_job",
+		"rje",
+		"shell",
+		"smtp",
+		"sql_net",
+		"ssh",
+		"sunrpc",
+		"supdup",
+		"systat",
+		"telnet",
+		"time",
+		"uucp",
+		"uucp_path",
+		"vmnet",
+		"whois"
+	};
+
 	Conversation::Conversation()
 		: reference_count(0)
 		, five_tuple(), state(INIT)
@@ -49,7 +130,7 @@ namespace FeatureExtractor {
 	void Conversation::deregister_reference() 
 	{
 		// If no more references, commit suicide (hahaha)
-		if (!reference_count--)
+		if (!(reference_count--))
 			delete this;
 	}
 
@@ -63,12 +144,12 @@ namespace FeatureExtractor {
 		return &five_tuple;
 	}
 
-	ConversationState Conversation::get_internal_state() const
+	conversation_state_t Conversation::get_internal_state() const
 	{
 		return state;
 	}
 
-	ConversationState Conversation::get_state() const
+	conversation_state_t Conversation::get_state() const
 	{
 		// Replace internal states
 		switch (state) {
@@ -152,6 +233,10 @@ namespace FeatureExtractor {
 		return urgent_packets;
 	}
 
+	const char *Conversation::get_service_str() const 
+	{
+		return SERVICE_NAMES[get_service()];
+	}
 
 	bool Conversation::land() const
 	{
@@ -218,7 +303,8 @@ namespace FeatureExtractor {
 		return state_to_str(get_state());
 	}
 
-	const char *Conversation::state_to_str(ConversationState state)
+	// TODO: use mapping by array fo char* s
+	const char *Conversation::state_to_str(conversation_state_t state)
 	{
 		switch (state) {
 		case INIT: return "INIT"; break;
@@ -269,7 +355,7 @@ namespace FeatureExtractor {
 		else if (five_tuple.get_ip_proto() == UDP) {
 			ss << " > UDP ";
 		}
-		ss << " > " << get_service() << endl;
+		ss << " > " << get_service_str() << endl;
 		ss << timestr;
 		ss << " duration=" << get_duration_ms() << "ms" << endl;
 

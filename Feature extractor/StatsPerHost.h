@@ -1,9 +1,10 @@
 #pragma once
 
 #include <stdint.h>
+#include "Stats.h"
 
 namespace FeatureExtractor {
-	class StatsPerHost
+	class StatsPerHost : public Stats
 	{
 		uint32_t count;
 		uint32_t serror_count;

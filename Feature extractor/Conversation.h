@@ -13,7 +13,7 @@ namespace FeatureExtractor {
 	 *	- other states specific to TCP
 	 * Description from https://www.bro.org/sphinx/scripts/base/protocols/conn/main.bro.html
 	 */
-	enum ConversationState {
+	enum conversation_state_t {
 		// General states
 		INIT,		// Nothing happened yet.
 		SF,			// Normal establishment and termination. Note that this is the same symbol as for state S1. You can tell the two apart because for S1 there will not be any byte counts in the summary, while for SF there will be.
@@ -39,6 +39,102 @@ namespace FeatureExtractor {
 		S3F			// FIN send by originator in state S3 - waiting for final ACK; externally represented as S3
 	};
 
+
+
+	// todo: conversion to strings http://stackoverflow.com/a/9150589/3503528 + static_assert
+
+	/**
+	 * Services
+	 * ! order & number of services must be the same in string mapping
+	 * see Conversation::SERVICE_NAMES[]
+	 */
+	enum service_t {
+		// General
+		SRV_OTHER,
+		SRV_PRIVATE,
+
+		// ICMP
+		SRV_ECR_I,
+		SRV_URP_I,
+		SRV_URH_I,
+		SRV_OTH_I,
+		SRV_RED_I,
+		SRV_ECO_I,
+		SRV_TIM_I,
+		SRV_OTH_I,
+
+		// UDP
+		SRV_DOMAIN_U,
+		SRV_TFTP_U,
+		SRV_NTP_U,
+
+		// TCP
+		SRV_IRC,
+		SRV_X11,
+		SRV_Z39_50,
+		SRV_AOL,
+		SRV_AUTH,
+		SRV_BGP,
+		SRV_COURIER,
+		SRV_CSNET_NS,
+		SRV_CTF,
+		SRV_DAYTIME,
+		SRV_DISCARD,
+		SRV_DOMAIN,
+		SRV_ECHO,
+		SRV_EFS,
+		SRV_EXEC,
+		SRV_FINGER,
+		SRV_FTP,
+		SRV_FTP_DATA,
+		SRV_GOPHER,
+		SRV_HARVEST,
+		SRV_HOSTNAMES,
+		SRV_HTTP,
+		SRV_HTTP_2784,
+		SRV_HTTP_443,
+		SRV_HTTP_8001,
+		SRV_ICMP,
+		SRV_IMAP4,
+		SRV_ISO_TSAP,
+		SRV_KLOGIN,
+		SRV_KSHELL,
+		SRV_LDAP,
+		SRV_LINK,
+		SRV_LOGIN,
+		SRV_MTP,
+		SRV_NAME,
+		SRV_NETBIOS_DGM,
+		SRV_NETBIOS_NS,
+		SRV_NETBIOS_SSN,
+		SRV_NETSTAT,
+		SRV_NNSP,
+		SRV_NNTP,
+		SRV_PM_DUMP,
+		SRV_POP_2,
+		SRV_POP_3,
+		SRV_PRINTER,
+		SRV_REMOTE_JOB,
+		SRV_RJE,
+		SRV_SHELL,
+		SRV_SMTP,
+		SRV_SQL_NET,
+		SRV_SSH,
+		SRV_SUNRPC,
+		SRV_SUPDUP,
+		SRV_SYSTAT,
+		SRV_TELNET,
+		SRV_TIME,
+		SRV_UUCP,
+		SRV_UUCP_PATH,
+		SRV_VMNET,
+		SRV_WHOIS,
+
+		// This must be the last 
+		NUMBER_OF_SERVICES
+	};
+
+
 	/**
 	 * Abstract Conversation (incorrectly called connection when not talking about TCP)
 	 * 
@@ -50,9 +146,12 @@ namespace FeatureExtractor {
 	{
 		int reference_count;	// Number of references (pointers) to this objects
 
+		// Array for mapping service_t to string (char *)
+		static const char* const SERVICE_NAMES[NUMBER_OF_SERVICES];
+
 	protected:
 		FiveTuple five_tuple;
-		ConversationState state;
+		conversation_state_t state;
 
 		Timestamp start_ts;
 		Timestamp last_ts;
@@ -66,7 +165,7 @@ namespace FeatureExtractor {
 		uint32_t urgent_packets;
 
 		virtual void update_state(const Packet *packet);
-		static const char *state_to_str(ConversationState state);
+		static const char *state_to_str(conversation_state_t state);
 
 	public:
 		Conversation();
@@ -82,6 +181,9 @@ namespace FeatureExtractor {
 		/**
 		 * Decrement the number of references to this object
 		 * If the number of references reaches 0, commit suicide (delete this). 
+		 *
+		 * The calling object/function should not use reference to this object
+		 * after calling this method.
 		 */
 		void deregister_reference();
 
@@ -96,8 +198,8 @@ namespace FeatureExtractor {
 		 */
 		const FiveTuple *get_five_tuple_ptr() const;
 
-		ConversationState get_state() const;
-		ConversationState get_internal_state() const;
+		conversation_state_t get_state() const;
+		conversation_state_t get_internal_state() const;
 		const char *get_state_str() const;
 		virtual bool is_in_final_state() const;
 
@@ -112,7 +214,8 @@ namespace FeatureExtractor {
 		uint32_t get_wrong_fragments() const;
 		uint32_t get_urgent_packets() const;
 		
-		virtual const char *get_service() const = 0;	// Pure virtual function
+		virtual service_t get_service() const = 0;	// Pure virtual function
+		const char * get_service_str() const;
 		bool land() const;
 		bool is_serror() const;
 		bool is_rerror() const;
@@ -124,14 +227,14 @@ namespace FeatureExtractor {
 		bool add_packet(const Packet *packet);
 
 		/**
-		 * Output the class values (e.g. for debuging purposes)
-		 */
-		void print() const;
-
-		/**
 		 * Compares using get_end_ts() values, used to sort conversation by last 
 		 * fragment timestamp
 		 */
 		bool operator<(const Conversation& other) const;
+
+		/**
+		 * Output the class values in human readable format (e.g. for debuging purposes)
+		 */
+		void print() const;
 	};
 }

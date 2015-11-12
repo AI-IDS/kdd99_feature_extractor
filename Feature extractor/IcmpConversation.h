@@ -25,6 +25,6 @@ namespace FeatureExtractor {
 		uint8_t get_icmp_code();
 		void get_icmp_code(uint8_t icmp_code);
 
-		const char *get_service() const;
+		service_t get_service() const;
 	};
 }

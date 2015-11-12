@@ -3,8 +3,7 @@
 #include "StatsPerService.h"
 
 namespace FeatureExtractor {
-	class StatsPerServiceWithSrcPort :
-		public StatsPerService
+	class StatsPerServiceWithSrcPort : public StatsPerService
 	{
 	public:
 		StatsPerServiceWithSrcPort();

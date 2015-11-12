@@ -22,20 +22,20 @@ namespace FeatureExtractor {
 	}
 
 
-	const char *UdpConversation::get_service() const
+	service_t UdpConversation::get_service() const
 	{
 		switch (five_tuple.get_dst_port())
 		{
 		case 53:	// DNS
-			return "domain_u";
+			return SRV_DOMAIN_U;
 			break;
 
 		case 69:	// TFTP
-			return "tftp_u";
+			return SRV_TFTP_U;
 			break;
 
 		case 123:	// NTP
-			return "ntp_u";
+			return SRV_NTP_U;
 			break;
 
 		default:
@@ -43,12 +43,12 @@ namespace FeatureExtractor {
 			// the Dynamic Ports, also known as the Private or Ephemeral Ports,
 			// from 49152 - 65535 (never assigned)
 			if (five_tuple.get_dst_port() >= 49152)
-				return "private"; // or other?
+				return SRV_PRIVATE;
 			else
-				return "other";
+				return SRV_OTHER;
 			break;
 		}
 
-		return "other";
+		return SRV_OTHER;
 	}
 }

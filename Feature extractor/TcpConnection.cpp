@@ -185,12 +185,12 @@ namespace FeatureExtractor {
 		return true;
 	}
 
-	const char *TcpConnection::get_service() const
+	service_t TcpConnection::get_service() const
 	{
 		// Identify FTP data in active FTP can be identified by source port
 		// TODO: passive FTP (only through FTP control payload inspection?)
 		if (five_tuple.get_src_port() == 20) {
-			return "ftp_data";
+			return SRV_FTP_DATA;
 		}
 
 		// Service ports assigned according to IANA Service Name and Transport Protocol Port Number Registry
@@ -205,7 +205,7 @@ namespace FeatureExtractor {
 		case 6668:
 		case 6669:
 		case 6697: // Internet Relay Chat via TLS/SSL   
-			return "IRC";
+			return SRV_IRC;
 			break;
 
 		case 6000: // X Window System (6000-6063)
@@ -272,11 +272,11 @@ namespace FeatureExtractor {
 		case 6061:
 		case 6062:
 		case 6063:
-			return "X11";
+			return SRV_X11;
 			break;
 
 		case 210: // ANSI Z39.50
-			return "Z39_50";
+			return SRV_Z39_50;
 			break;
 
 		case 5190: // America-Online
@@ -284,7 +284,7 @@ namespace FeatureExtractor {
 		case 5192: // AmericaOnline2
 		case 5193: // AmericaOnline3
 		case 531: // AOL Instant Messenger
-			return "aol";
+			return SRV_AOL;
 			break;
 
 		case 113: // Authentication Service
@@ -319,254 +319,258 @@ namespace FeatureExtractor {
 		case 9002: // DynamID authentication
 		case 19194: // UserAuthority SecureAgent
 		case 27999: // TW Authentication/Key Distribution and
-			return "auth";
+			return SRV_AUTH;
 			break;
 
 		case 179: // Border Gateway Protocol
-			return "bgp";
+			return SRV_BGP;
 			break;
 
 		case 530: // rpc
 		case 165: // Xerox (xns-courier)
-			return "courier";
+			return SRV_COURIER;
 			break;
 
 		case 105: // Mailbox Name Nameserver
-			return "csnet_ns";
+			return SRV_CSNET_NS;
 			break;
 
 		case 84: // Common Trace Facility
-			return "ctf";
+			return SRV_CTF;
 			break;
 
 		case 13: // Daytime
-			return "daytime";
+			return SRV_DAYTIME;
 			break;
 
 		case 9: // Discard
-			return "discard";
+			return SRV_DISCARD;
 			break;
 
 		case 53: // Domain Name Server
-			return "domain";
+			return SRV_DOMAIN;
 			break;
 
 		case 7: // 
-			return "echo";
+			return SRV_ECHO;
 			break;
 
 		case 520: // extended file name server
-			return "efs";
+			return SRV_EFS;
 			break;
 
 		case 512: // remote process execution; authentication performed using passwords and UNIX login names
-			return "exec";
+			return SRV_EXEC;
 			break;
 
 		case 79: // Finger
-			return "finger";
+			return SRV_FINGER;
 			break;
 
 		case 21: // File Transfer Protocol [Control]
-			return "ftp";
+			return SRV_FTP;
 			break;
 
-		// FTP data (20) is identified according to source port or FTP control payload inspection
+		case 20: // File Transfer [Default Data] (TODO)
+			return SRV_FTP_DATA;
+			break;
 
 		case 70: // Gopher
-			return "gopher";
+			return SRV_GOPHER;
 			break;
 
-		// TODO: harvest server port number
-		//case ??: // 
-		//	return "harvest";
+		// TODO: service harvest port number
+		//case: // 
+		//	return SRV_HARVEST;
 		//	break;
 
 		case 101: // NIC Host Name Server
-			return "hostnames";
+			return SRV_HOSTNAMES;
 			break;
 
 		case 80: // World Wide Web HTTP
 		case 8008: // HTTP Alternate
 		case 8080: // HTTP Alternate
-			return "http";
+			return SRV_HTTP;
 			break;
 
 		case 2784: // world wide web - development (www-dev)
-			return "http_2784";
+			return SRV_HTTP_2784;
 			break;
 
 		case 443: // http protocol over TLS/SSL
-			return "http_443";
+			return SRV_HTTP_443;
 			break;
 
 		case 8001: // VCOM Tunnel(iana) / Commonly used for Internet radio streams such as SHOUTcast (wiki)
-			return "http_8001";
+			return SRV_HTTP_8001;
 			break;
 
 		case 5813: // ICMPD
-			return "icmp";
+			return SRV_ICMP;
 			break;
 
 		case 143: // imap4 protocol over TLS/SSL (imaps)
 		case 993: // imap4 protocol over TLS/SSL (imaps)
-			return "imap4";
+			return SRV_IMAP4;
 			break;
 
 		case 102: // ISO-TSAP Class 0
 		case 309: // ISO Transport Class 2 Non-Control over TCP
-			return "iso_tsap";
+			return SRV_ISO_TSAP;
 			break;
 
 		case 543: // klogin
-			return "klogin";
+			return SRV_KLOGIN;
 			break;
 
 		case 544: // krcmd
-			return "kshell";
+			return SRV_KSHELL;
 			break;
 
 		case 389: // Lightweight Directory Access Protocol
 		case 636: // ldap protocol over TLS/SSL (was sldap) (ldaps)
-			return "ldap";
+			return SRV_LDAP;
 			break;
 
 		case 245: // LINK
-			return "link";
+			return SRV_LINK;
 			break;
 
 		case 513: // "remote login a la telnet; automatic authentication performed based on priviledged port numbers and distributed data bases which identify ""authentication domains"""
-			return "login";
+			return SRV_LOGIN;
 			break;
 
 		case 1911: // Starlight Networks Multimedia Transport Protocol
-			return "mtp";
+			return SRV_MTP;
 			break;
 
 		case 42: // Host Name Server
-			return "name";
+			return SRV_NAME;
 			break;
 
 		case 138: // NETBIOS Datagram Service
-			return "netbios_dgm";
+			return SRV_NETBIOS_DGM;
 			break;
 
 		case 137: // NETBIOS Name Service
-			return "netbios_ns";
+			return SRV_NETBIOS_NS;
 			break;
 
 		case 139: // NETBIOS Session Service
-			return "netbios_ssn";
+			return SRV_NETBIOS_SSN;
 			break;
 
 		case 15: // Unassigned [was netstat]
-			return "netstat";
+			return SRV_NETSTAT;
 			break;
 
 		case 433: // NNSP
-			return "nnsp";
+			return SRV_NNSP;
 			break;
 
 		case 119: // Network News Transfer Protocol
 		case 563: // nntp protocol over TLS/SSL (was snntp)
-			return "nntp";
+			return SRV_NNTP;
 			break;
 
-		// TODO: pm_dump server port number
-		//case ??: // 
-		//	return "pm_dump";
+		// TODO: service pm_dump port number
+		//case: // 
+		//	return SRV_PM_DUMP;
 		//	break;
 
 		case 109: // Post Office Protocol Version 2
-			return "pop_2";
+			return SRV_POP_2;
 			break;
 
 		case 110: // Post Office Protocol Version 3
-			return "pop_3";
+			return SRV_POP_3;
 			break;
 
 		case 515: // spooler
-			return "printer";
+			return SRV_PRINTER;
 			break;
 
 		case 71: // Remote Job Service (netrjs-1)
 		case 72: // Remote Job Service (netrjs-2)
 		case 73: // Remote Job Service (netrjs-3)
 		case 74: // Remote Job Service (netrjs-4)
-			return "remote_job";
+			return SRV_REMOTE_JOB;
 			break;
 
 		case 5: // Remote Job Entry
 		case 77: // any private RJE service
-			return "rje";
+			return SRV_RJE;
 			break;
 
 		case 514: // "cmd like exec
-			return "shell";
+			return SRV_SHELL;
 			break;
 
 		case 25: // Simple Mail Transfer
-			return "smtp";
+			return SRV_SMTP;
 			break;
 
 		case 66: // Oracle SQL*NET
 		case 150: // SQL-NET
-			return "sql_net";
+			return SRV_SQL_NET;
 			break;
 
 		case 22: // The Secure Shell (SSH) Protocol
-			return "ssh";
+			return SRV_SSH;
 			break;
 
 		case 111: // SUN Remote Procedure Call
-			return "sunrpc";
+			return SRV_SUNRPC;
 			break;
 
 		case 95: // SUPDUP
-			return "supdup";
+			return SRV_SUPDUP;
 			break;
 
 		case 11: // Active Users
-			return "systat";
+			return SRV_SYSTAT;
 			break;
 
 		case 23: // Telnet
-			return "telnet";
+			return SRV_TELNET;
 			break;
 
 		case 37: // Time
-			return "time";
+			return SRV_TIME;
 			break;
 
 		case 540: // uucpd
 		case 4031: // UUCP over SSL
-			return "uucp";
+			return SRV_UUCP;
 			break;
 
 		case 117: // UUCP Path Service
-			return "uucp_path";
+			return SRV_UUCP_PATH;
 			break;
 
 		case 175: // VMNET
-			return "vmnet";
+			return SRV_VMNET;
 			break;
 
 		case 43: // Who Is
 		case 4321: // Remote Who Is (rwhois)
-			return "whois";
+			return SRV_WHOIS;
 			break;
+
+
 
 		default:
 			// Private ports defined by IANA in RFC 6335 section 6:
 			// Dynamic Ports, also known as the Private or Ephemeral Ports,
 			// from 49152 - 65535 (never assigned)
 			if (five_tuple.get_dst_port() >= 49152)
-				return "private"; // or other?
+				return SRV_PRIVATE; // or other?
 			else
-				return "other";
+				return SRV_OTHER;
 			break;
 		}
 
-		return "other";
+		return SRV_OTHER;
 	}
 }
