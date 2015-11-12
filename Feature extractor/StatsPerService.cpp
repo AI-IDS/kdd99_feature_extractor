@@ -15,55 +15,42 @@ namespace FeatureExtractor {
 
 	void StatsPerService::report_conversation_removal(const Conversation *conv)
 	{
-		count--;
+		srv_count--;
 
 		// SYN error
 		if (conv->is_serror())
-			serror_count--;
+			srv_serror_count--;
 
 		// REJ error
 		if (conv->is_rerror())
-			rerror_count--;
-
-		// Number of conv. per service
-		service_t service = conv->get_service();
-		same_srv_counts[service]--;
-
+			srv_rerror_count--;
 	}
 
 	void StatsPerService::report_new_conversation(ConversationFeatures *cf)
 	{
 		const Conversation *conv = cf->get_conversation();
-		count++;
+
+		// srv_count > 0 always, dont' have to treat division by zero bellow
+		srv_count++;
 
 		// SYN error
 		if (conv->is_serror())
-			serror_count++;
+			srv_serror_count++;
 
 		// REJ error
 		if (conv->is_rerror())
-			rerror_count++;
+			srv_rerror_count++;
 
-		// Number of conv. per service
-		service_t service = conv->get_service();
-		same_srv_counts[service]++;
+		// Feature 24
+		feature_updater->set_srv_count(cf, srv_count);
 
-		// Set feature 23
-		feature_updater->set_count(cf, count);
+		// Feature 26
+		double srv_serror_rate = srv_serror_count / (double)srv_count;
+		feature_updater->set_srv_serror_rate(cf, srv_serror_rate);
 
-		// Feature 25
-		double serror_rate = serror_count / (double)count;
-		feature_updater->set_serror_rate(cf, serror_rate);
+		// Feature 28
+		double srv_rerror_rate = srv_rerror_count / (double)srv_count;
+		feature_updater->set_srv_rerror_rate(cf, srv_rerror_rate);
 
-		// Feature 25
-		double rerror_rate = rerror_count / (double)count;
-		feature_updater->set_rerror_rate(cf, rerror_rate);
-
-		// Feature 29
-		double same_srv_rate = same_srv_counts[service] / (double)count;
-		feature_updater->set_same_srv_rate(cf, same_srv_rate);
-
-		// Feature 30
-		feature_updater->set_diff_srv_rate(cf, 1.0 - same_srv_rate);
 	}
 }

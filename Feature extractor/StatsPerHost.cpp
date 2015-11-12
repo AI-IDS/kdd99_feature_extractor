@@ -35,7 +35,9 @@ namespace FeatureExtractor {
 	void StatsPerHost::report_new_conversation(ConversationFeatures *cf)
 	{
 		const Conversation *conv = cf->get_conversation();
-		count++;
+
+		// count > 0 always, dont' have to treat division by zero bellow
+		count++;	
 
 		// SYN error
 		if (conv->is_serror())
@@ -49,7 +51,7 @@ namespace FeatureExtractor {
 		service_t service = conv->get_service();
 		same_srv_counts[service]++;
 
-		// Set feature 23
+		// Feature 23
 		feature_updater->set_count(cf, count);
 
 		// Feature 25

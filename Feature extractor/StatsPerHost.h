@@ -12,20 +12,20 @@ namespace FeatureExtractor {
 	{
 		FeatureUpdater *feature_updater;	// Used to update features in ConversationFeatures object
 
-		// 23: # of conversations to same destination IP
+		// 23/32: Number of conversations to same destination IP
 		uint32_t count;				
 
-		// 25: Number of conversations that have activated the flag
-		//     S0, S1, S2 or S3 among conv. in count (23)
+		// 25/38: Number of conversations that have activated the flag
+		// S0, S1, S2 or S3 among conv. in count (23/32)
 		uint32_t serror_count;		
 
-		// 27: Number of conversations that have activated the flag REJ among 
-		//     conv. in count (23)
+		// 27/40: Number of conversations that have activated the flag REJ among 
+		// conv. in count (23/32)
 		uint32_t rerror_count;		
 		
-		// 29: Number of conversations for each service (23 split by service)
-		//     Feature 30 can be derived from this: 
-		//       diff_srv_rate = (1 - same_srv_rate)
+		// 29/34 : Number of conversations for each service (23/32 split by service)
+		// Feature 30 can be derived from this: 
+		//  diff_srv_rate = (1 - same_srv_rate)
 		// TODO: consider using map<service_t, uint32_t>
 		uint32_t same_srv_counts[NUMBER_OF_SERVICES];
 		
