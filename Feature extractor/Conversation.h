@@ -57,10 +57,10 @@ namespace FeatureExtractor {
 		SRV_ECR_I,
 		SRV_URP_I,
 		SRV_URH_I,
-		SRV_OTH_I,
 		SRV_RED_I,
 		SRV_ECO_I,
 		SRV_TIM_I,
+		SRV_OTH_I,
 
 		// UDP
 		SRV_DOMAIN_U,

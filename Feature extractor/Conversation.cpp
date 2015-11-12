@@ -15,7 +15,7 @@ namespace FeatureExtractor {
 		// ICMP
 		"ecr_i",
 		"urp_i",
-		"urp_i",
+		"urh_i",
 		"red_i",
 		"eco_i",
 		"tim_i",
@@ -24,7 +24,7 @@ namespace FeatureExtractor {
 		// UDP
 		"domain_u",
 		"tftp_u",
-		"ntp_u"
+		"ntp_u",
 
 		// TCP
 		"IRC",
