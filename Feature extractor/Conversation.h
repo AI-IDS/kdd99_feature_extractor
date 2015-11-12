@@ -1,6 +1,7 @@
 #pragma once
 
 #include "net.h"
+#include "ReferenceCounter.h"
 #include "Packet.h"
 #include "FiveTuple.h"
 #include "Timestamp.h"
@@ -138,12 +139,11 @@ namespace FeatureExtractor {
 	 * Abstract Conversation (incorrectly called connection when not talking about TCP)
 	 * 
 	 * Every instance can keep the number of references(pointers) to itself. If the this number
-	 * reaches zero after deregistering a reference, the object commits suicide (delete this).
-	 * See methods register_reference(), deregister_reference().
+	 * is decremented to zero, the object commits suicide (delete this).
+	 * See class ReferenceCounter.
 	 */
-	class Conversation
+	class Conversation : public ReferenceCounter
 	{
-		int reference_count;	// Number of references (pointers) to this objects
 
 		// Array for mapping service_t to string (char *)
 		static const char* const SERVICE_NAMES[NUMBER_OF_SERVICES];
@@ -173,20 +173,6 @@ namespace FeatureExtractor {
 		Conversation(const FiveTuple *tuple);
 		Conversation(const Packet *packet);
 		~Conversation();
-
-		/**
-		 * Increment the number of references to this object
-		 */
-		void register_reference();
-
-		/**
-		 * Decrement the number of references to this object
-		 * If the number of references reaches 0, commit suicide (delete this). 
-		 *
-		 * The calling object/function should not use reference to this object
-		 * after calling this method.
-		 */
-		void deregister_reference();
 
 		/**
 		 * Returns five tuple identifying the connection 
