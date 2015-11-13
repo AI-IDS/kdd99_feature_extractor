@@ -51,22 +51,25 @@ namespace FeatureExtractor {
 		service_t service = conv->get_service();
 		same_srv_counts[service]++;
 
-		// Feature 23
+		// Feature 23/32
 		feature_updater->set_count(cf, count);
 
-		// Feature 25
+		// Feature 25/38
 		double serror_rate = serror_count / (double)count;
 		feature_updater->set_serror_rate(cf, serror_rate);
 
-		// Feature 25
+		// Feature 27/40
 		double rerror_rate = rerror_count / (double)count;
 		feature_updater->set_rerror_rate(cf, rerror_rate);
 
-		// Feature 29
+		// Feature 29/34
 		double same_srv_rate = same_srv_counts[service] / (double)count;
 		feature_updater->set_same_srv_rate(cf, same_srv_rate);
 
 		// Feature 30
 		feature_updater->set_diff_srv_rate(cf, 1.0 - same_srv_rate);
+
+		// Part of feature 31/37
+		feature_updater->set_diff_srv_rate(cf, same_srv_counts[service]);
 	}
 }

@@ -43,4 +43,6 @@ namespace FeatureExtractor {
 	}
 
 
+	void FeatureUpdaterTime::set_same_srv_count(ConversationFeatures * f, double same_srv_count) = 0;
+
 }

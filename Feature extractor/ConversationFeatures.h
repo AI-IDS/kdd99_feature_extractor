@@ -24,7 +24,6 @@ namespace FeatureExtractor {
 		double srv_rerror_rate;
 		double same_srv_rate;
 		double diff_srv_rate;
-		double srv_diff_host_rate;
 
 		/**
 		 * Derived features for 100 connection window
@@ -34,17 +33,26 @@ namespace FeatureExtractor {
 		double dst_host_same_srv_rate;
 		double dst_host_diff_srv_rate;
 		double dst_host_same_src_port_rate;
-		double dst_host_srv_diff_host_rate;
 		double dst_host_serror_rate;
 		double dst_host_srv_serror_rate;
 		double dst_host_rerror_rate;
 		double dst_host_srv_rerror_rate;
+
+		/**
+		 * Additional values kept to calculate feature 31(37) 
+		 * (srv_diff_host_rate/dst_host_srv_diff_host_rate)
+		 *   srv_diff_host_rate = (srv_count - same_srv_count) / srv_count
+		 */
+		uint32_t same_srv_count;
+		uint32_t dst_host_same_srv_count;
 
 	public:
 		ConversationFeatures(Conversation *);
 		~ConversationFeatures();
 
 		const Conversation *get_conversation();
+
+		// Time window features
 
 		uint32_t get_count() const;
 		void set_count(uint32_t count);
@@ -72,6 +80,13 @@ namespace FeatureExtractor {
 
 		double get_srv_diff_host_rate() const;
 		void set_srv_diff_host_rate(double srv_diff_host_rate);
+
+		double get_srv_diff_host_rate() const;
+
+		// Count window features
+
+		uint32_t get_same_srv_count() const;
+		void set_same_srv_count(uint32_t same_srv_count);
 
 		uint32_t get_dst_host_count() const;
 		void set_dst_host_count(uint32_t dst_host_count);
@@ -103,6 +118,9 @@ namespace FeatureExtractor {
 		double get_dst_host_srv_rerror_rate() const;
 		void set_dst_host_srv_rerror_rate(double dst_host_srv_rerror_rate);
 
+		double get_dst_host_srv_diff_host_rate() const;
 
+		uint32_t get_dst_host_same_srv_count() const;
+		void set_dst_host_same_srv_count(uint32_t same_srv_count);
 	};
 }
