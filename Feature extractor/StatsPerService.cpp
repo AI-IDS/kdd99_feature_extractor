@@ -30,17 +30,9 @@ namespace FeatureExtractor {
 	{
 		const Conversation *conv = cf->get_conversation();
 
-		// srv_count > 0 always, dont' have to treat division by zero bellow
-		srv_count++;
-
-		// SYN error
-		if (conv->is_serror())
-			srv_serror_count++;
-
-		// REJ error
-		if (conv->is_rerror())
-			srv_rerror_count++;
-
+		/*
+		 * Set derived window features based on previous conversations in window
+		 */
 		// Feature 24
 		feature_updater->set_srv_count(cf, srv_count);
 
@@ -51,6 +43,20 @@ namespace FeatureExtractor {
 		// Feature 28
 		double srv_rerror_rate = srv_rerror_count / (double)srv_count;
 		feature_updater->set_srv_rerror_rate(cf, srv_rerror_rate);
+
+		/*
+		 * Include new conversation to stats
+		 */
+		srv_count++;
+
+		// SYN error
+		if (conv->is_serror())
+			srv_serror_count++;
+
+		// REJ error
+		if (conv->is_rerror())
+			srv_rerror_count++;
+
 
 	}
 }

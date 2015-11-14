@@ -44,15 +44,15 @@ namespace FeatureExtractor {
 		// with single lookup http://stackoverflow.com/a/101980/3503528
 		map<uint16_t, uint32_t>::iterator it = same_src_port_counts.lower_bound(src_port);
 		if (it != same_src_port_counts.end() && !(same_src_port_counts.key_comp()(src_port, it->first))) {
-			// Key already exists, update
-			it->second--;
+			// Key already exists, take value, then update (exclude new conversation from stats)
 			value = it->second;
+			it->second++;
 		}
 		else {
 			// The key does not exist in the map
 			// Add it to the map + update iterator to point to new item
-			value = 1;
-			same_src_port_counts.insert(it, map<uint16_t, uint32_t>::value_type(src_port, value));
+			same_src_port_counts.insert(it, map<uint16_t, uint32_t>::value_type(src_port, 1));
+			value = 0;
 		}
 
 		// Feature 36
