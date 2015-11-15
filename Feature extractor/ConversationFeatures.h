@@ -50,7 +50,7 @@ namespace FeatureExtractor {
 		ConversationFeatures(Conversation *);
 		~ConversationFeatures();
 
-		const Conversation *get_conversation();
+		Conversation *get_conversation();
 
 		// Time window features
 

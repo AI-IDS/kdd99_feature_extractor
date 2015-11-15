@@ -24,8 +24,7 @@ namespace FeatureExtractor {
 		uint32_t rerror_count;		
 		
 		// 29/34 : Number of conversations for each service (23/32 split by service)
-		// Feature 30 can be derived from this: 
-		//  diff_srv_rate = (1 - same_srv_rate)
+		// Feature 30 can be derived from this: diff_srv_rate = (1 - same_srv_rate)
 		// TODO: consider using map<service_t, uint32_t>
 		uint32_t same_srv_counts[NUMBER_OF_SERVICES];
 		

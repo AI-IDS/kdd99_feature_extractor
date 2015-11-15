@@ -2,6 +2,7 @@
 #include "StatsPerHost.h"
 #include "StatsPerService.h"
 #include "StatsPerServiceWithSrcPort.h"
+#include <assert.h>
 
 
 namespace FeatureExtractor {
@@ -18,6 +19,16 @@ namespace FeatureExtractor {
 	//template<class TStatTime, class TStatCount>
 	StatsWindow::~StatsWindow()
 	{
+		// Deallocate leftover conversations in the queue
+		while (!queue.empty()) {
+			Conversation *conv = queue.back();
+			queue.pop();
+
+			// Object commits suicide if no more references to it
+			conv->deregister_reference();
+		}
+
+		// per_host map<> should automatically be deallocated
 	}
 
 	//template<class TStatTime, class TStatCount>
@@ -27,7 +38,6 @@ namespace FeatureExtractor {
 
 		// Find or insert with single lookup: 
 		// http://stackoverflow.com/a/101980/3503528
-		// - iterator can will also used to remove buffer for reassembled datagram
 		map<uint32_t, TStatsPerHost>::iterator it = per_host.lower_bound(dst_ip);
 		if (it != per_host.end() && !(per_host.key_comp()(dst_ip, it->first)))
 		{
@@ -44,6 +54,22 @@ namespace FeatureExtractor {
 		return stats;
 	}
 
+
+	//template<class TStatTime, class TStatCount>
+	void StatsWindow::report_conversation_removal(const Conversation *conv)
+	{
+		uint32_t dst_ip = conv->get_five_tuple_ptr()->get_dst_ip();
+		service_t service = conv->get_service();
+
+		// Forward to per host stats
+		map<uint32_t, TStatsPerHost>::iterator it = per_host.find(dst_ip);
+		assert(it != per_host.end(), "Reporting removal of convesation not in queue: no such dst. IP record");
+		it->second.report_conversation_removal(conv);
+
+		// Forward to per service stats
+		per_service[service].report_conversation_removal(conv);
+	}
+
 	//template<class TStatTime, class TStatCount>
 	void StatsWindow::add_conversation(ConversationFeatures *cf)
 	{
@@ -52,7 +78,7 @@ namespace FeatureExtractor {
 		// 2. add new conv. to stats  x
 		// 3. update window
 
-		const Conversation *conv = cf->get_conversation();
+		Conversation *conv = cf->get_conversation();
 		uint32_t dst_ip = conv->get_five_tuple_ptr()->get_dst_ip();
 		service_t service = conv->get_service();
 
@@ -63,7 +89,8 @@ namespace FeatureExtractor {
 		// Per service statitics 
 		per_service[service].report_new_conversation(cf);
 
-		// Add new connection to window queue
+		// Add new connection to window queue (+ register reference)
+		conv->register_reference();
 		queue.push(conv);
 
 		perform_window_maintenance(conv);

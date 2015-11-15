@@ -30,7 +30,7 @@ namespace FeatureExtractor {
 	public:
 		StatsPerService();
 		StatsPerService(FeatureUpdater *feature_updater);
-		~StatsPerService();
+		virtual ~StatsPerService();
 
 		void report_conversation_removal(const Conversation *conv);
 		void report_new_conversation(ConversationFeatures *cf);

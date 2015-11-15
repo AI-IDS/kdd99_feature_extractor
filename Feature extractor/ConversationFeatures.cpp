@@ -13,7 +13,7 @@ namespace FeatureExtractor {
 	}
 
 
-	const Conversation *ConversationFeatures::get_conversation()
+	Conversation *ConversationFeatures::get_conversation()
 	{
 		return conv;
 	}
