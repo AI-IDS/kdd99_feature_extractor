@@ -1,27 +1,31 @@
 #include "StatsWindowTime.h"
+#include "StatsPerHost.h"
+#include "StatsPerService.h"
+#include "StatsPerServiceWithSrcPort.h"
+#include "FeatureUpdaterTime.h"
 
 
 namespace FeatureExtractor {
-	//template<class TStatsPerHost, class TStatsPer>
-	StatsWindowTime::StatsWindowTime(FeatureUpdater *feature_updater)
-		: StatsWindow(feature_updater)
+	template<class TStatsPerHost, class TStatsPerService>
+	StatsWindowTime::StatsWindowTime()
+		: StatsWindow(new FeatureUpdaterTime())
 		, window_size_ms(2000)		// Default size = 2 sec.
 	{
 	}
 
-	//template<class TStatsPerHost, class TStatsPer>
-	StatsWindowTime::StatsWindowTime(FeatureUpdater *feature_updater, unsigned int window_size_ms)
-		: StatsWindow(feature_updater)
+	template<class TStatsPerHost, class TStatsPerService>
+	StatsWindowTime::StatsWindowTime(unsigned int window_size_ms)
+		: StatsWindow(new FeatureUpdaterTime())
 		, window_size_ms(window_size_ms)
 	{
 	}
 
-	//template<class TStatsPerHost, class TStatsPer>
+	template<class TStatsPerHost, class TStatsPerService>
 	StatsWindowTime::~StatsWindowTime()
 	{
 	}
 
-	//template<class TStatsPerHost, class TStatsPer>
+	template<class TStatsPerHost, class TStatsPerService>
 	void StatsWindowTime::perform_window_maintenance(const Conversation *new_conv)
 	{
 		Timestamp now = new_conv->get_last_ts();
@@ -41,7 +45,7 @@ namespace FeatureExtractor {
 	}
 
 
-	// TODO:
-	//template class StatsWindowTime<StatsPerHost, StatsPerService>;
-	//template class StatsWindowTime<StatsPerHost, StatsPerServiceWithSrcPort>;
+	// Explicit template specialisation 
+	template class StatsWindowTime<StatsPerHost, StatsPerService>;
+	template class StatsWindowTime<StatsPerHost, StatsPerServiceWithSrcPort>;
 }

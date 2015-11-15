@@ -6,7 +6,7 @@
 
 
 namespace FeatureExtractor {
-	//template<class TStatTime, class TStatCount>
+	template<class TStatsPerHost, class TStatsPerService>
 	StatsWindow::StatsWindow(FeatureUpdater *feature_updater)
 		: feature_updater(feature_updater)
 	{
@@ -16,7 +16,7 @@ namespace FeatureExtractor {
 		}
 	}
 
-	//template<class TStatTime, class TStatCount>
+	template<class TStatsPerHost, class TStatsPerService>
 	StatsWindow::~StatsWindow()
 	{
 		// Deallocate leftover conversations in the queue
@@ -31,7 +31,7 @@ namespace FeatureExtractor {
 		// per_host map<> should automatically be deallocated
 	}
 
-	//template<class TStatTime, class TStatCount>
+	template<class TStatsPerHost, class TStatsPerService>
 	TStatsPerHost *StatsWindow::find_or_insert_host_stats(uint32_t dst_ip)
 	{
 		TStatsPerHost *stats = nullptr;
@@ -55,7 +55,7 @@ namespace FeatureExtractor {
 	}
 
 
-	//template<class TStatTime, class TStatCount>
+	template<class TStatsPerHost, class TStatsPerService>
 	void StatsWindow::report_conversation_removal(const Conversation *conv)
 	{
 		uint32_t dst_ip = conv->get_five_tuple_ptr()->get_dst_ip();
@@ -70,7 +70,7 @@ namespace FeatureExtractor {
 		per_service[service].report_conversation_removal(conv);
 	}
 
-	//template<class TStatTime, class TStatCount>
+	template<class TStatsPerHost, class TStatsPerService>
 	void StatsWindow::add_conversation(ConversationFeatures *cf)
 	{
 		Conversation *conv = cf->get_conversation();
@@ -91,8 +91,7 @@ namespace FeatureExtractor {
 		perform_window_maintenance(conv);
 	}
 
-	// TODO:
 	// Explicit template specialisation http://stackoverflow.com/q/115703/3503528
-	//template class StatsWindow<StatsPerHost, StatsPerService>;
-	//template class StatsWindow<StatsPerHost, StatsPerServiceWithSrcPort>;
+	template class StatsWindow<StatsPerHost, StatsPerService>;
+	template class StatsWindow<StatsPerHost, StatsPerServiceWithSrcPort>;
 }

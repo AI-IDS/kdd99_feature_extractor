@@ -5,15 +5,14 @@ namespace FeatureExtractor {
 	/**
 	 * Statistics for time window
 	 */
-	// TODO: temp template hiding
-	//template<class TStatsPerHost, class TStatsPer>
-	class StatsWindowTime : public StatsWindow//<TStatsPerHost, TStatsPer>
+	template<class TStatsPerHost, class TStatsPerService>
+	class StatsWindowTime : public StatsWindow<TStatsPerHost, TStatsPerService>
 	{
 		unsigned int window_size_ms;
 
 	public:
-		StatsWindowTime(FeatureUpdater *feature_updater);
-		StatsWindowTime(FeatureUpdater *feature_updater, unsigned int window_size_ms);
+		StatsWindowTime();
+		StatsWindowTime(unsigned int window_size_ms);
 		~StatsWindowTime();
 
 		/**

@@ -5,17 +5,8 @@
 #include "Conversation.h"
 #include "ConversationFeatures.h"
 
-// TODO: temp includes 
-#include "StatsPerHost.h"
-#include "StatsPerService.h"
-
-
 namespace FeatureExtractor {
 	using namespace std;
-
-	// TODO: temp typedefs
-	typedef StatsPerHost TStatsPerHost;
-	typedef StatsPerService TStatsPerService;
 
 	/**
 	 * Abstract template for mantaining connection window and calculating derived features.
@@ -28,8 +19,7 @@ namespace FeatureExtractor {
 	 * Algorithm performing window maintenance (keeping it's size) must be specified
 	 * in derived class.
 	 */
-	// TODO: temp template hiding
-	//template<class TStatsPerHost, class TStatsPer>
+	template<class TStatsPerHost, class TStatsPerService>
 	class StatsWindow
 	{
 	protected:
@@ -43,7 +33,7 @@ namespace FeatureExtractor {
 		map<uint32_t, TStatsPerHost> per_host;
 
 		// Statistics per service
-		StatsPerService per_service[NUMBER_OF_SERVICES];
+		TStatsPerService per_service[NUMBER_OF_SERVICES];
 
 		FeatureUpdater *feature_updater;
 
@@ -79,14 +69,9 @@ namespace FeatureExtractor {
 		virtual ~StatsWindow();
 
 		/**
-		 * Adds conversation to window and calculates derived statistics
+		 * Adds conversation to window, calculates & sets derived statistics.
 		 * Queue (window) size maintenance is performed after each new conversation.
 		 */
 		void add_conversation(ConversationFeatures *cf);
-
-		/*
-		 *
-		 */
-
 	};
 }

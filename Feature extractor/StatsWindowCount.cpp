@@ -1,29 +1,33 @@
 #include "StatsWindowCount.h"
+#include "StatsPerHost.h"
+#include "StatsPerService.h"
+#include "StatsPerServiceWithSrcPort.h"
+#include "FeatureUpdaterCount.h"
 
 
 namespace FeatureExtractor {
-	//template<class TStatsPerHost, class TStatsPer>
-	StatsWindowCount::StatsWindowCount(FeatureUpdater *feature_updater)
-		: StatsWindow(feature_updater)
+	template<class TStatsPerHost, class TStatsPerService>
+	StatsWindowCount::StatsWindowCount()
+		: StatsWindow(new FeatureUpdaterTime())
 		, window_size(100)	// Default size = 100 conversations
 	{
 	}
 
-	//template<class TStatsPerHost, class TStatsPer>
-	StatsWindowCount::StatsWindowCount(FeatureUpdater *feature_updater, unsigned int window_size)
-		: StatsWindow(feature_updater)
+	template<class TStatsPerHost, class TStatsPerService>
+	StatsWindowCount::StatsWindowCount(unsigned int window_size)
+		: StatsWindow(new FeatureUpdaterTime())
 		, window_size(window_size)
 	{
 	}
 
 
-	//template<class TStatsPerHost, class TStatsPer>
+	template<class TStatsPerHost, class TStatsPerService>
 	StatsWindowCount::~StatsWindowCount()
 	{
 	}
 
 
-	//template<class TStatsPerHost, class TStatsPer>
+	template<class TStatsPerHost, class TStatsPerService>
 	void StatsWindowCount::perform_window_maintenance(const Conversation *new_conv)
 	{
 		while (queue.size > window_size) {
@@ -38,7 +42,7 @@ namespace FeatureExtractor {
 		}
 	}
 
-	// TODO:
-	//template class StatsWindowCount<StatsPerHost, StatsPerService>;
-	//template class StatsWindowCount<StatsPerHost, StatsPerServiceWithSrcPort>;
+	// Explicit template specialisation
+	template class StatsWindowCount<StatsPerHost, StatsPerService>;
+	template class StatsWindowCount<StatsPerHost, StatsPerServiceWithSrcPort>;
 }

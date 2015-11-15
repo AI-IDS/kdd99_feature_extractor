@@ -5,15 +5,14 @@ namespace FeatureExtractor {
 	/**
 	 * Statistics window defined by number of connections
 	 */
-	// TODO: temp template hiding
-	//template<class TStatsPerHost, class TStatsPer>
-	class StatsWindowCount : public StatsWindow//<TStatsPerHost, TStatsPer>
+	template<class TStatsPerHost, class TStatsPerService>
+	class StatsWindowCount : public StatsWindow<TStatsPerHost, TStatsPerService>
 	{
 		unsigned int window_size;
 
 	public:
-		StatsWindowCount(FeatureUpdater *feature_updater);
-		StatsWindowCount(FeatureUpdater *feature_updater, unsigned int window_size);
+		StatsWindowCount();
+		StatsWindowCount(unsigned int window_size);
 		~StatsWindowCount();
 
 		/**
