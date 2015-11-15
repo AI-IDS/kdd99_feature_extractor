@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 
 	debug_test();
 
-	//p = new Sniffer("ip_frag_source.pcap");
+	p = new Sniffer("ip_frag_source.pcap");
 	//p = new Sniffer("ssh.pcap");
 	//p = new Sniffer("ssh_student.pcap");
 	//p = new Sniffer("t.cap");
@@ -115,6 +115,7 @@ int main(int argc, char* argv[])
 
 			// Derived features
 			ConversationFeatures *cf = stats_engine.calculate_features(conv);
+			conv = nullptr;
 
 			delete cf;
 		}

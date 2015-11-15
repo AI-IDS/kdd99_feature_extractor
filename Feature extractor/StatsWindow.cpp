@@ -21,7 +21,7 @@ namespace FeatureExtractor {
 	{
 		// Deallocate leftover conversations in the queue
 		while (!queue.empty()) {
-			Conversation *conv = queue.back();
+			Conversation *conv = queue.front();
 			queue.pop();
 
 			// Object commits suicide if no more references to it
@@ -54,7 +54,6 @@ namespace FeatureExtractor {
 		return stats;
 	}
 
-
 	template<class TStatsPerHost, class TStatsPerService>
 	void StatsWindow<TStatsPerHost, TStatsPerService>::report_conversation_removal(const Conversation *conv)
 	{
@@ -64,7 +63,12 @@ namespace FeatureExtractor {
 		// Forward to per host stats
 		map<uint32_t, TStatsPerHost>::iterator it = per_host.find(dst_ip);
 		assert(it != per_host.end()); // "Reporting removal of convesation not in queue: no such dst. IP record"
-		it->second.report_conversation_removal(conv);
+		TStatsPerHost *this_host = &it->second;
+		this_host->report_conversation_removal(conv);
+
+		// Remove per-host stats for this host if it's "empty" for this window
+		if (this_host->is_empty())
+			per_host.erase(it);
 
 		// Forward to per service stats
 		per_service[service].report_conversation_removal(conv);

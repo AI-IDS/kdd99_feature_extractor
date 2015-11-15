@@ -31,7 +31,7 @@ namespace FeatureExtractor {
 	void StatsWindowCount<TStatsPerHost, TStatsPerService>::perform_window_maintenance(const Conversation *new_conv)
 	{
 		while (queue.size() > window_size) {
-			Conversation *conv = queue.back();
+			Conversation *conv = queue.front();
 			queue.pop();
 
 			// Exclude removed conversation from stats

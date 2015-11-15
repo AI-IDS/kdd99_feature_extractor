@@ -22,6 +22,11 @@ namespace FeatureExtractor {
 		 * Notify statitics about new conversation being added to window
 		 */
 		virtual void report_new_conversation(ConversationFeatures *cf) = 0;
+
+		/**
+		 * Checks whether the statistical collection is empty (e.g. count == 0)
+		 */
+		virtual bool is_empty() = 0;
 	};
 }
 

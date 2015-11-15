@@ -24,7 +24,7 @@ namespace FeatureExtractor {
 	{
 		// Deallocate leftover conversations in output queue
 		while (!output_queue.empty()) {
-			delete output_queue.back();
+			delete output_queue.front();
 			output_queue.pop();
 		}
 

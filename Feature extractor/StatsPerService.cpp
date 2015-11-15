@@ -62,7 +62,10 @@ namespace FeatureExtractor {
 		// REJ error
 		if (conv->is_rerror())
 			srv_rerror_count++;
+	}
 
-
+	bool StatsPerService::is_empty()
+	{
+		return (srv_count == 0);
 	}
 }

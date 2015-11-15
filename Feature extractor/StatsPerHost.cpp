@@ -76,7 +76,11 @@ namespace FeatureExtractor {
 
 		// Number of conv. per service
 		same_srv_counts[service]++;
-
-		
 	}
+
+	bool StatsPerHost::is_empty()
+	{
+		return (count == 0);
+	}
+
 }

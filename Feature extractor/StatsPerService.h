@@ -34,5 +34,6 @@ namespace FeatureExtractor {
 
 		void report_conversation_removal(const Conversation *conv);
 		void report_new_conversation(ConversationFeatures *cf);
+		bool is_empty();
 	};
 }

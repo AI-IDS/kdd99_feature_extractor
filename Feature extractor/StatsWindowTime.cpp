@@ -32,8 +32,8 @@ namespace FeatureExtractor {
 		Timestamp max_delete_ts = now - (window_size_ms * 1000);	// Substract usecs
 
 		// Delete all conversations with last timestamp <= max_delete_ts
-		while (queue.back()->get_last_ts() <= max_delete_ts) {
-			Conversation *conv = queue.back();
+		while (!queue.empty() && queue.front()->get_last_ts() <= max_delete_ts) {
+			Conversation *conv = queue.front();
 			queue.pop();
 
 			// Exclude removed conversation from stats
