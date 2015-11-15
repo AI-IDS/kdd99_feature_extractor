@@ -28,6 +28,7 @@ namespace FeatureExtractor {
 		//uint32_t srv_diff_host_count;
 
 	public:
+		StatsPerService();
 		StatsPerService(FeatureUpdater *feature_updater);
 		~StatsPerService();
 

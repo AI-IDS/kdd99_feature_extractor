@@ -2,6 +2,12 @@
 
 
 namespace FeatureExtractor {
+	StatsPerService::StatsPerService()
+		: feature_updater(nullptr)
+		, srv_count(0), srv_serror_count(0), srv_rerror_count(0)
+	{
+	}
+
 	StatsPerService::StatsPerService(FeatureUpdater *feature_updater)
 		: feature_updater(feature_updater)
 		, srv_count(0), srv_serror_count(0), srv_rerror_count(0)
