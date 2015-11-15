@@ -30,6 +30,9 @@ namespace FeatureExtractor {
 			Conversation *conv = queue.back();
 			queue.pop();
 
+			// Exclude removed conversation from stats
+			report_conversation_removal(conv);
+
 			// Object commits suicide if no more references to it
 			conv->deregister_reference();
 		}

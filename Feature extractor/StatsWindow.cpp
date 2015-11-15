@@ -73,11 +73,6 @@ namespace FeatureExtractor {
 	//template<class TStatTime, class TStatCount>
 	void StatsWindow::add_conversation(ConversationFeatures *cf)
 	{
-		// TODO:
-		// 1. get stats for new conv  x
-		// 2. add new conv. to stats  x
-		// 3. update window
-
 		Conversation *conv = cf->get_conversation();
 		uint32_t dst_ip = conv->get_five_tuple_ptr()->get_dst_ip();
 		service_t service = conv->get_service();
