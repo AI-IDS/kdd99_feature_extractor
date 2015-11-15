@@ -10,11 +10,6 @@ namespace FeatureExtractor {
 	{
 		unsigned int window_size_ms;
 
-	public:
-		StatsWindowTime();
-		StatsWindowTime(unsigned int window_size_ms);
-		~StatsWindowTime();
-
 		/**
 		 * Method performing window maintenance.
 		 *
@@ -22,5 +17,10 @@ namespace FeatureExtractor {
 		 * oldest one is removed from windows.
 		 */
 		void perform_window_maintenance(const Conversation *new_conv);
+
+	public:
+		StatsWindowTime();
+		StatsWindowTime(unsigned int window_size_ms);
+		~StatsWindowTime();
 	};
 }

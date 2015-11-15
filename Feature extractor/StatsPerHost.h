@@ -1,14 +1,14 @@
 #pragma once
 
 #include <stdint.h>
-#include "Stats.h"
+#include "StatsCollector.h"
 #include "FeatureUpdater.h"
 
 namespace FeatureExtractor {
 	/**
 	 * Statistics per one host (IP address)
 	 */
-	class StatsPerHost : public Stats
+	class StatsPerHost : public StatsCollector
 	{
 		FeatureUpdater *feature_updater;	// Used to update features in ConversationFeatures object
 

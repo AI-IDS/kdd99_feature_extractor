@@ -10,7 +10,7 @@ namespace FeatureExtractor {
 	 */
 	class IntervalKeeper
 	{
-		uint64_t interval;	// in ms
+		uint64_t interval;	// in usec
 		Timestamp last_ts;
 		
 	public:

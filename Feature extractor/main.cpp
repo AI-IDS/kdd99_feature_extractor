@@ -6,6 +6,7 @@
 #include "Sniffer.h"
 #include "IpReassembler.h"
 #include "ConversationReconstructor.h"
+#include "StatsEngine.h"
 
 
 using namespace std;
@@ -73,6 +74,7 @@ int main(int argc, char* argv[])
 
 	IpReassembler reasm;
 	ConversationReconstructor conv_reconstructor;
+	StatsEngine stats_engine;
 
 	bool has_more_traffic = true;
 	while (has_more_traffic) {
@@ -109,7 +111,12 @@ int main(int argc, char* argv[])
 			conv->print();
 			//cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl << endl;
 
-			delete conv;
+			//delete conv;
+
+			// Derived features
+			ConversationFeatures *cf = stats_engine.calculate_features(conv);
+
+			delete cf;
 		}
 	}
 

@@ -5,12 +5,13 @@
 
 namespace FeatureExtractor {
 	/**
-	 * General interface for statistics about conversations in one window (e.g. timewindow)
+	 * General interface for collecting statistics about specific conversations 
+	 * (e.g. per host/service in one window)
 	 */
-	class Stats
+	class StatsCollector
 	{
 	public:
-		virtual ~Stats() { };
+		virtual ~StatsCollector() { };
 
 		/**
 		 * Notify statitics about conversation being removed from window

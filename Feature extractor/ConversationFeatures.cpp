@@ -5,11 +5,14 @@ namespace FeatureExtractor {
 	ConversationFeatures::ConversationFeatures(Conversation *conv)
 		: conv(conv)
 	{
+		conv->register_reference();
 	}
 
 
 	ConversationFeatures::~ConversationFeatures()
 	{
+		// Conversation object commits suicide when nobody needs it anymore
+		conv->deregister_reference();
 	}
 
 

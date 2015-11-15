@@ -25,7 +25,7 @@ namespace FeatureExtractor {
 
 	void IntervalKeeper::set_interval(uint64_t interval_ms)
 	{
-		this->interval = interval_ms;
+		this->interval = interval_ms * 1000;
 	}
 
 	void IntervalKeeper::update_time(const Timestamp &ts)

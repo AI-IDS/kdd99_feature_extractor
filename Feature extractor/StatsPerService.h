@@ -1,14 +1,14 @@
 #pragma once
 
 #include <stdint.h>
-#include "Stats.h"
+#include "StatsCollector.h"
 #include "FeatureUpdater.h"
 
 namespace FeatureExtractor {
 	/**
 	 * Statistics per one service
 	 */
-	class StatsPerService : public Stats
+	class StatsPerService : public StatsCollector
 	{
 	protected:
 		FeatureUpdater *feature_updater;	// Used to update features in ConversationFeatures object
