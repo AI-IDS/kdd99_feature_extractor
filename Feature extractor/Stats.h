@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Conversation.h"
+#include "ConversationFeatures.h"
 
 namespace FeatureExtractor {
 	/**

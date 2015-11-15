@@ -34,13 +34,11 @@ namespace FeatureExtractor {
 		f->set_dst_host_diff_srv_rate(diff_srv_rate);
 	}
 
-	void FeatureUpdaterCount::set_srv_diff_host_rate(ConversationFeatures * f, double srv_diff_host_rate) {
-		f->set_dst_host_srv_diff_host_rate(srv_diff_host_rate);
-	}
-
 	void FeatureUpdaterCount::set_dst_host_same_src_port_rate(ConversationFeatures * f, double dst_host_same_src_port_rate) {
 		f->set_dst_host_same_src_port_rate(dst_host_same_src_port_rate);
 	}
 
-
+	void FeatureUpdaterCount::set_same_srv_count(ConversationFeatures * f, uint32_t same_srv_count) {
+		f->set_dst_host_same_srv_count(same_srv_count);
+	}
 }

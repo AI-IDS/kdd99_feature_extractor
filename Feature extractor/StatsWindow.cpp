@@ -7,7 +7,7 @@
 
 namespace FeatureExtractor {
 	template<class TStatsPerHost, class TStatsPerService>
-	StatsWindow::StatsWindow(FeatureUpdater *feature_updater)
+	StatsWindow<TStatsPerHost, TStatsPerService>::StatsWindow(FeatureUpdater *feature_updater)
 		: feature_updater(feature_updater)
 	{
 		// Initialize stats per service
@@ -17,7 +17,7 @@ namespace FeatureExtractor {
 	}
 
 	template<class TStatsPerHost, class TStatsPerService>
-	StatsWindow::~StatsWindow()
+	StatsWindow<TStatsPerHost, TStatsPerService>::~StatsWindow()
 	{
 		// Deallocate leftover conversations in the queue
 		while (!queue.empty()) {
@@ -32,7 +32,7 @@ namespace FeatureExtractor {
 	}
 
 	template<class TStatsPerHost, class TStatsPerService>
-	TStatsPerHost *StatsWindow::find_or_insert_host_stats(uint32_t dst_ip)
+	TStatsPerHost *StatsWindow<TStatsPerHost, TStatsPerService>::find_or_insert_host_stats(uint32_t dst_ip)
 	{
 		TStatsPerHost *stats = nullptr;
 
@@ -56,7 +56,7 @@ namespace FeatureExtractor {
 
 
 	template<class TStatsPerHost, class TStatsPerService>
-	void StatsWindow::report_conversation_removal(const Conversation *conv)
+	void StatsWindow<TStatsPerHost, TStatsPerService>::report_conversation_removal(const Conversation *conv)
 	{
 		uint32_t dst_ip = conv->get_five_tuple_ptr()->get_dst_ip();
 		service_t service = conv->get_service();
@@ -71,7 +71,7 @@ namespace FeatureExtractor {
 	}
 
 	template<class TStatsPerHost, class TStatsPerService>
-	void StatsWindow::add_conversation(ConversationFeatures *cf)
+	void StatsWindow<TStatsPerHost, TStatsPerService>::add_conversation(ConversationFeatures *cf)
 	{
 		Conversation *conv = cf->get_conversation();
 		uint32_t dst_ip = conv->get_five_tuple_ptr()->get_dst_ip();

@@ -11,7 +11,7 @@ namespace FeatureExtractor {
 	class ConversationFeatures
 	{
 		// Intrinsic features are extracted directly from conversation object
-		const Conversation *conv;
+		Conversation *conv;
 
 		/**
 		 * Derived features for 2s time window
@@ -79,14 +79,12 @@ namespace FeatureExtractor {
 		void set_diff_srv_rate(double diff_srv_rate);
 
 		double get_srv_diff_host_rate() const;
-		void set_srv_diff_host_rate(double srv_diff_host_rate);
-
-		double get_srv_diff_host_rate() const;
-
-		// Count window features
 
 		uint32_t get_same_srv_count() const;
 		void set_same_srv_count(uint32_t same_srv_count);
+
+		// Count window features
+
 
 		uint32_t get_dst_host_count() const;
 		void set_dst_host_count(uint32_t dst_host_count);
@@ -102,9 +100,6 @@ namespace FeatureExtractor {
 
 		double get_dst_host_same_src_port_rate() const;
 		void set_dst_host_same_src_port_rate(double dst_host_same_src_port_rate);
-
-		double get_dst_host_srv_diff_host_rate() const;
-		void set_dst_host_srv_diff_host_rate(double dst_host_srv_diff_host_rate);
 
 		double get_dst_host_serror_rate() const;
 		void set_dst_host_serror_rate(double dst_host_serror_rate);

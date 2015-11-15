@@ -78,7 +78,7 @@ namespace FeatureExtractor {
 	}
 
 	double ConversationFeatures::get_srv_diff_host_rate() const {
-		return (same_srv_count == 0) ? 0.0 : ((srv_count - same_srv_count) / (double)same_srv_count);
+		return (srv_count == 0) ? 0.0 : ((srv_count - same_srv_count) / (double)srv_count);
 	}
 
 	uint32_t ConversationFeatures::get_same_srv_count() const {
@@ -152,7 +152,7 @@ namespace FeatureExtractor {
 	}
 
 	double ConversationFeatures::get_dst_host_srv_diff_host_rate() const {
-		return (dst_host_same_srv_count == 0) ? 0.0 : ((dst_host_srv_count - dst_host_same_srv_count) / (double)dst_host_same_srv_count);
+		return (dst_host_srv_count == 0) ? 0.0 : ((dst_host_srv_count - dst_host_same_srv_count) / (double)dst_host_srv_count);
 	}
 
 	uint32_t ConversationFeatures::get_dst_host_same_srv_count() const {

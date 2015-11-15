@@ -34,15 +34,12 @@ namespace FeatureExtractor {
 		f->set_diff_srv_rate(diff_srv_rate);
 	}
 
-	void FeatureUpdaterTime::set_srv_diff_host_rate(ConversationFeatures * f, double srv_diff_host_rate) {
-		f->set_srv_diff_host_rate(srv_diff_host_rate);
-	}
-
 	void FeatureUpdaterTime::set_dst_host_same_src_port_rate(ConversationFeatures * f, double dst_host_same_src_port_rate) {
 		// Do nothing - no such feature for time window
 	}
 
-
-	void FeatureUpdaterTime::set_same_srv_count(ConversationFeatures * f, double same_srv_count) = 0;
+	void FeatureUpdaterTime::set_same_srv_count(ConversationFeatures * f, uint32_t same_srv_count) {
+		f->set_same_srv_count(same_srv_count);
+	}
 
 }

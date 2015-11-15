@@ -7,32 +7,32 @@
 
 namespace FeatureExtractor {
 	template<class TStatsPerHost, class TStatsPerService>
-	StatsWindowTime::StatsWindowTime()
+	StatsWindowTime<TStatsPerHost, TStatsPerService>::StatsWindowTime()
 		: StatsWindow(new FeatureUpdaterTime())
 		, window_size_ms(2000)		// Default size = 2 sec.
 	{
 	}
 
 	template<class TStatsPerHost, class TStatsPerService>
-	StatsWindowTime::StatsWindowTime(unsigned int window_size_ms)
+	StatsWindowTime<TStatsPerHost, TStatsPerService>::StatsWindowTime(unsigned int window_size_ms)
 		: StatsWindow(new FeatureUpdaterTime())
 		, window_size_ms(window_size_ms)
 	{
 	}
 
 	template<class TStatsPerHost, class TStatsPerService>
-	StatsWindowTime::~StatsWindowTime()
+	StatsWindowTime<TStatsPerHost, TStatsPerService>::~StatsWindowTime()
 	{
 	}
 
 	template<class TStatsPerHost, class TStatsPerService>
-	void StatsWindowTime::perform_window_maintenance(const Conversation *new_conv)
+	void StatsWindowTime<TStatsPerHost, TStatsPerService>::perform_window_maintenance(const Conversation *new_conv)
 	{
 		Timestamp now = new_conv->get_last_ts();
 		Timestamp max_delete_ts = now - (window_size_ms * 1000);	// Substract usecs
 
 		// Delete all conversations with last timestamp <= max_delete_ts
-		while (queue.back()->get_last_ts <= max_delete_ts) {
+		while (queue.back()->get_last_ts() <= max_delete_ts) {
 			Conversation *conv = queue.back();
 			queue.pop();
 

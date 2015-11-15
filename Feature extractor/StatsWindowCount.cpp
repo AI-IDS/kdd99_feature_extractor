@@ -7,28 +7,28 @@
 
 namespace FeatureExtractor {
 	template<class TStatsPerHost, class TStatsPerService>
-	StatsWindowCount::StatsWindowCount()
-		: StatsWindow(new FeatureUpdaterTime())
+	StatsWindowCount<TStatsPerHost, TStatsPerService>::StatsWindowCount()
+		: StatsWindow(new FeatureUpdaterCount())
 		, window_size(100)	// Default size = 100 conversations
 	{
 	}
 
 	template<class TStatsPerHost, class TStatsPerService>
-	StatsWindowCount::StatsWindowCount(unsigned int window_size)
-		: StatsWindow(new FeatureUpdaterTime())
+	StatsWindowCount<TStatsPerHost, TStatsPerService>::StatsWindowCount(unsigned int window_size)
+		: StatsWindow(new FeatureUpdaterCount())
 		, window_size(window_size)
 	{
 	}
 
 
 	template<class TStatsPerHost, class TStatsPerService>
-	StatsWindowCount::~StatsWindowCount()
+	StatsWindowCount<TStatsPerHost, TStatsPerService>::~StatsWindowCount()
 	{
 	}
 
 
 	template<class TStatsPerHost, class TStatsPerService>
-	void StatsWindowCount::perform_window_maintenance(const Conversation *new_conv)
+	void StatsWindowCount<TStatsPerHost, TStatsPerService>::perform_window_maintenance(const Conversation *new_conv)
 	{
 		while (queue.size > window_size) {
 			Conversation *conv = queue.back();
