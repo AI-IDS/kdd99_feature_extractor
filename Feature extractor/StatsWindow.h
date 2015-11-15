@@ -4,6 +4,7 @@
 #include <map>
 #include "Conversation.h"
 #include "ConversationFeatures.h"
+#include "FeatureUpdater.h"
 
 namespace FeatureExtractor {
 	using namespace std;
@@ -41,7 +42,7 @@ namespace FeatureExtractor {
 		 * Finds stats record in map<> for given host. If there is no record for such
 		 * a host, a new one is inserted into map.
 		 */
-		StatsPerHost *find_or_insert_host_stats(uint32_t dst_ip);
+		TStatsPerHost *find_or_insert_host_stats(uint32_t dst_ip);
 
 		/**
 		 * Report conversation that should be excluded from window.
