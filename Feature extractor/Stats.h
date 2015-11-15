@@ -10,7 +10,7 @@ namespace FeatureExtractor {
 	class Stats
 	{
 	public:
-		virtual ~Stats() = 0;
+		virtual ~Stats() { };
 
 		/**
 		 * Notify statitics about conversation being removed from window

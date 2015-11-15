@@ -12,6 +12,7 @@ namespace FeatureExtractor {
 		map<uint16_t, uint32_t> same_src_port_counts;
 
 	public:
+		StatsPerServiceWithSrcPort();
 		StatsPerServiceWithSrcPort(FeatureUpdater *feature_updater);
 		~StatsPerServiceWithSrcPort();
 

@@ -30,7 +30,7 @@ namespace FeatureExtractor {
 	template<class TStatsPerHost, class TStatsPerService>
 	void StatsWindowCount<TStatsPerHost, TStatsPerService>::perform_window_maintenance(const Conversation *new_conv)
 	{
-		while (queue.size > window_size) {
+		while (queue.size() > window_size) {
 			Conversation *conv = queue.back();
 			queue.pop();
 
