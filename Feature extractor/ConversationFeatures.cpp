@@ -186,6 +186,7 @@ namespace FeatureExtractor {
 		ss << conv->get_urgent_packets() << ',';
 
 		// Derived time windows features
+		ss << setprecision(2);
 		ss << count << ',';
 		ss << srv_count << ',';
 		ss << serror_rate << ',';
@@ -206,7 +207,7 @@ namespace FeatureExtractor {
 		ss << dst_host_serror_rate << ',';
 		ss << dst_host_srv_serror_rate << ',';
 		ss << dst_host_rerror_rate << ',';
-		ss << dst_host_srv_rerror_rate << ',';
+		ss << dst_host_srv_rerror_rate;
 
 		if (print_extra_features) {
 			const FiveTuple *ft = conv->get_five_tuple_ptr();
@@ -216,18 +217,21 @@ namespace FeatureExtractor {
 			uint32_t dst_ip = ft->get_dst_ip();
 			uint8_t *sip = (uint8_t *)&src_ip;
 			uint8_t *dip = (uint8_t *)&dst_ip;
-			ss << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3] << ',';
+			ss << ',' << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3] << ',';
 			ss << ft->get_src_port() << ',';
 			ss << (int)dip[0] << "." << (int)dip[1] << "." << (int)dip[2] << "." << (int)dip[3] << ',';
-			ss << ft->get_dst_port() << endl << ',';
+			ss << ft->get_dst_port() << ',';
 
 			// Time (e.g.: 2010-06-14T00:11:23)
-			struct tm *ltime;
+			//struct tm *ltime;
+			struct tm timeinfo;
 			char timestr[20];
 			time_t local_tv_sec;
 			local_tv_sec = conv->get_last_ts().get_secs();
-			ltime = localtime(&local_tv_sec);
-			strftime(timestr, sizeof timestr, "%Y-%m-%dT%H:%M:%S", ltime);
+			//ltime = localtime(&local_tv_sec);
+			localtime_s(&timeinfo, &local_tv_sec);
+			//strftime(timestr, sizeof timestr, "%Y-%m-%dT%H:%M:%S", ltime);
+			strftime(timestr, sizeof timestr, "%Y-%m-%dT%H:%M:%S", &timeinfo);
 			ss << timestr;
 
 			cout << ss.str() << endl;

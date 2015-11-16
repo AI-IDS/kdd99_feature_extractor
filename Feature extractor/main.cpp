@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 	debug_test();
 
 	//p = new Sniffer("ip_frag_source.pcap");
-	p = new Sniffer("ssh.pcap");
+	//p = new Sniffer("ssh.pcap");
 	//p = new Sniffer("ssh_student.pcap");
 	//p = new Sniffer("t.cap");
 
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
 		// Output conversations
 		Conversation *conv;
 		while ((conv = conv_reconstructor.get_next_conversation()) != nullptr) {
-			cout << "==================================" << endl;
+			//cout << "==================================" << endl;
 			//conv->print();
 			//cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl << endl;
 
@@ -126,6 +126,6 @@ int main(int argc, char* argv[])
 
 
 	cout << endl;
-	system("pause");
+	//system("pause");
 	return 0;
 }
