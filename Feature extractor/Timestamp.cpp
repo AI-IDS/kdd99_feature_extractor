@@ -7,7 +7,7 @@ namespace FeatureExtractor {
 		ts.tv_sec = 0;
 		ts.tv_usec = 0;
 	}
-	
+
 	Timestamp::Timestamp(const struct timeval &ts)
 	{
 		this->ts = ts;
@@ -41,13 +41,13 @@ namespace FeatureExtractor {
 
 	int64_t Timestamp::get_total_usecs() const
 	{
-		return ts.tv_sec * 1000000 + ts.tv_usec;
+		return ts.tv_sec * (uint64_t)1000000 + ts.tv_usec;
 	}
 
 
 	int64_t Timestamp::get_total_msecs() const
 	{
-		return (ts.tv_sec * 1000) + (ts.tv_usec / 1000);
+		return (ts.tv_sec * (uint64_t)1000) + (ts.tv_usec / 1000);
 	}
 
 
@@ -102,6 +102,7 @@ namespace FeatureExtractor {
 
 	Timestamp Timestamp::operator-(int64_t b) const
 	{
-		return Timestamp(this->get_total_usecs() - b);
+		Timestamp t = Timestamp(this->get_total_usecs() - b);
+		return t;
 	}
 }

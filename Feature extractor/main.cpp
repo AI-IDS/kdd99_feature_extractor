@@ -16,17 +16,22 @@ void debug_test()
 {
 	return;
 
+
+
+
+
 	struct timeval tv;
 	tv.tv_sec = 10000;
 	tv.tv_usec = 20000;
 
 	Timestamp ts1(tv);
-	Timestamp ts2;
+	Timestamp ts2 = ts1 - (2000 * 1); //should be 2 sec ago
 
-	cout << endl << "---- before s =" << ts2.get_secs() << " new=" << ts1.get_secs() << endl;
+	cout << endl << "orig=" << ts1.get_secs() << " new=" << ts2.get_secs() << endl;
+	ts2 = ts1 + (2000 * 1); //should be 2 sec ago
 
-	ts2 = ts1;
-	cout << "after s =" << ts2.get_secs() << endl;
+	cout << endl << "orig=" << ts1.get_secs() << " new=" << ts2.get_secs() << endl;
+
 	return;
 }
 
