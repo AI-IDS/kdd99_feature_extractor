@@ -59,7 +59,7 @@ namespace FeatureExtractor {
 		feature_updater->set_diff_srv_rate(cf, 1.0 - same_srv_rate);
 
 		// Part of feature 31/37
-		feature_updater->set_diff_srv_rate(cf, same_srv_counts[service]);
+		feature_updater->set_same_srv_count(cf, same_srv_counts[service]);
 
 		/*
 		 * Include new conversation to stats

@@ -175,7 +175,7 @@ namespace FeatureExtractor {
 		stringstream ss;
 
 		// Intrinsic features
-		ss << setprecision(0) << (conv->get_duration_ms() / 1000) << ',';
+		ss << noshowpoint << setprecision(0) << (conv->get_duration_ms() / 1000) << ',';
 		ss << conv->get_protocol_type_str() << ',';
 		ss << conv->get_service_str() << ',';
 		ss << conv->get_state_str() << ',';
@@ -186,7 +186,7 @@ namespace FeatureExtractor {
 		ss << conv->get_urgent_packets() << ',';
 
 		// Derived time windows features
-		ss << setprecision(2);
+		ss << fixed << showpoint <<setprecision(2);
 		ss << count << ',';
 		ss << srv_count << ',';
 		ss << serror_rate << ',';
