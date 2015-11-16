@@ -43,11 +43,11 @@ namespace FeatureExtractor {
 		feature_updater->set_srv_count(cf, srv_count);
 
 		// Feature 26
-		double srv_serror_rate = srv_serror_count / (double)srv_count;
+		double srv_serror_rate = (srv_count == 0) ? 0.0 : (srv_serror_count / (double)srv_count);
 		feature_updater->set_srv_serror_rate(cf, srv_serror_rate);
 
 		// Feature 28
-		double srv_rerror_rate = srv_rerror_count / (double)srv_count;
+		double srv_rerror_rate = (srv_count == 0) ? 0.0 : (srv_rerror_count / (double)srv_count);
 		feature_updater->set_srv_rerror_rate(cf, srv_rerror_rate);
 
 		/*

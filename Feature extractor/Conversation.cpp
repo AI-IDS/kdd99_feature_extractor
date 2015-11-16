@@ -226,6 +226,22 @@ namespace FeatureExtractor {
 		return SERVICE_NAMES[get_service()];
 	}
 
+	const char * Conversation::get_protocol_type_str() const
+	{
+		switch (five_tuple.get_ip_proto()) {
+		case TCP:
+			return "tcp";
+			break;
+		case UDP:
+			return "udp";
+			break;
+		case ICMP:
+			return "icmp";
+			break;
+		}
+		return "UNKNOWN";
+	}
+
 	bool Conversation::land() const
 	{
 		return five_tuple.land();

@@ -52,7 +52,7 @@ namespace FeatureExtractor {
 		feature_updater->set_rerror_rate(cf, rerror_rate);
 
 		// Feature 29/34
-		double same_srv_rate = (count == 0) ? 0.0 : (same_srv_counts[service] / (double)count);
+		double same_srv_rate = (count == 0) ? 1.0 : (same_srv_counts[service] / (double)count);
 		feature_updater->set_same_srv_rate(cf, same_srv_rate);
 
 		// Feature 30

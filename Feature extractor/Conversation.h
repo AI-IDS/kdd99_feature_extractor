@@ -199,6 +199,7 @@ namespace FeatureExtractor {
 		
 		virtual service_t get_service() const = 0;	// Pure virtual function
 		const char * get_service_str() const;
+		const char * get_protocol_type_str() const;
 		bool land() const;
 		bool is_serror() const;
 		bool is_rerror() const;

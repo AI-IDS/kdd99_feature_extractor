@@ -1,7 +1,12 @@
+#include <sstream>
+#include <iostream>
+#include <iomanip>
 #include "ConversationFeatures.h"
 
 
 namespace FeatureExtractor {
+	using namespace std;
+
 	ConversationFeatures::ConversationFeatures(Conversation *conv)
 		: conv(conv)
 	{
@@ -163,6 +168,99 @@ namespace FeatureExtractor {
 	}
 	void ConversationFeatures::set_dst_host_same_srv_count(uint32_t dst_host_same_srv_count) {
 		this->dst_host_same_srv_count = dst_host_same_srv_count;
+	}
+
+	void ConversationFeatures::print(bool print_extra_features = true)
+	{
+		stringstream ss;
+
+		// Intrinsic features
+		ss << setprecision(0) << (conv->get_duration_ms / 1000) << ',';
+		ss << conv->get_protocol_type_str() << ',';
+		ss << conv->get_service_str() << ',';
+		ss << conv->get_state_str() << ',';
+		ss << conv->get_src_bytes() << ',';
+		ss << conv->get_dst_bytes() << ',';
+		ss << conv->land() << ',';
+		ss << conv->get_wrong_fragments() << ',';
+		ss << conv->get_urgent_packets() << ',';
+
+		// Derived time windows features
+		ss << count << ',' << endl;
+		ss << srv_count << ',' << endl;
+		ss << serror_rate << ',' << endl;
+		ss << srv_serror_rate << ',' << endl;
+		ss << rerror_rate << ',' << endl;
+		ss << srv_rerror_rate << ',' << endl;
+		ss << same_srv_rate << ',' << endl;
+		ss << diff_srv_rate << ',' << endl;
+		ss << get_srv_diff_host_rate() << ',' << endl;
+
+		// Derived connection count window features
+		ss << dst_host_count << ',' << endl;
+		ss << dst_host_srv_count << ',' << endl;
+		ss << dst_host_same_srv_rate << ',' << endl;
+		ss << dst_host_diff_srv_rate << ',' << endl;
+		ss << dst_host_same_src_port_rate << ',' << endl;
+		ss << get_dst_host_srv_diff_host_rate() << ',' << endl;
+		ss << dst_host_serror_rate << ',' << endl;
+		ss << dst_host_srv_serror_rate << ',' << endl;
+		ss << dst_host_rerror_rate << ',' << endl;
+		ss << dst_host_srv_rerror_rate << ',' << endl;
+
+		if (print_extra_features) {
+			const FiveTuple *ft = conv->get_five_tuple_ptr();
+
+			// TODO: ugly wtf, but working
+			uint32_t src_ip = ft->get_src_ip();
+			uint32_t dst_ip = ft->get_dst_ip();
+			uint8_t *sip = (uint8_t *)&src_ip;
+			uint8_t *dip = (uint8_t *)&dst_ip;
+			ss << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3] << ',';
+			ss << ft->get_src_port() << ',';
+			ss << (int)dip[0] << "." << (int)dip[1] << "." << (int)dip[2] << "." << (int)dip[3] << ',';
+			ss << ft->get_dst_port() << endl << ',';
+
+			// Time (e.g.: 2010-06-14T00:11:23)
+			struct tm *ltime;
+			char timestr[20];
+			time_t local_tv_sec;
+			local_tv_sec = conv->get_last_ts().get_secs();
+			ltime = localtime(&local_tv_sec);
+			strftime(timestr, sizeof timestr, "%Y-%m-%dT%H:%M:%S", ltime);
+			ss << timestr;
+
+			cout << ss.str();
+		}
+	}
+	
+
+	void ConversationFeatures::print_human()
+	{
+		conv->print();
+
+		stringstream ss;
+		ss << fixed << setprecision(2);
+		ss << "count = " << count << endl;
+		ss << "srv_count = " << srv_count << endl;
+		ss << "serror_rate = " << serror_rate << endl;
+		ss << "srv_serror_rate = " << srv_serror_rate << endl;
+		ss << "rerror_rate = " << rerror_rate << endl;
+		ss << "srv_rerror_rate = " << srv_rerror_rate << endl;
+		ss << "same_srv_rate = " << same_srv_rate << endl;
+		ss << "diff_srv_rate = " << diff_srv_rate << endl;
+		ss << "get_srv_diff_host_rate = " << get_srv_diff_host_rate() << endl;
+		ss << "dst_host_count = " << dst_host_count << endl;
+		ss << "dst_host_srv_count = " << dst_host_srv_count << endl;
+		ss << "dst_host_same_srv_rate = " << dst_host_same_srv_rate << endl;
+		ss << "dst_host_diff_srv_rate = " << dst_host_diff_srv_rate << endl;
+		ss << "dst_host_same_src_port_rate = " << dst_host_same_src_port_rate << endl;
+		ss << "get_dst_host_srv_diff_host_rate = " << get_dst_host_srv_diff_host_rate() << endl;
+		ss << "dst_host_serror_rate = " << dst_host_serror_rate << endl;
+		ss << "dst_host_srv_serror_rate = " << dst_host_srv_serror_rate << endl;
+		ss << "dst_host_rerror_rate = " << dst_host_rerror_rate << endl;
+		ss << "dst_host_srv_rerror_rate = " << dst_host_srv_rerror_rate << endl;
+		cout << ss.str() << endl;
 	}
 
 }

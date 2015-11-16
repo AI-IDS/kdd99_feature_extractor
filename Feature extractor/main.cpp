@@ -67,8 +67,8 @@ int main(int argc, char* argv[])
 
 	debug_test();
 
-	p = new Sniffer("ip_frag_source.pcap");
-	//p = new Sniffer("ssh.pcap");
+	//p = new Sniffer("ip_frag_source.pcap");
+	p = new Sniffer("ssh.pcap");
 	//p = new Sniffer("ssh_student.pcap");
 	//p = new Sniffer("t.cap");
 
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
 		Conversation *conv;
 		while ((conv = conv_reconstructor.get_next_conversation()) != nullptr) {
 			cout << "==================================" << endl;
-			conv->print();
+			//conv->print();
 			//cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl << endl;
 
 			//delete conv;
@@ -117,12 +117,15 @@ int main(int argc, char* argv[])
 			ConversationFeatures *cf = stats_engine.calculate_features(conv);
 			conv = nullptr;
 
+			//cf->print_human();
+			cf->print();
+
 			delete cf;
 		}
 	}
 
 
 	cout << endl;
-	//system("pause");
+	system("pause");
 	return 0;
 }

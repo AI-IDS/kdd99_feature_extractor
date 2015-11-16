@@ -10,7 +10,7 @@ namespace FeatureExtractor {
 	 */
 	class ConversationFeatures
 	{
-		// Intrinsic features are extracted directly from conversation object
+		// Link to conversation
 		Conversation *conv;
 
 		/**
@@ -117,5 +117,15 @@ namespace FeatureExtractor {
 
 		uint32_t get_dst_host_same_srv_count() const;
 		void set_dst_host_same_srv_count(uint32_t same_srv_count);
+
+		/**
+		 * Print in KDD style + optional extra features
+		 */
+		void print(bool print_extra_features = true);
+
+		/**
+		 * Human readable print to stdout
+		 */
+		void print_human();
 	};
 }
