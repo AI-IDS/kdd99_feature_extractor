@@ -89,7 +89,7 @@ namespace FeatureExtractor {
 			it = conn_map.insert(it, ConnectionMap::value_type(key, conversation));
 		}
 
-		// Pass new packet to connection
+		// Pass new packet to conversation
 		bool is_finished = conversation->add_packet(packet);
 
 		// If connection is in final state, remove it from map & enqueue to output
@@ -121,13 +121,13 @@ namespace FeatureExtractor {
 		timeout_interval.update_time(now);
 
 		// Maximal timestamp that timedout connection can have
-		Timestamp max_tcp_syn = now - (timeouts.get_tcp_syn() * 100000);
-		Timestamp max_tcp_estab = now - (timeouts.get_tcp_estab() * 100000);
-		Timestamp max_tcp_rst = now - (timeouts.get_tcp_rst() * 100000);
-		Timestamp max_tcp_fin = now - (timeouts.get_tcp_fin() * 100000);
-		Timestamp max_tcp_last_ack = now - (timeouts.get_tcp_last_ack() * 100000);
-		Timestamp max_udp = now - (timeouts.get_udp() * 100000);
-		Timestamp max_icmp = now - (timeouts.get_icmp() * 100000);
+		Timestamp max_tcp_syn = now - (timeouts.get_tcp_syn() * 1000000);
+		Timestamp max_tcp_estab = now - (timeouts.get_tcp_estab() * 1000000);
+		Timestamp max_tcp_rst = now - (timeouts.get_tcp_rst() * 1000000);
+		Timestamp max_tcp_fin = now - (timeouts.get_tcp_fin() * 1000000);
+		Timestamp max_tcp_last_ack = now - (timeouts.get_tcp_last_ack() * 1000000);
+		Timestamp max_udp = now - (timeouts.get_udp() * 1000000);
+		Timestamp max_icmp = now - (timeouts.get_icmp() * 1000000);
 
 		// Temporary list of timed out conversations
 		vector<Conversation *> timedout_convs;
