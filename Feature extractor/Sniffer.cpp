@@ -60,7 +60,7 @@ namespace FeatureExtractor {
 			exit(-1);
 		}
 
-		cout << "Interface: " << d->name << endl << d->description << endl;
+		//cout << "Interface: " << d->name << endl << d->description << endl;
 		pcap_freealldevs(alldevs);
 	}
 

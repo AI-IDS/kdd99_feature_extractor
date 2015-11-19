@@ -217,7 +217,8 @@ namespace FeatureExtractor {
 			uint32_t dst_ip = ft->get_dst_ip();
 			uint8_t *sip = (uint8_t *)&src_ip;
 			uint8_t *dip = (uint8_t *)&dst_ip;
-			ss << ',' << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3] << ',';
+			ss << ',';
+			ss << (int)sip[0] << "." << (int)sip[1] << "." << (int)sip[2] << "." << (int)sip[3] << ',';
 			ss << ft->get_src_port() << ',';
 			ss << (int)dip[0] << "." << (int)dip[1] << "." << (int)dip[2] << "." << (int)dip[3] << ',';
 			ss << ft->get_dst_port() << ',';

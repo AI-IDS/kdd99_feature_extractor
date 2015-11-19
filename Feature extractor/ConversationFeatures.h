@@ -85,7 +85,6 @@ namespace FeatureExtractor {
 
 		// Count window features
 
-
 		uint32_t get_dst_host_count() const;
 		void set_dst_host_count(uint32_t dst_host_count);
 

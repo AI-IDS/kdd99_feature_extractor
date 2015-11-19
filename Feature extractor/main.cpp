@@ -1,6 +1,5 @@
-
-//#pragma warning(default:4265)
 #include <iostream>
+#include <iomanip>
 #include <cstdlib>
 #include <string>
 #include "Sniffer.h"
@@ -8,13 +7,30 @@
 #include "ConversationReconstructor.h"
 #include "StatsEngine.h"
 
-
 using namespace std;
 using namespace FeatureExtractor;
 
 void debug_test()
 {
+
 	return;
+
+
+	//// TCP flag debug
+	//tcp_field_flags_t tcp_flags;
+	//tcp_flags.flags = 0x11;
+	//cout << (tcp_flags.fin() ? "F" : "-");
+	//cout << (tcp_flags.syn() ? "S" : "-");
+	//cout << (tcp_flags.rst() ? "R" : "-");
+	//cout << (tcp_flags.psh() ? "P" : "-");
+	//cout << " ";
+	//cout << (tcp_flags.ack() ? "A" : "-");
+	//cout << (tcp_flags.urg() ? "U" : "-");
+	//cout << (tcp_flags.ece() ? "E" : "-");
+	//cout << (tcp_flags.cwr() ? "C" : "-");
+	//cout << endl;
+	//system("pause");
+	//return 0;
 
 
 
@@ -35,47 +51,55 @@ void debug_test()
 	return;
 }
 
+void usage();
+void list_interfaces();
+void extract(Sniffer *sniffer, bool print_extra_features = true);
+
 int main(int argc, char* argv[])
 {
-	Sniffer *p = NULL;
+	Sniffer *sniffer = NULL;
 
+	// TODO: usage/help, more input files, move main cycle to function
+	/*
+		extractor [OPTION] [FILE]...
+		-i interface_num
+		-e print extra features (IPs, ports, end time)
+		[timeouts]
+		[window settings]
 
-	//// TCP flag debug
-	//tcp_field_flags_t tcp_flags;
-	//tcp_flags.flags = 0x11;
-	//cout << (tcp_flags.fin() ? "F" : "-");
-	//cout << (tcp_flags.syn() ? "S" : "-");
-	//cout << (tcp_flags.rst() ? "R" : "-");
-	//cout << (tcp_flags.psh() ? "P" : "-");
-	//cout << " ";
-	//cout << (tcp_flags.ack() ? "A" : "-");
-	//cout << (tcp_flags.urg() ? "U" : "-");
-	//cout << (tcp_flags.ece() ? "E" : "-");
-	//cout << (tcp_flags.cwr() ? "C" : "-");
-	//cout << endl;
-	//system("pause");
-	//return 0;
+		*/
+
+	// test
+	//usage();
+	//list_interfaces();
 
 	if (argc <= 1) {
-		p = new Sniffer(1);
+		sniffer = new Sniffer(1);
 	}
 	else {
 		int inum = atoi(argv[1]);
 		if (inum && to_string(inum) == argv[1]) {
-			p = new Sniffer(inum);
+			sniffer = new Sniffer(inum);
 		}
 		else {
-			p = new Sniffer(argv[1]);
+			sniffer = new Sniffer(argv[1]);
 		}
 
 	}
 
+	//sniffer = new Sniffer("ip_frag_source.pcap");
+	//sniffer = new Sniffer("ssh.pcap");
+	//sniffer = new Sniffer("ssh_student.pcap");
+	//sniffer = new Sniffer("t.cap");
+
 	debug_test();
 
-	//p = new Sniffer("ip_frag_source.pcap");
-	//p = new Sniffer("ssh.pcap");
-	//p = new Sniffer("ssh_student.pcap");
-	//p = new Sniffer("t.cap");
+	extract(sniffer);
+
+	return 0;
+
+	//-------------------------------
+	// OLD outp.
 
 	IpReassembler reasm;
 	ConversationReconstructor conv_reconstructor;
@@ -85,7 +109,7 @@ int main(int argc, char* argv[])
 	while (has_more_traffic) {
 		Packet *datagr = nullptr;
 
-		IpFragment *frag = p->next_frame();
+		IpFragment *frag = sniffer->next_frame();
 		has_more_traffic = (frag != NULL);
 
 		if (has_more_traffic)  {
@@ -130,7 +154,89 @@ int main(int argc, char* argv[])
 	}
 
 
-	cout << endl;
+	//cout << endl;
 	//system("pause");
 	return 0;
+}
+
+
+void extract(Sniffer *sniffer, bool print_extra_features)
+{
+	IpReassembler reasm;
+	ConversationReconstructor conv_reconstructor;
+	StatsEngine stats_engine;
+
+	bool has_more_traffic = true;
+	while (has_more_traffic) {
+		Packet *datagr = nullptr;
+
+		// Get frame from sniffer
+		IpFragment *frag = sniffer->next_frame();
+		has_more_traffic = (frag != NULL);
+
+		// I
+		if (has_more_traffic)  {
+			ip_field_protocol_t ip_proto = frag->get_ip_proto();
+			if (ip_proto != TCP && ip_proto != UDP && ip_proto != ICMP)
+				continue;
+
+			datagr = reasm.reassemble(frag);
+		}
+		else {
+			// If no more traffic, finish everything
+			conv_reconstructor.finish_all_conversations();
+		}
+
+		// Pass datagrams/packets to conversation reconstruction engine
+		if (datagr)
+			conv_reconstructor.add_packet(datagr);
+
+		// Output conversations
+		Conversation *conv;
+		while ((conv = conv_reconstructor.get_next_conversation()) != nullptr) {
+			ConversationFeatures *cf = stats_engine.calculate_features(conv);
+			conv = nullptr;		// Should not be used anymore, object will commit suicide
+
+			cf->print(print_extra_features);
+			delete cf;
+		}
+	}
+}
+
+void usage()
+{
+	cout << "Usage: extractor [OPTION] [FILE]..." << endl
+		<< "  -l, --list \tList interfaces" << endl
+		<< "  -i interface_num" << endl
+		<< "  -e \tPrint extra features(IPs, ports, end timestamp)" << endl
+		<< "  [timeouts]" << endl	// TODO
+		<< "  [window settings]" << endl << endl;	// TODO
+}
+
+void list_interfaces()
+{
+
+	pcap_if_t *alldevs;
+	pcap_if_t *d;
+	char errbuf[PCAP_ERRBUF_SIZE];
+	int i;
+
+	// Retrieve the device list
+	if (pcap_findalldevs(&alldevs, errbuf) == -1)
+	{
+		cerr << "Error in pcap_findalldevs: " << errbuf << endl;
+		exit(-1);
+	}
+
+	// Print the list
+	for (d = alldevs, i = 1; d; d = d->next, i++) {
+		
+		cout << i << ". "
+			<< setiosflags(ios_base::left) << setw(40) << d->description
+			<< "\t[" << d->name << ']' << endl;
+	}
+	cout << endl;
+
+	// Free the device list
+	pcap_freealldevs(alldevs);
 }

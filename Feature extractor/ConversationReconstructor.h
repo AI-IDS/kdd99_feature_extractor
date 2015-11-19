@@ -28,8 +28,8 @@ namespace FeatureExtractor {
 		IntervalKeeper timeout_interval;
 
 		/**
-		* Removes timed out reassembly buffers - "drops incomplete datagrams"
-		*/
+		 * Removes timed out reassembly buffers - "drops incomplete datagrams"
+		 */
 		void check_timeouts(const Timestamp &now);
 	public:
 		ConversationReconstructor();
@@ -43,8 +43,10 @@ namespace FeatureExtractor {
 
 
 		/**
-		 * Returns next reconstructed conversation from internal queue.
+		 * Returns next reconstructed conversation from internal queue of finished conversation.
 		 *
+		 * Conversations are returned in order the ended (sorted by the timestamp 
+		 * of their last packet).
 		 * If the queueis empty nullptr is returned.
 		 * Caller must take care of deallocation of returned object.
 		 */
