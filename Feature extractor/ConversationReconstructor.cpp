@@ -121,13 +121,13 @@ namespace FeatureExtractor {
 		timeout_interval.update_time(now);
 
 		// Maximal timestamp that timedout connection can have
-		Timestamp max_tcp_syn = now - (timeouts.get_tcp_syn() * 1000000);
-		Timestamp max_tcp_estab = now - (timeouts.get_tcp_estab() * 1000000);
-		Timestamp max_tcp_rst = now - (timeouts.get_tcp_rst() * 1000000);
-		Timestamp max_tcp_fin = now - (timeouts.get_tcp_fin() * 1000000);
-		Timestamp max_tcp_last_ack = now - (timeouts.get_tcp_last_ack() * 1000000);
-		Timestamp max_udp = now - (timeouts.get_udp() * 1000000);
-		Timestamp max_icmp = now - (timeouts.get_icmp() * 1000000);
+		Timestamp max_tcp_syn = now - (timeouts.get_tcp_syn_timeout() * 1000000);
+		Timestamp max_tcp_estab = now - (timeouts.get_tcp_estab_timeout() * 1000000);
+		Timestamp max_tcp_rst = now - (timeouts.get_tcp_rst_timeout() * 1000000);
+		Timestamp max_tcp_fin = now - (timeouts.get_tcp_fin_timeout() * 1000000);
+		Timestamp max_tcp_last_ack = now - (timeouts.get_tcp_last_ack_timeout() * 1000000);
+		Timestamp max_udp = now - (timeouts.get_udp_timeout() * 1000000);
+		Timestamp max_icmp = now - (timeouts.get_icmp_timeout() * 1000000);
 
 		// Temporary list of timed out conversations
 		vector<Conversation *> timedout_convs;

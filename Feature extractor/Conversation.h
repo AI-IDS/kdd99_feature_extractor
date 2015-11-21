@@ -158,7 +158,7 @@ namespace FeatureExtractor {
 		uint32_t packets;
 		uint32_t src_packets;
 		uint32_t dst_packets;
-		uint32_t wrong_fragments;
+		uint32_t wrong_fragments;	// TODO: not implemented (IP checksum)
 		uint32_t urgent_packets;
 
 		virtual void update_state(const Packet *packet);

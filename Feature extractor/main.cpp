@@ -11,54 +11,18 @@
 using namespace std;
 using namespace FeatureExtractor;
 
-void debug_test()
-{
-
-	return;
-
-
-	//// TCP flag debug
-	//tcp_field_flags_t tcp_flags;
-	//tcp_flags.flags = 0x11;
-	//cout << (tcp_flags.fin() ? "F" : "-");
-	//cout << (tcp_flags.syn() ? "S" : "-");
-	//cout << (tcp_flags.rst() ? "R" : "-");
-	//cout << (tcp_flags.psh() ? "P" : "-");
-	//cout << " ";
-	//cout << (tcp_flags.ack() ? "A" : "-");
-	//cout << (tcp_flags.urg() ? "U" : "-");
-	//cout << (tcp_flags.ece() ? "E" : "-");
-	//cout << (tcp_flags.cwr() ? "C" : "-");
-	//cout << endl;
-	//system("pause");
-	//return 0;
-
-
-
-
-
-	struct timeval tv;
-	tv.tv_sec = 10000;
-	tv.tv_usec = 20000;
-
-	Timestamp ts1(tv);
-	Timestamp ts2 = ts1 - (2000 * 1); //should be 2 sec ago
-
-	cout << endl << "orig=" << ts1.get_secs() << " new=" << ts2.get_secs() << endl;
-	ts2 = ts1 + (2000 * 1); //should be 2 sec ago
-
-	cout << endl << "orig=" << ts1.get_secs() << " new=" << ts2.get_secs() << endl;
-
-	return;
-}
 
 void usage();
 void list_interfaces();
-void extract(Sniffer *sniffer, bool print_extra_features = true);
+void parse_args(int argc, char *argv[], Config *config);
+void extract(Sniffer *sniffer, const Config *config);
 
-int main(int argc, char* argv[])
+int main(int argc, char **argv)
 {
 	Config config;
+
+	parse_args(argc, argv, &config);
+
 	Sniffer *sniffer = NULL;
 
 	// TODO: usage/help, more input files, move main cycle to function
@@ -102,79 +66,24 @@ int main(int argc, char* argv[])
 	//sniffer = new Sniffer("ssh_student.pcap");
 	//sniffer = new Sniffer("t.cap");
 
-	debug_test();
+	//debug_test();
 
-	extract(sniffer);
+	extract(sniffer, &config);
 
-	return 0;
-
-	//-------------------------------
-	// OLD outp.
-
-	IpReassembler reasm;
-	ConversationReconstructor conv_reconstructor;
-	StatsEngine stats_engine(&config);
-
-	bool has_more_traffic = true;
-	while (has_more_traffic) {
-		Packet *datagr = nullptr;
-
-		IpFragment *frag = sniffer->next_frame();
-		has_more_traffic = (frag != NULL);
-
-		if (has_more_traffic)  {
-			//frag->print();
-			ip_field_protocol_t ip_proto = frag->get_ip_proto();
-			if (ip_proto != TCP && ip_proto != UDP && ip_proto != ICMP)
-				continue;
-
-			datagr = reasm.reassemble(frag);
-		}
-		else {
-			conv_reconstructor.finish_all_conversations();
-		}
-
-		if (datagr) {
-			//// WTF debug
-			//cout << "----------------------------------" << endl;
-			//datagr->print();
-			//cout << "----------------------------------" << endl << endl;
-
-			conv_reconstructor.add_packet(datagr);
-		}
-
-		// Output conversations
-		Conversation *conv;
-		while ((conv = conv_reconstructor.get_next_conversation()) != nullptr) {
-			//cout << "==================================" << endl;
-			//conv->print();
-			//cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl << endl;
-
-			//delete conv;
-
-			// Derived features
-			ConversationFeatures *cf = stats_engine.calculate_features(conv);
-			conv = nullptr;
-
-			//cf->print_human();
-			cf->print();
-
-			delete cf;
-		}
-	}
-
-
-	//cout << endl;
-	//system("pause");
 	return 0;
 }
 
 
-void extract(Sniffer *sniffer, bool print_extra_features)
+void parse_args(int argc, char *argv[], Config *config)
+{
+
+}
+
+void extract(Sniffer *sniffer, const Config *config)
 {
 	IpReassembler reasm;
 	ConversationReconstructor conv_reconstructor;
-	StatsEngine stats_engine;
+	StatsEngine stats_engine(config);
 
 	bool has_more_traffic = true;
 	while (has_more_traffic) {
@@ -207,21 +116,62 @@ void extract(Sniffer *sniffer, bool print_extra_features)
 			ConversationFeatures *cf = stats_engine.calculate_features(conv);
 			conv = nullptr;		// Should not be used anymore, object will commit suicide
 
-			cf->print(print_extra_features);
+			cf->print(config->get_print_extra_features());
 			delete cf;
 		}
 	}
 }
 
+
+/*
+TODO:
+l  list
+h  help
+? help
+--help help
+e print extra features
+
+-  int files_c;
+-  char *files_v;
+i  int interface_num;
+a  size_t additional_frame_len;
+
+ft  uint32_t ipfrag_timeout;
+fi  uint32_t ipfrag_check_interval;
+
+tst  uint32_t tcp_syn_timeout;
+tet  uint32_t tcp_estab_timeout;
+trt  uint32_t tcp_rst_timeout;
+tft  uint32_t tcp_fin_timeout;
+tlt  uint32_t tcp_last_ack_timeout;
+ut  uint32_t udp_timeout;
+it  uint32_t icmp_timeout;
+ci  uint32_t conversation_check_interval;
+
+w  unsigned int time_window_size_ms;
+c  unsigned int count_window_size;
+*/
 void usage()
 {
 	cout << "Usage: extractor [OPTION] [FILE]..." << endl
-		<< "  -l, --list \tList interfaces" << endl
-		<< "  -i interface_num" << endl
-		<< "  -e \tPrint extra features(IPs, ports, end timestamp)" << endl
-		<< "  [timeouts]" << endl	// TODO
-		<< "  [window settings]" << endl	// TODO
-		<< "  [intervals]" << endl	// TODO
+		<< " -h, --help   Display this usage  " << endl
+		<< " -l, --list    List interfaces  " << endl
+		<< " -i   NUMBER   Capture from interface with given number  " << endl
+		<< " -e            Print extra features(IPs, ports, end timestamp)  " << endl
+		<< " -a   BYTES    Additional frame length to be add to each frame in bytes  " << endl
+		<< "                 (e.g. 4B Ethernet CRC)  " << endl
+		<< " -ft  SECONDS  IP reassembly timeout (default 30)" << endl
+		<< " -fi  SECONDS  Max time between timed out IP fragments lookups (default 1) " << endl
+		<< " -tst SECONDS  TCP SYN timeout for states S0, S1 (default 120)" << endl
+		<< " -tet SECONDS  TCP timeout for established connections (default 5days)  " << endl
+		<< " -trt SECONDS  TCP RST timeout for states REJ, RSTO, RSTR, RSTOS0 (default 10)  " << endl
+		<< " -tft SECONDS  TCP FIN timeout for states S2, S3 (default 120)  " << endl
+		<< " -tlt SECONDS  TCP last ACK timeout (default 30)" << endl
+		<< " -ut  SECONDS  UDP timeout  (default 180)" << endl
+		<< " -it  SECONDS  ICMP timeout  (default 30)" << endl
+		<< " -ci  SECONDS  Max time between timed out connection lookups (default 1)" << endl
+		<< " -w   MS       Time window size in ms (default 2000)" << endl
+		<< " -c   NUMBER   Count window size (default 100)  " << endl
 		<< endl;
 }
 
