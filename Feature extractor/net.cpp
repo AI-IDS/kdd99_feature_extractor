@@ -34,17 +34,17 @@ namespace FeatureExtractor {
 
 	bool ip_header_t::flag_eb() const
 	{
-		return (flags() & 0x1 != 0);
+		return ((flags() & 0x1) != 0);
 	}
 
 	bool ip_header_t::flag_df() const
 	{
-		return (flags() & 0x2 != 0);
+		return ((flags() & 0x2) != 0);
 	}
 
 	bool ip_header_t::flag_mf() const
 	{
-		return (flags() & 0x4 != 0);
+		return ((flags() & 0x4) != 0);
 	}
 
 	size_t ip_header_t::frag_offset() const
