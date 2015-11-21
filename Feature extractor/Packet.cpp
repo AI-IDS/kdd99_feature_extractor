@@ -155,8 +155,9 @@ namespace FeatureExtractor {
 		return 1;
 	}
 
-	void Packet::print() const
+	void Packet::print_human() const
 	{
+		// TODO: WTF ugly code, just for debugging, mal si branic..
 		stringstream ss;
 
 		//struct tm *ltime;

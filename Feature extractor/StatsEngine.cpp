@@ -3,6 +3,7 @@
 
 namespace FeatureExtractor {
 	StatsEngine::StatsEngine()
+		// TODO: get values from config
 		: time_window()		// Default size (2 sec)
 		, count_window()	// Default size (100 connections)
 	{

@@ -24,7 +24,7 @@ namespace FeatureExtractor {
 
 	public:
 		Packet();
-		~Packet();
+		virtual ~Packet();
 
 		Timestamp get_start_ts() const;
 		void set_start_ts(const Timestamp &start_ts);
@@ -71,7 +71,7 @@ namespace FeatureExtractor {
 		/**
 		 * Output the class values (e.g. for debuging purposes)
 		 */
-		virtual void print() const;
+		virtual void print_human() const;
 
 	};
 

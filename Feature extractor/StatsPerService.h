@@ -24,9 +24,6 @@ namespace FeatureExtractor {
 		// conv. in srv_count (24/33)
 		uint32_t srv_rerror_count;
 
-		// TODO: move elsewhere dst_hot_srv_diff_host_rate
-		//uint32_t srv_diff_host_count;
-
 	public:
 		StatsPerService();
 		StatsPerService(FeatureUpdater *feature_updater);

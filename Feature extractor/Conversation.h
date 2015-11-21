@@ -43,7 +43,7 @@ namespace FeatureExtractor {
 	/**
 	 * Services
 	 * ! order & number of services must be the same in string mapping
-	 * see Conversation::SERVICE_NAMES[]
+	 * see Conversation::SERVICE_NAMES[] in Conversation.cpp
 	 */
 	enum service_t {
 		// General
@@ -168,7 +168,7 @@ namespace FeatureExtractor {
 		Conversation();
 		Conversation(const FiveTuple *tuple);
 		Conversation(const Packet *packet);
-		~Conversation();
+		virtual ~Conversation();
 
 		/**
 		 * Returns five tuple identifying the connection 
@@ -219,6 +219,6 @@ namespace FeatureExtractor {
 		/**
 		 * Output the class values in human readable format (e.g. for debuging purposes)
 		 */
-		void print() const;
+		void print_human() const;
 	};
 }

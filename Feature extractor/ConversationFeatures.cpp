@@ -170,12 +170,12 @@ namespace FeatureExtractor {
 		this->dst_host_same_srv_count = dst_host_same_srv_count;
 	}
 
-	void ConversationFeatures::print(bool print_extra_features)
+	void ConversationFeatures::print(bool print_extra_features) const
 	{
 		stringstream ss;
 
 		// Intrinsic features
-		ss << noshowpoint << setprecision(0) << (conv->get_duration_ms() / 1000) << ',';
+		ss << noshowpoint << setprecision(0) << (conv->get_duration_ms() / 1000) << ','; // Cut fractional part
 		ss << conv->get_protocol_type_str() << ',';
 		ss << conv->get_service_str() << ',';
 		ss << conv->get_state_str() << ',';
@@ -240,9 +240,9 @@ namespace FeatureExtractor {
 	}
 	
 
-	void ConversationFeatures::print_human()
+	void ConversationFeatures::print_human() const
 	{
-		conv->print();
+		conv->print_human();
 
 		stringstream ss;
 		ss << fixed << setprecision(2);

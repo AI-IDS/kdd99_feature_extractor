@@ -58,7 +58,7 @@ namespace FeatureExtractor {
 
 	void IpFragment::print() const
 	{
-		Packet::print();
+		Packet::print_human();
 
 		if (get_eth_type() == IPV4) {
 			cout << "  ip.flag_mf=" << get_ip_flag_mf()

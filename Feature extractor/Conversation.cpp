@@ -6,7 +6,7 @@ namespace FeatureExtractor {
 	using namespace std;
 
 	// Array for mapping service_t to string (char *)
-	// ! Update with enum service_t
+	// ! Update with enum service_t (in Conversation.h)
 	const char* const Conversation::SERVICE_NAMES[NUMBER_OF_SERVICES] = {
 		// General
 		"other",
@@ -339,8 +339,9 @@ namespace FeatureExtractor {
 		return (this->get_last_ts() < other.get_last_ts());
 	}
 
-	void Conversation::print() const
+	void Conversation::print_human() const
 	{
+		// TODO: WTF ugly code, just for debugging, so nasrac..
 		stringstream ss;
 
 		//struct tm *ltime;

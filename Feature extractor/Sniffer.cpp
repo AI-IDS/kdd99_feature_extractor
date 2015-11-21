@@ -5,13 +5,14 @@
 #include <assert.h>
 
 // prevent localtime warning
-#pragma warning(disable : 4996)
+//#pragma warning(disable : 4996)
 
 namespace FeatureExtractor {
 	
 	using namespace std;
 
-	Sniffer::Sniffer(char *fname)
+	Sniffer::Sniffer(char *fname, size_t additional_frame_length)
+		: additional_frame_length(additional_frame_length)
 	{
 		char errbuf[PCAP_ERRBUF_SIZE];
 
@@ -27,7 +28,8 @@ namespace FeatureExtractor {
 	}
 
 
-	Sniffer::Sniffer(int inum)
+	Sniffer::Sniffer(int inum, size_t additional_frame_length)
+		: additional_frame_length(additional_frame_length)
 	{
 		pcap_if_t *alldevs;
 		pcap_if_t *d;
@@ -77,7 +79,7 @@ namespace FeatureExtractor {
 		IpFragment *f = new IpFragment();
 		Timestamp ts(header->ts);
 		f->set_start_ts(ts);
-		f->set_length(header->len + ADDITIONAL_LEN);	// Additional lenght for e.g. CRC of Ethernet
+		f->set_length(header->len + additional_frame_length);	// Additional lenght for e.g. CRC of Ethernet
 
 		// Ethernet type/length field
 		ether_header_t *eth = (ether_header_t *)data;

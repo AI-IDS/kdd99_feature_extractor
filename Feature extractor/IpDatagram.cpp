@@ -47,9 +47,9 @@ namespace FeatureExtractor {
 	}
 
 
-	void IpDatagram::print() const
+	void IpDatagram::print_human() const
 	{
-		Packet::print();
+		Packet::print_human();
 		if (get_eth_type() == IPV4) {
 			//struct tm *ltime;
 			struct tm timeinfo;

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdint.h>
+// Bug in win WpdPack_4_1_2: On line 69 of pcap-stdinc.h, 'inline' is re-defined
+// http://www.winpcap.org/pipermail/winpcap-bugs/2013-November/001760.html
 #include <pcap.h>
 
 namespace FeatureExtractor {

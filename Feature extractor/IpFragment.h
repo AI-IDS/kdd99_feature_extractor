@@ -31,6 +31,6 @@ namespace FeatureExtractor {
 		 * Output the class values (e.g. for debuging purposes)
 		 * overriden
 		 */
-		virtual void print() const;
+		void print() const;
 	};
 }

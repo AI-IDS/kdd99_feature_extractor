@@ -73,6 +73,24 @@ int main(int argc, char* argv[])
 	//usage();
 	//list_interfaces();
 
+	// TODO: arg: timouts, intervals
+	/*
+	uint32_t ipfrag;
+	uint32_t ipfrag_check_interval;
+
+	uint32_t tcp_syn;		// S0, S1
+	uint32_t tcp_estab;		// ESTAB
+	uint32_t tcp_rst;		// REJ, RSTO, RSTR, RSTOS0
+	uint32_t tcp_fin;		// S2, S3
+	uint32_t tcp_last_ack;	// S2F, S2F
+	uint32_t udp;
+	uint32_t icmp;
+	uint32_t conversation_check_interval;
+
+
+
+	*/
+
 	if (argc <= 1) {
 		sniffer = new Sniffer(1);
 	}
@@ -210,7 +228,9 @@ void usage()
 		<< "  -i interface_num" << endl
 		<< "  -e \tPrint extra features(IPs, ports, end timestamp)" << endl
 		<< "  [timeouts]" << endl	// TODO
-		<< "  [window settings]" << endl << endl;	// TODO
+		<< "  [window settings]" << endl	// TODO
+		<< "  [intervals]" << endl	// TODO
+		<< endl;
 }
 
 void list_interfaces()

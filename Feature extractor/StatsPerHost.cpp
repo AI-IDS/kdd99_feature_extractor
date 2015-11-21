@@ -1,7 +1,11 @@
 #include "StatsPerHost.h"
 
+// Disable C4351 warning message:
+// new behavior: elements of array 'StatsPerHost::same_srv_counts' will be default initialized
+#pragma warning(disable:4351)
 
 namespace FeatureExtractor {
+
 	StatsPerHost::StatsPerHost(FeatureUpdater *feature_updater)
 		: feature_updater(feature_updater)
 		, count(0), serror_count(0), rerror_count()
