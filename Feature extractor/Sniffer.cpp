@@ -11,8 +11,8 @@ namespace FeatureExtractor {
 	
 	using namespace std;
 
-	Sniffer::Sniffer(char *fname, size_t additional_frame_length)
-		: additional_frame_length(additional_frame_length)
+	Sniffer::Sniffer(const char *fname, const Config *config)
+		: additional_frame_length(config->get_additional_frame_len())
 	{
 		char errbuf[PCAP_ERRBUF_SIZE];
 
@@ -28,8 +28,8 @@ namespace FeatureExtractor {
 	}
 
 
-	Sniffer::Sniffer(int inum, size_t additional_frame_length)
-		: additional_frame_length(additional_frame_length)
+	Sniffer::Sniffer(int inum, const Config *config)
+		: additional_frame_length(config->get_additional_frame_len())
 	{
 		pcap_if_t *alldevs;
 		pcap_if_t *d;

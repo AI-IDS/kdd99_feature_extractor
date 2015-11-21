@@ -5,7 +5,7 @@
 #include "net.h"
 #include "Packet.h"
 #include "Conversation.h"
-#include "TimeoutValues.h"
+#include "Config.h"
 #include "IntervalKeeper.h"
 
 namespace FeatureExtractor {
@@ -24,7 +24,7 @@ namespace FeatureExtractor {
 		queue<Conversation *>output_queue;
 
 		// Timeout values & timeout check interval
-		TimeoutValues timeouts;
+		Config timeouts;
 		IntervalKeeper timeout_interval;
 
 		/**
@@ -33,7 +33,7 @@ namespace FeatureExtractor {
 		void check_timeouts(const Timestamp &now);
 	public:
 		ConversationReconstructor();
-		ConversationReconstructor(TimeoutValues &timeouts);
+		ConversationReconstructor(Config &timeouts);
 		~ConversationReconstructor();
 
 		/**

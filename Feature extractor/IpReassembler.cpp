@@ -10,7 +10,7 @@ namespace FeatureExtractor {
 	{
 	}
 
-	IpReassembler::IpReassembler(TimeoutValues &timeouts)
+	IpReassembler::IpReassembler(Config &timeouts)
 		: timeouts(timeouts)
 		, timeout_interval(timeouts.get_conversation_check_interval())
 	{

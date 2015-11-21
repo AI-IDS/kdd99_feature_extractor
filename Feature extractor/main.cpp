@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <cstdlib>
 #include <string>
+#include "Config.h"
 #include "Sniffer.h"
 #include "IpReassembler.h"
 #include "ConversationReconstructor.h"
@@ -57,6 +58,7 @@ void extract(Sniffer *sniffer, bool print_extra_features = true);
 
 int main(int argc, char* argv[])
 {
+	Config config;
 	Sniffer *sniffer = NULL;
 
 	// TODO: usage/help, more input files, move main cycle to function
@@ -73,23 +75,13 @@ int main(int argc, char* argv[])
 	//usage();
 	//list_interfaces();
 
-	// TODO: arg: timouts, intervals
-	/*
-	uint32_t ipfrag;
-	uint32_t ipfrag_check_interval;
-
-	uint32_t tcp_syn;		// S0, S1
-	uint32_t tcp_estab;		// ESTAB
-	uint32_t tcp_rst;		// REJ, RSTO, RSTR, RSTOS0
-	uint32_t tcp_fin;		// S2, S3
-	uint32_t tcp_last_ack;	// S2F, S2F
-	uint32_t udp;
-	uint32_t icmp;
-	uint32_t conversation_check_interval;
+	// TODO: arg: timouts, intervals ... (config)
 
 
 
-	*/
+	// TODO: arg_parser(args, config)
+	// - multiple files
+	// - switch to print line with filename
 
 	if (argc <= 1) {
 		sniffer = new Sniffer(1);
@@ -121,7 +113,7 @@ int main(int argc, char* argv[])
 
 	IpReassembler reasm;
 	ConversationReconstructor conv_reconstructor;
-	StatsEngine stats_engine;
+	StatsEngine stats_engine(&config);
 
 	bool has_more_traffic = true;
 	while (has_more_traffic) {

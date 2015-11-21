@@ -5,6 +5,7 @@
 #include "StatsPerHost.h"
 #include "StatsPerService.h"
 #include "StatsPerServiceWithSrcPort.h"
+#include "Config.h"
 
 namespace FeatureExtractor {
 	/**
@@ -16,7 +17,7 @@ namespace FeatureExtractor {
 		StatsWindowCount<StatsPerHost, StatsPerServiceWithSrcPort> count_window;
 
 	public:
-		StatsEngine();
+		StatsEngine(const Config *config);
 		~StatsEngine();
 
 		/**

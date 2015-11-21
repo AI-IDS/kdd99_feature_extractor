@@ -1,8 +1,10 @@
 #pragma once
 
 #include "IpFragment.h"
+#include "Config.h"
 // Bug in win WpdPack_4_1_2: On line 69 of pcap-stdinc.h, 'inline' is re-defined
 // http://www.winpcap.org/pipermail/winpcap-bugs/2013-November/001760.html
+// Solved by including pcap.h after standard libs
 #include <pcap.h>
 
 namespace FeatureExtractor {
@@ -26,8 +28,8 @@ namespace FeatureExtractor {
 		size_t additional_frame_length;
 
 	public:
-		Sniffer(char *fname, size_t additional_frame_length = 0);
-		Sniffer(int inum, size_t additional_frame_length = 0);
+		Sniffer(const char *fname, const Config *config = new Config());
+		Sniffer(int inum, const Config *config = new Config());
 		~Sniffer();
 
 		IpFragment *next_frame();

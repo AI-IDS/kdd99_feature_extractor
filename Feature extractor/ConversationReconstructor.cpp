@@ -14,7 +14,7 @@ namespace FeatureExtractor {
 	{
 	}
 
-	ConversationReconstructor::ConversationReconstructor(TimeoutValues &timeouts)
+	ConversationReconstructor::ConversationReconstructor(Config &timeouts)
 		: timeouts(timeouts)
 		, timeout_interval(timeouts.get_conversation_check_interval())
 	{
