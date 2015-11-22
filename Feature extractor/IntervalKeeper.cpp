@@ -8,7 +8,7 @@ namespace FeatureExtractor {
 	}
 
 	IntervalKeeper::IntervalKeeper(uint64_t interval_ms)
-		: interval(interval_ms), last_ts()
+		: interval(interval_ms * 1000), last_ts()
 	{
 	}
 
@@ -20,7 +20,7 @@ namespace FeatureExtractor {
 
 	uint64_t IntervalKeeper::get_interval() const
 	{
-		return interval;
+		return interval / 1000;
 	}
 
 	void IntervalKeeper::set_interval(uint64_t interval_ms)
