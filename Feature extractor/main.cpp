@@ -22,13 +22,7 @@ void extract(Sniffer *sniffer, const Config *config);
 
 int main(int argc, char **argv)
 {
-	// debug
-	std::ofstream out("out.txt");
-	std::streambuf *coutbuf = std::cout.rdbuf(); //save old buf
-	std::cout.rdbuf(out.rdbuf()); //redirect std::cout to out.txt!
-
 	Config config;
-	// test: -i 1 -p 1200 -e -v -a 12 -ft 11 -fi 12 -tst 21 -tet 22 -trt 23 -tft 24 -tlt 25 -ut 31 -it 41 -ci 51 -t 666 -c 777
 	parse_args(argc, argv, &config);
 
 	if (config.get_files_count() == 0) {
@@ -38,8 +32,6 @@ int main(int argc, char **argv)
 			cout << "INTERFACE " << inum << endl;
 		Sniffer *sniffer = new Sniffer(inum, &config);
 		extract(sniffer, &config);
-
-
 	}
 	else {
 		// Input from files
@@ -55,7 +47,6 @@ int main(int argc, char **argv)
 			cout << "counter: " << Sniffer::counter << endl;
 		}
 	}
-
 
 	return 0;
 }
@@ -112,7 +103,7 @@ void usage()
 		<< " -p   MS       PCAP read timeout in ms (default 1000)" << endl
 		<< " -e            Print extra features(IPs, ports, end timestamp)" << endl
 		<< " -v            Print filename before parsing each file" << endl
-		<< " -o   FILE     Write output to FILE instead of standard output" << endl
+		<< " -o   FILE     Write all output to FILE instead of standard output" << endl
 		<< " -a   BYTES    Additional frame length to be add to each frame in bytes" << endl
 		<< "                 (e.g. 4B Ethernet CRC) (default 0)" << endl
 		<< " -ft  SECONDS  IP reassembly timeout (default 30)" << endl
