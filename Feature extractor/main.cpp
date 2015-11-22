@@ -26,12 +26,15 @@ int main(int argc, char **argv)
 	if (config.get_files_count() == 0) {
 		// Input from interface
 		int inum = config.get_interface_num();
+		cout << "from interface " << inum << endl;
 		Sniffer *sniffer = new Sniffer(inum, &config);
 		extract(sniffer, &config);
+
 
 	} else {
 		// Input from files
 		int count = config.get_files_count();
+		cout << "from files " << count << endl;
 		char **files = config.get_files_values();
 		for (int i = 0; i < count; i++) {
 			if (config.should_print_extra_features())
