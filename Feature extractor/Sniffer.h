@@ -7,6 +7,7 @@
 // Solved by including pcap.h after standard libs
 #include <pcap.h>
 
+
 namespace FeatureExtractor {
 	/**
 	 * Network traffic sniffer & frame parser
@@ -27,12 +28,18 @@ namespace FeatureExtractor {
 		// Value 0 should lead to same result as you can see in wireshark
 		size_t additional_frame_length;
 
+
+
 	public:
 		Sniffer(const char *fname, const Config *config = new Config());
 		Sniffer(int inum, const Config *config = new Config());
 		~Sniffer();
 
 		IpFragment *next_frame();
+
+
+		//debug
+		static uint32_t counter;
 
 	};
 }

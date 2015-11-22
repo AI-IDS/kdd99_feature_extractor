@@ -11,6 +11,9 @@ namespace FeatureExtractor {
 	
 	using namespace std;
 
+	//debug
+	uint32_t Sniffer::counter = 0;
+
 	Sniffer::Sniffer(const char *fname, const Config *config)
 		: additional_frame_length(config->get_additional_frame_len())
 	{
@@ -76,6 +79,8 @@ namespace FeatureExtractor {
 		if (pcap_next_ex(this->handle, &header, &data) != 1) {
 			return NULL;
 		}
+		// debug
+		counter++;
 
 		IpFragment *f = new IpFragment();
 		Timestamp ts(header->ts);

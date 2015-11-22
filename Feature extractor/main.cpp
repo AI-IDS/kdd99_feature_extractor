@@ -17,12 +17,20 @@ void invalid_option(char *opt);
 void invalid_option_value(char *opt, char *val);
 void extract(Sniffer *sniffer, const Config *config);
 
+//debug
+#include <fstream>
+
 int main(int argc, char **argv)
 {
+	// debug
+	std::ofstream out("out.txt");
+	std::streambuf *coutbuf = std::cout.rdbuf(); //save old buf
+	std::cout.rdbuf(out.rdbuf()); //redirect std::cout to out.txt!
+
 	Config config;
 	// test: -i 1 -p 1200 -e -v -a 12 -ft 11 -fi 12 -tst 21 -tet 22 -trt 23 -tft 24 -tlt 25 -ut 31 -it 41 -ci 51 -t 666 -c 777
 	parse_args(argc, argv, &config);
-	
+
 	if (config.get_files_count() == 0) {
 		// Input from interface
 		int inum = config.get_interface_num();
@@ -32,7 +40,8 @@ int main(int argc, char **argv)
 		extract(sniffer, &config);
 
 
-	} else {
+	}
+	else {
 		// Input from files
 		int count = config.get_files_count();
 		char **files = config.get_files_values();
@@ -42,8 +51,11 @@ int main(int argc, char **argv)
 
 			Sniffer *sniffer = new Sniffer(files[i], &config);
 			extract(sniffer, &config);
+
+			cout << "counter: " << Sniffer::counter << endl;
 		}
 	}
+
 
 	return 0;
 }
@@ -100,6 +112,7 @@ void usage()
 		<< " -p   MS       PCAP read timeout in ms (default 1000)" << endl
 		<< " -e            Print extra features(IPs, ports, end timestamp)" << endl
 		<< " -v            Print filename before parsing each file" << endl
+		<< " -o   FILE     Write output to FILE instead of standard output" << endl
 		<< " -a   BYTES    Additional frame length to be add to each frame in bytes" << endl
 		<< "                 (e.g. 4B Ethernet CRC) (default 0)" << endl
 		<< " -ft  SECONDS  IP reassembly timeout (default 30)" << endl
@@ -134,7 +147,7 @@ void list_interfaces()
 
 	// Print the list
 	for (d = alldevs, i = 1; d; d = d->next, i++) {
-		
+
 		cout << i << ". "
 			<< setiosflags(ios_base::left) << setw(40) << d->description
 			<< "\t[" << d->name << ']' << endl;
@@ -158,6 +171,7 @@ void parse_args(int argc, char **argv, Config *config)
 		// Second character
 		char *endptr;
 		long num;
+		std::ofstream out_stream;
 		switch (argv[i][1]) {
 		case '-': // Long option
 			if (strcmp(argv[i], "--help") == 0) {
@@ -206,7 +220,7 @@ void parse_args(int argc, char **argv, Config *config)
 			else {
 				invalid_option(argv[i]);
 			}
-				break;
+			break;
 
 		case 'e':
 			if (len != 2)
@@ -220,6 +234,18 @@ void parse_args(int argc, char **argv, Config *config)
 				invalid_option(argv[i]);
 
 			config->set_print_filename(true);
+			break;
+
+		case 'o':
+			if (len != 2)
+				invalid_option(argv[i]);
+
+			if (argc <= ++i)
+				invalid_option_value(argv[i - 1], "");
+
+			out_stream = ofstream(argv[i]);
+			// streambuf *coutbuf = std::cout.rdbuf(); //save old buf
+			cout.rdbuf(out_stream.rdbuf());		//redirect std::cout
 			break;
 
 		case 'p':
