@@ -12,9 +12,9 @@ using namespace FeatureExtractor;
 
 void usage();
 void list_interfaces();
-void parse_args(int argc, const char *argv[], Config *config);
-void invalid_option(const char *opt);
-void invalid_option_value(const char *opt, const char *val);
+void parse_args(int argc, char **argv, Config *config);
+void invalid_option(char *opt);
+void invalid_option_value(char *opt, char *val);
 void extract(Sniffer *sniffer, const Config *config);
 
 int main(int argc, char **argv)
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 	} else {
 		// Input from files
 		int count = config.get_files_count();
-		const char **files = config.get_files_values();
+		char **files = config.get_files_values();
 		for (int i = 0; i < count; i++) {
 			if (config.get_print_extra_features())
 				cout << "FILE '" << files[i] << "'" << endl;
@@ -93,10 +93,10 @@ void usage()
 	cout << "Usage: extractor [OPTION] [FILE]..." << endl
 		<< " -h, --help    Display this usage  " << endl
 		<< " -l, --list    List interfaces  " << endl
-		<< " -i   NUMBER   Capture from interface with given number" << endl
+		<< " -i   NUMBER   Capture from interface with given number (default 1)" << endl
 		<< " -e            Print extra features(IPs, ports, end timestamp)" << endl
 		<< " -a   BYTES    Additional frame length to be add to each frame in bytes" << endl
-		<< "                 (e.g. 4B Ethernet CRC)" << endl
+		<< "                 (e.g. 4B Ethernet CRC) (default 0)" << endl
 		<< " -ft  SECONDS  IP reassembly timeout (default 30)" << endl
 		<< " -fi  SECONDS  Max time between timed out IP fragments lookups (default 1)" << endl
 		<< " -tst SECONDS  TCP SYN timeout for states S0, S1 (default 120)" << endl
@@ -140,7 +140,7 @@ void list_interfaces()
 	pcap_freealldevs(alldevs);
 }
 
-void parse_args(int argc, const char **argv, Config *config)
+void parse_args(int argc, char **argv, Config *config)
 {
 	int i;
 
@@ -179,14 +179,20 @@ void parse_args(int argc, const char **argv, Config *config)
 
 		case 'i':
 			if (len == 2) {
-				num = strtol(argv[++i], &endptr, 10);
+				if (argc <= ++i)
+					invalid_option_value(argv[i - 1], "");
+
+				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + len)
 					invalid_option_value(argv[i - 1], argv[i]);
 
 				config->set_interface_num(num);
 			}
 			else if (len == 3 && argv[i][2] == 't') {	// Option -it
-				num = strtol(argv[++i], &endptr, 10);
+				if (argc <= ++i)
+					invalid_option_value(argv[i - 1], "");
+
+				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + len)
 					invalid_option_value(argv[i - 1], argv[i]);
 
@@ -208,7 +214,10 @@ void parse_args(int argc, const char **argv, Config *config)
 			if (len != 2)
 				invalid_option(argv[i]);
 
-			num = strtol(argv[++i], &endptr, 10);
+			if (argc <= ++i)
+				invalid_option_value(argv[i - 1], "");
+
+			num = strtol(argv[i], &endptr, 10);
 			if (endptr < argv[i] + len)
 				invalid_option_value(argv[i - 1], argv[i]);
 
@@ -217,14 +226,20 @@ void parse_args(int argc, const char **argv, Config *config)
 
 		case 'c':
 			if (len == 2) {
-				num = strtol(argv[++i], &endptr, 10);
+				if (argc <= ++i)
+					invalid_option_value(argv[i - 1], "");
+
+				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + len)
 					invalid_option_value(argv[i - 1], argv[i]);
 
 				config->set_count_window_size(num);
 			}
 			else if (len == 3 && argv[i][2] == 'i') {	// Option -ci
-				num = strtol(argv[++i], &endptr, 10);
+				if (argc <= ++i)
+					invalid_option_value(argv[i - 1], "");
+
+				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + len)
 					invalid_option_value(argv[i - 1], argv[i]);
 
@@ -240,7 +255,10 @@ void parse_args(int argc, const char **argv, Config *config)
 			if (len != 3 || argv[i][2] != 't')
 				invalid_option(argv[i]);
 
-			num = strtol(argv[++i], &endptr, 10);
+			if (argc <= ++i)
+				invalid_option_value(argv[i - 1], "");
+
+			num = strtol(argv[i], &endptr, 10);
 			if (endptr < argv[i] + len)
 				invalid_option_value(argv[i - 1], argv[i]);
 
@@ -254,7 +272,10 @@ void parse_args(int argc, const char **argv, Config *config)
 			// Third character
 			switch (argv[i][2]) {
 			case 't':
-				num = strtol(argv[++i], &endptr, 10);
+				if (argc <= ++i)
+					invalid_option_value(argv[i - 1], "");
+
+				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + len)
 					invalid_option_value(argv[i - 1], argv[i]);
 
@@ -262,7 +283,10 @@ void parse_args(int argc, const char **argv, Config *config)
 				break;
 
 			case 'i':
-				num = strtol(argv[++i], &endptr, 10);
+				if (argc <= ++i)
+					invalid_option_value(argv[i - 1], "");
+
+				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + len)
 					invalid_option_value(argv[i - 1], argv[i]);
 
@@ -277,7 +301,10 @@ void parse_args(int argc, const char **argv, Config *config)
 
 		case 't':
 			if (len == 2) {
-				num = strtol(argv[++i], &endptr, 10);
+				if (argc <= ++i)
+					invalid_option_value(argv[i - 1], "");
+
+				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + len)
 					invalid_option_value(argv[i - 1], argv[i]);
 
@@ -287,7 +314,10 @@ void parse_args(int argc, const char **argv, Config *config)
 				// Third character
 				switch (argv[i][2]) {
 				case 's':
-					num = strtol(argv[++i], &endptr, 10);
+					if (argc <= ++i)
+						invalid_option_value(argv[i - 1], "");
+
+					num = strtol(argv[i], &endptr, 10);
 					if (endptr < argv[i] + len)
 						invalid_option_value(argv[i - 1], argv[i]);
 
@@ -295,7 +325,10 @@ void parse_args(int argc, const char **argv, Config *config)
 					break;
 
 				case 'e':
-					num = strtol(argv[++i], &endptr, 10);
+					if (argc <= ++i)
+						invalid_option_value(argv[i - 1], "");
+
+					num = strtol(argv[i], &endptr, 10);
 					if (endptr < argv[i] + len)
 						invalid_option_value(argv[i - 1], argv[i]);
 
@@ -303,7 +336,10 @@ void parse_args(int argc, const char **argv, Config *config)
 					break;
 
 				case 'r':
-					num = strtol(argv[++i], &endptr, 10);
+					if (argc <= ++i)
+						invalid_option_value(argv[i - 1], "");
+
+					num = strtol(argv[i], &endptr, 10);
 					if (endptr < argv[i] + len)
 						invalid_option_value(argv[i - 1], argv[i]);
 
@@ -311,7 +347,10 @@ void parse_args(int argc, const char **argv, Config *config)
 					break;
 
 				case 'f':
-					num = strtol(argv[++i], &endptr, 10);
+					if (argc <= ++i)
+						invalid_option_value(argv[i - 1], "");
+
+					num = strtol(argv[i], &endptr, 10);
 					if (endptr < argv[i] + len)
 						invalid_option_value(argv[i - 1], argv[i]);
 
@@ -319,7 +358,10 @@ void parse_args(int argc, const char **argv, Config *config)
 					break;
 
 				case 'l':
-					num = strtol(argv[++i], &endptr, 10);
+					if (argc <= ++i)
+						invalid_option_value(argv[i - 1], "");
+
+					num = strtol(argv[i], &endptr, 10);
 					if (endptr < argv[i] + len)
 						invalid_option_value(argv[i - 1], argv[i]);
 
@@ -352,14 +394,14 @@ void parse_args(int argc, const char **argv, Config *config)
 	}
 }
 
-void invalid_option(const char *opt)
+void invalid_option(char *opt)
 {
 	cout << "Invalid option '" << opt << "'" << endl << endl;
 	usage();
 	exit(-1);
 }
 
-void invalid_option_value(const char *opt, char *val)
+void invalid_option_value(char *opt, char *val)
 {
 	cout << "Invalid value '" << val << "' for option '" << opt << "'" << endl << endl;
 	usage();
