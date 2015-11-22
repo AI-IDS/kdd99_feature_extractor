@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 		int count = config.get_files_count();
 		char **files = config.get_files_values();
 		for (int i = 0; i < count; i++) {
-			if (config.get_print_extra_features())
+			if (config.should_print_extra_features())
 				cout << "FILE '" << files[i] << "'" << endl;
 
 			Sniffer *sniffer = new Sniffer(files[i], &config);
@@ -59,7 +59,7 @@ void extract(Sniffer *sniffer, const Config *config)
 		IpFragment *frag = sniffer->next_frame();
 		has_more_traffic = (frag != NULL);
 
-		// I
+		// IP Reassembly
 		if (has_more_traffic)  {
 			ip_field_protocol_t ip_proto = frag->get_ip_proto();
 			if (ip_proto != TCP && ip_proto != UDP && ip_proto != ICMP)
@@ -82,7 +82,7 @@ void extract(Sniffer *sniffer, const Config *config)
 			ConversationFeatures *cf = stats_engine.calculate_features(conv);
 			conv = nullptr;		// Should not be used anymore, object will commit suicide
 
-			cf->print(config->get_print_extra_features());
+			cf->print(config->should_print_extra_features());
 			delete cf;
 		}
 	}
@@ -96,6 +96,7 @@ void usage()
 		<< " -i   NUMBER   Capture from interface with given number (default 1)" << endl
 		<< " -p   MS       PCAP read timeout in ms (default 1000)" << endl
 		<< " -e            Print extra features(IPs, ports, end timestamp)" << endl
+		<< " -v            Print filename before parsing each file" << endl
 		<< " -a   BYTES    Additional frame length to be add to each frame in bytes" << endl
 		<< "                 (e.g. 4B Ethernet CRC) (default 0)" << endl
 		<< " -ft  SECONDS  IP reassembly timeout (default 30)" << endl

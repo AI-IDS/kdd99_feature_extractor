@@ -27,8 +27,6 @@ namespace FeatureExtractor {
 		// Value 0 should lead to same result as you can see in wireshark
 		size_t additional_frame_length;
 
-		int read_timeout;
-
 	public:
 		Sniffer(const char *fname, const Config *config = new Config());
 		Sniffer(int inum, const Config *config = new Config());
