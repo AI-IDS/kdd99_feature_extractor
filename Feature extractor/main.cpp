@@ -20,13 +20,14 @@ void extract(Sniffer *sniffer, const Config *config);
 int main(int argc, char **argv)
 {
 	Config config;
-	// test: -i 1 -p 1200 -e -v -a 12 -ft 11 -fi 12 --tst 21 -tet 22 -trt 23 -tft 24 -tft 25 -tlt 26 -ut 31 -it 41 -ci 51 -t 666 -c 777
+	// test: -i 1 -p 1200 -e -v -a 12 -ft 11 -fi 12 -tst 21 -tet 22 -trt 23 -tft 24 -tlt 25 -ut 31 -it 41 -ci 51 -t 666 -c 777
 	parse_args(argc, argv, &config);
 	
 	if (config.get_files_count() == 0) {
 		// Input from interface
 		int inum = config.get_interface_num();
-		cout << "from interface " << inum << endl;
+		if (config.should_print_extra_features())
+			cout << "INTERFACE " << inum << endl;
 		Sniffer *sniffer = new Sniffer(inum, &config);
 		extract(sniffer, &config);
 
@@ -34,7 +35,6 @@ int main(int argc, char **argv)
 	} else {
 		// Input from files
 		int count = config.get_files_count();
-		cout << "from files " << count << endl;
 		char **files = config.get_files_values();
 		for (int i = 0; i < count; i++) {
 			if (config.should_print_extra_features())

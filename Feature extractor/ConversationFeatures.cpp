@@ -234,9 +234,9 @@ namespace FeatureExtractor {
 			//strftime(timestr, sizeof timestr, "%Y-%m-%dT%H:%M:%S", ltime);
 			strftime(timestr, sizeof timestr, "%Y-%m-%dT%H:%M:%S", &timeinfo);
 			ss << timestr;
-
-			cout << ss.str() << endl;
 		}
+
+		cout << ss.str() << endl;
 	}
 	
 
