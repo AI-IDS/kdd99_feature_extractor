@@ -1,7 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include <cstdlib>
-#include <string>
+#include <string.h>
 #include "Config.h"
 #include "Sniffer.h"
 #include "IpReassembler.h"
@@ -11,10 +10,11 @@
 using namespace std;
 using namespace FeatureExtractor;
 
-
 void usage();
 void list_interfaces();
-void parse_args(int argc, char *argv[], Config *config);
+void parse_args(int argc, const char *argv[], Config *config);
+void invalid_option(const char *opt);
+void invalid_option_value(const char *opt, const char *val);
 void extract(Sniffer *sniffer, const Config *config);
 
 int main(int argc, char **argv)
@@ -22,61 +22,27 @@ int main(int argc, char **argv)
 	Config config;
 
 	parse_args(argc, argv, &config);
+	
+	if (config.get_files_count() == 0) {
+		// Input from interface
+		int inum = config.get_interface_num();
+		Sniffer *sniffer = new Sniffer(inum, &config);
+		extract(sniffer, &config);
 
-	Sniffer *sniffer = NULL;
+	} else {
+		// Input from files
+		int count = config.get_files_count();
+		const char **files = config.get_files_values();
+		for (int i = 0; i < count; i++) {
+			if (config.get_print_extra_features())
+				cout << "FILE '" << files[i] << "'" << endl;
 
-	// TODO: usage/help, more input files, move main cycle to function
-	/*
-		extractor [OPTION] [FILE]...
-		-i interface_num
-		-e print extra features (IPs, ports, end time)
-		[timeouts]
-		[window settings]
-
-		*/
-
-	// test
-	//usage();
-	//list_interfaces();
-
-	// TODO: arg: timouts, intervals ... (config)
-
-
-
-	// TODO: arg_parser(args, config)
-	// - multiple files
-	// - switch to print line with filename
-
-	if (argc <= 1) {
-		sniffer = new Sniffer(1);
-	}
-	else {
-		int inum = atoi(argv[1]);
-		if (inum && to_string(inum) == argv[1]) {
-			sniffer = new Sniffer(inum);
+			Sniffer *sniffer = new Sniffer(files[i], &config);
+			extract(sniffer, &config);
 		}
-		else {
-			sniffer = new Sniffer(argv[1]);
-		}
-
 	}
-
-	//sniffer = new Sniffer("ip_frag_source.pcap");
-	//sniffer = new Sniffer("ssh.pcap");
-	//sniffer = new Sniffer("ssh_student.pcap");
-	//sniffer = new Sniffer("t.cap");
-
-	//debug_test();
-
-	extract(sniffer, &config);
 
 	return 0;
-}
-
-
-void parse_args(int argc, char *argv[], Config *config)
-{
-
 }
 
 void extract(Sniffer *sniffer, const Config *config)
@@ -122,56 +88,27 @@ void extract(Sniffer *sniffer, const Config *config)
 	}
 }
 
-
-/*
-TODO:
-l  list
-h  help
-? help
---help help
-e print extra features
-
--  int files_c;
--  char *files_v;
-i  int interface_num;
-a  size_t additional_frame_len;
-
-ft  uint32_t ipfrag_timeout;
-fi  uint32_t ipfrag_check_interval;
-
-tst  uint32_t tcp_syn_timeout;
-tet  uint32_t tcp_estab_timeout;
-trt  uint32_t tcp_rst_timeout;
-tft  uint32_t tcp_fin_timeout;
-tlt  uint32_t tcp_last_ack_timeout;
-ut  uint32_t udp_timeout;
-it  uint32_t icmp_timeout;
-ci  uint32_t conversation_check_interval;
-
-w  unsigned int time_window_size_ms;
-c  unsigned int count_window_size;
-*/
 void usage()
 {
 	cout << "Usage: extractor [OPTION] [FILE]..." << endl
-		<< " -h, --help   Display this usage  " << endl
+		<< " -h, --help    Display this usage  " << endl
 		<< " -l, --list    List interfaces  " << endl
-		<< " -i   NUMBER   Capture from interface with given number  " << endl
-		<< " -e            Print extra features(IPs, ports, end timestamp)  " << endl
-		<< " -a   BYTES    Additional frame length to be add to each frame in bytes  " << endl
-		<< "                 (e.g. 4B Ethernet CRC)  " << endl
+		<< " -i   NUMBER   Capture from interface with given number" << endl
+		<< " -e            Print extra features(IPs, ports, end timestamp)" << endl
+		<< " -a   BYTES    Additional frame length to be add to each frame in bytes" << endl
+		<< "                 (e.g. 4B Ethernet CRC)" << endl
 		<< " -ft  SECONDS  IP reassembly timeout (default 30)" << endl
-		<< " -fi  SECONDS  Max time between timed out IP fragments lookups (default 1) " << endl
+		<< " -fi  SECONDS  Max time between timed out IP fragments lookups (default 1)" << endl
 		<< " -tst SECONDS  TCP SYN timeout for states S0, S1 (default 120)" << endl
 		<< " -tet SECONDS  TCP timeout for established connections (default 5days)  " << endl
-		<< " -trt SECONDS  TCP RST timeout for states REJ, RSTO, RSTR, RSTOS0 (default 10)  " << endl
-		<< " -tft SECONDS  TCP FIN timeout for states S2, S3 (default 120)  " << endl
+		<< " -trt SECONDS  TCP RST timeout for states REJ, RSTO, RSTR, RSTOS0 (default 10)" << endl
+		<< " -tft SECONDS  TCP FIN timeout for states S2, S3 (default 120)" << endl
 		<< " -tlt SECONDS  TCP last ACK timeout (default 30)" << endl
 		<< " -ut  SECONDS  UDP timeout  (default 180)" << endl
 		<< " -it  SECONDS  ICMP timeout  (default 30)" << endl
 		<< " -ci  SECONDS  Max time between timed out connection lookups (default 1)" << endl
-		<< " -w   MS       Time window size in ms (default 2000)" << endl
-		<< " -c   NUMBER   Count window size (default 100)  " << endl
+		<< " -t   MS       Time window size in ms (default 2000)" << endl
+		<< " -c   NUMBER   Count window size (default 100)" << endl
 		<< endl;
 }
 
@@ -201,4 +138,230 @@ void list_interfaces()
 
 	// Free the device list
 	pcap_freealldevs(alldevs);
+}
+
+void parse_args(int argc, const char **argv, Config *config)
+{
+	int i;
+
+	// Options
+	for (i = 1; i < argc && argv[i][0] == '-'; i++) {
+		int len = strlen(argv[i]);
+		if (len < 2)
+			invalid_option(argv[i]);
+
+		// Second character
+		char *endptr;
+		long num;
+		switch (argv[i][1]) {
+		case '-': // Long option
+			if (strcmp(argv[i], "--help") == 0) {
+				usage();
+				exit(0);
+			}
+			if (strcmp(argv[i], "--list") == 0) {
+				list_interfaces();
+				exit(0);
+			}
+
+			invalid_option(argv[i]);
+			break;
+
+		case 'h':
+			usage();
+			exit(0);
+			break;
+
+		case 'l':
+			list_interfaces();
+			exit(0);
+			break;
+
+		case 'i':
+			if (len == 2) {
+				num = strtol(argv[++i], &endptr, 10);
+				if (endptr < argv[i] + len)
+					invalid_option_value(argv[i - 1], argv[i]);
+
+				config->set_interface_num(num);
+			}
+			else if (len == 3 && argv[i][2] == 't') {	// Option -it
+				num = strtol(argv[++i], &endptr, 10);
+				if (endptr < argv[i] + len)
+					invalid_option_value(argv[i - 1], argv[i]);
+
+				config->set_icmp_timeout(num);
+			}
+			else {
+				invalid_option(argv[i]);
+			}
+				break;
+
+		case 'e':
+			if (len != 2)
+				invalid_option(argv[i]);
+
+			config->set_print_extra_features(true);
+			break;
+
+		case 'a':
+			if (len != 2)
+				invalid_option(argv[i]);
+
+			num = strtol(argv[++i], &endptr, 10);
+			if (endptr < argv[i] + len)
+				invalid_option_value(argv[i - 1], argv[i]);
+
+			config->set_additional_frame_len(num);
+			break;
+
+		case 'c':
+			if (len == 2) {
+				num = strtol(argv[++i], &endptr, 10);
+				if (endptr < argv[i] + len)
+					invalid_option_value(argv[i - 1], argv[i]);
+
+				config->set_count_window_size(num);
+			}
+			else if (len == 3 && argv[i][2] == 'i') {	// Option -ci
+				num = strtol(argv[++i], &endptr, 10);
+				if (endptr < argv[i] + len)
+					invalid_option_value(argv[i - 1], argv[i]);
+
+				config->set_conversation_check_interval(num);
+			}
+			else {
+				invalid_option(argv[i]);
+			}
+			break;
+
+		case 'u':
+			// Limit to '-ut'
+			if (len != 3 || argv[i][2] != 't')
+				invalid_option(argv[i]);
+
+			num = strtol(argv[++i], &endptr, 10);
+			if (endptr < argv[i] + len)
+				invalid_option_value(argv[i - 1], argv[i]);
+
+			config->set_time_window_size_ms(num);
+			break;
+
+		case 'f':
+			if (len != 2)
+				invalid_option(argv[i]);
+
+			// Third character
+			switch (argv[i][2]) {
+			case 't':
+				num = strtol(argv[++i], &endptr, 10);
+				if (endptr < argv[i] + len)
+					invalid_option_value(argv[i - 1], argv[i]);
+
+				config->set_ipfrag_timeout(num);
+				break;
+
+			case 'i':
+				num = strtol(argv[++i], &endptr, 10);
+				if (endptr < argv[i] + len)
+					invalid_option_value(argv[i - 1], argv[i]);
+
+				config->set_ipfrag_check_interval(num);
+				break;
+
+			default:
+				invalid_option(argv[i]);
+				break;
+			}
+			break;
+
+		case 't':
+			if (len == 2) {
+				num = strtol(argv[++i], &endptr, 10);
+				if (endptr < argv[i] + len)
+					invalid_option_value(argv[i - 1], argv[i]);
+
+				config->set_time_window_size_ms(num);
+			}
+			else if (len == 4 && argv[i][3] == 't') { // Limit to '-t?t'
+				// Third character
+				switch (argv[i][2]) {
+				case 's':
+					num = strtol(argv[++i], &endptr, 10);
+					if (endptr < argv[i] + len)
+						invalid_option_value(argv[i - 1], argv[i]);
+
+					config->set_tcp_syn_timeout(num);
+					break;
+
+				case 'e':
+					num = strtol(argv[++i], &endptr, 10);
+					if (endptr < argv[i] + len)
+						invalid_option_value(argv[i - 1], argv[i]);
+
+					config->set_tcp_estab_timeout(num);
+					break;
+
+				case 'r':
+					num = strtol(argv[++i], &endptr, 10);
+					if (endptr < argv[i] + len)
+						invalid_option_value(argv[i - 1], argv[i]);
+
+					config->set_tcp_rst_timeout(num);
+					break;
+
+				case 'f':
+					num = strtol(argv[++i], &endptr, 10);
+					if (endptr < argv[i] + len)
+						invalid_option_value(argv[i - 1], argv[i]);
+
+					config->set_tcp_fin_timeout(num);
+					break;
+
+				case 'l':
+					num = strtol(argv[++i], &endptr, 10);
+					if (endptr < argv[i] + len)
+						invalid_option_value(argv[i - 1], argv[i]);
+
+					config->set_tcp_last_ack_timeout(num);
+					break;
+
+				default:
+					invalid_option(argv[i]);
+					break;
+				}
+			}
+			else {
+				invalid_option(argv[i]);
+			}
+			break;
+
+
+		default:
+			invalid_option(argv[i]);
+			break;
+		}
+
+	}
+
+	// File list
+	int file_cnt = argc - i;
+	config->set_files_count(file_cnt);
+	if (file_cnt) {
+		config->set_files_values(&argv[i]);
+	}
+}
+
+void invalid_option(const char *opt)
+{
+	cout << "Invalid option '" << opt << "'" << endl << endl;
+	usage();
+	exit(-1);
+}
+
+void invalid_option_value(const char *opt, char *val)
+{
+	cout << "Invalid value '" << val << "' for option '" << opt << "'" << endl << endl;
+	usage();
+	exit(-1);
 }
