@@ -13,6 +13,7 @@ namespace FeatureExtractor {
 
 	Sniffer::Sniffer(const char *fname, const Config *config)
 		: additional_frame_length(config->get_additional_frame_len())
+		, read_timeout(config->get_pcap_read_timeout())	// No meaning here
 	{
 		char errbuf[PCAP_ERRBUF_SIZE];
 
@@ -30,6 +31,7 @@ namespace FeatureExtractor {
 
 	Sniffer::Sniffer(int inum, const Config *config)
 		: additional_frame_length(config->get_additional_frame_len())
+		, read_timeout(config->get_pcap_read_timeout())
 	{
 		pcap_if_t *alldevs;
 		pcap_if_t *d;

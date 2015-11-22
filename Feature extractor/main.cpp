@@ -94,6 +94,7 @@ void usage()
 		<< " -h, --help    Display this usage  " << endl
 		<< " -l, --list    List interfaces  " << endl
 		<< " -i   NUMBER   Capture from interface with given number (default 1)" << endl
+		<< " -p   MS       PCAP read timeout in ms (default 1000)" << endl
 		<< " -e            Print extra features(IPs, ports, end timestamp)" << endl
 		<< " -a   BYTES    Additional frame length to be add to each frame in bytes" << endl
 		<< "                 (e.g. 4B Ethernet CRC) (default 0)" << endl
@@ -208,6 +209,20 @@ void parse_args(int argc, char **argv, Config *config)
 				invalid_option(argv[i]);
 
 			config->set_print_extra_features(true);
+			break;
+
+		case 'p':
+			if (len != 2)
+				invalid_option(argv[i]);
+
+			if (argc <= ++i)
+				invalid_option_value(argv[i - 1], "");
+
+			num = strtol(argv[i], &endptr, 10);
+			if (endptr < argv[i] + len)
+				invalid_option_value(argv[i - 1], argv[i]);
+
+			config->set_pcap_read_timeout(num);
 			break;
 
 		case 'a':
