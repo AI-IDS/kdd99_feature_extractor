@@ -43,8 +43,6 @@ int main(int argc, char **argv)
 
 			Sniffer *sniffer = new Sniffer(files[i], &config);
 			extract(sniffer, &config);
-
-			cout << "counter: " << Sniffer::counter << endl;
 		}
 	}
 
