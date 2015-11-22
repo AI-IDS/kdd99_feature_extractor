@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 	if (config.get_files_count() == 0) {
 		// Input from interface
 		int inum = config.get_interface_num();
-		if (config.should_print_extra_features())
+		if (config.should_print_filename())
 			cout << "INTERFACE " << inum << endl;
 		Sniffer *sniffer = new Sniffer(inum, &config);
 		extract(sniffer, &config);
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 		int count = config.get_files_count();
 		char **files = config.get_files_values();
 		for (int i = 0; i < count; i++) {
-			if (config.should_print_extra_features())
+			if (config.should_print_filename())
 				cout << "FILE '" << files[i] << "'" << endl;
 
 			Sniffer *sniffer = new Sniffer(files[i], &config);
