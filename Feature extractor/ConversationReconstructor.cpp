@@ -10,13 +10,13 @@ namespace FeatureExtractor {
 
 	ConversationReconstructor::ConversationReconstructor()
 		: timeouts()
-		, timeout_interval(timeouts.get_conversation_check_interval())
+		, timeout_interval(timeouts.get_conversation_check_interval_ms())
 	{
 	}
 
 	ConversationReconstructor::ConversationReconstructor(Config &timeouts)
 		: timeouts(timeouts)
-		, timeout_interval(timeouts.get_conversation_check_interval())
+		, timeout_interval(timeouts.get_conversation_check_interval_ms())
 	{
 	}
 

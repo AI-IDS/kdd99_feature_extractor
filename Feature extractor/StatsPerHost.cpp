@@ -60,7 +60,8 @@ namespace FeatureExtractor {
 		feature_updater->set_same_srv_rate(cf, same_srv_rate);
 
 		// Feature 30
-		feature_updater->set_diff_srv_rate(cf, 0.0 - same_srv_rate);
+		double diff_srv_rate = (count == 0) ? 0.0 : (1.0 - same_srv_rate);
+		feature_updater->set_diff_srv_rate(cf, diff_srv_rate);
 
 		// Part of feature 31/37
 		feature_updater->set_same_srv_count(cf, same_srv_counts[service]);

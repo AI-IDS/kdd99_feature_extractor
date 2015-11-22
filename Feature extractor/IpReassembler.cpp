@@ -6,13 +6,13 @@ namespace FeatureExtractor {
 	
 	IpReassembler::IpReassembler()
 		: timeouts()
-		, timeout_interval(timeouts.get_conversation_check_interval())
+		, timeout_interval(timeouts.get_conversation_check_interval_ms())
 	{
 	}
 
 	IpReassembler::IpReassembler(Config &timeouts)
 		: timeouts(timeouts)
-		, timeout_interval(timeouts.get_conversation_check_interval())
+		, timeout_interval(timeouts.get_conversation_check_interval_ms())
 	{
 	}
 
