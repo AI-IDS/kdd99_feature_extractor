@@ -1,6 +1,8 @@
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <string.h>
+#include <new>          // std::bad_alloc
 #include "Config.h"
 #include "Sniffer.h"
 #include "IpReassembler.h"
@@ -17,33 +19,37 @@ void invalid_option(char *opt);
 void invalid_option_value(char *opt, char *val);
 void extract(Sniffer *sniffer, const Config *config);
 
-//debug
-#include <fstream>
-
 int main(int argc, char **argv)
 {
-	Config config;
-	parse_args(argc, argv, &config);
+	try {
+		Config config;
+		parse_args(argc, argv, &config);
 
-	if (config.get_files_count() == 0) {
-		// Input from interface
-		int inum = config.get_interface_num();
-		if (config.should_print_filename())
-			cout << "INTERFACE " << inum << endl;
-		Sniffer *sniffer = new Sniffer(inum, &config);
-		extract(sniffer, &config);
-	}
-	else {
-		// Input from files
-		int count = config.get_files_count();
-		char **files = config.get_files_values();
-		for (int i = 0; i < count; i++) {
+		if (config.get_files_count() == 0) {
+			// Input from interface
+			int inum = config.get_interface_num();
 			if (config.should_print_filename())
-				cout << "FILE '" << files[i] << "'" << endl;
-
-			Sniffer *sniffer = new Sniffer(files[i], &config);
+				cout << "INTERFACE " << inum << endl;
+			Sniffer *sniffer = new Sniffer(inum, &config);
 			extract(sniffer, &config);
 		}
+		else {
+			// Input from files
+			int count = config.get_files_count();
+			char **files = config.get_files_values();
+			for (int i = 0; i < count; i++) {
+				if (config.should_print_filename())
+					cout << "FILE '" << files[i] << "'" << endl;
+
+				Sniffer *sniffer = new Sniffer(files[i], &config);
+				extract(sniffer, &config);
+			}
+		}
+	}
+	catch (std::bad_alloc& ba)	// Inform when memory limit reached
+	{
+		std::cerr << "Error allocating memory (Exception bad_alloc): " << ba.what() << '\n';
+		return -1;
 	}
 
 	return 0;
@@ -100,7 +106,7 @@ void usage()
 		<< " -i   NUMBER   Capture from interface with given number (default 1)" << endl
 		<< " -p   MS       PCAP read timeout in ms (default 1000)" << endl
 		<< " -e            Print extra features(IPs, ports, end timestamp)" << endl
-		<< " -v            Print filename before parsing each file" << endl
+		<< " -v            Print filename/interface number before parsing each file" << endl
 		<< " -o   FILE     Write all output to FILE instead of standard output" << endl
 		<< " -a   BYTES    Additional frame length to be add to each frame in bytes" << endl
 		<< "                 (e.g. 4B Ethernet CRC) (default 0)" << endl

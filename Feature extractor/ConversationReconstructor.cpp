@@ -196,7 +196,7 @@ namespace FeatureExtractor {
 		// Overriden operator '<' of class Conversation is used
 		sort(timedout_convs.begin(), timedout_convs.end());
 
-		// Add timeout conversation to output queue in order of their last timestamp
+		// Add timedout conversation to output queue in order of their last timestamp
 		for (vector<Conversation *>::iterator it = timedout_convs.begin(); it != timedout_convs.end(); ++it) {
 			output_queue.push(*it);
 		}
