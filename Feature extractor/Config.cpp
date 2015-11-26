@@ -204,7 +204,7 @@ namespace FeatureExtractor {
 	{
 		return print_filename;
 	}
-	void Config::set_print_filename(bool print_extra_features)
+	void Config::set_print_filename(bool print_filename)
 	{
 		this->print_filename = print_filename;
 	}

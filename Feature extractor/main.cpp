@@ -104,7 +104,7 @@ void usage()
 		<< " -h, --help    Display this usage  " << endl
 		<< " -l, --list    List interfaces  " << endl
 		<< " -i   NUMBER   Capture from interface with given number (default 1)" << endl
-		<< " -p   MS       PCAP read timeout in ms (default 1000)" << endl
+		<< " -p   MS       libpcap network read timeout in ms (default 1000)" << endl
 		<< " -e            Print extra features(IPs, ports, end timestamp)" << endl
 		<< " -v            Print filename/interface number before parsing each file" << endl
 		<< " -o   FILE     Write all output to FILE instead of standard output" << endl
@@ -153,6 +153,7 @@ void list_interfaces()
 	pcap_freealldevs(alldevs);
 }
 
+// TODO: code in usage() can be reused function/macro
 void parse_args(int argc, char **argv, Config *config)
 {
 	int i;
