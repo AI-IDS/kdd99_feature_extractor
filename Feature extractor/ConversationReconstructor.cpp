@@ -29,7 +29,7 @@ namespace FeatureExtractor {
 		}
 
 		// Deallocate leftover active conversations
-		for (ConnectionMap::iterator it = conn_map.begin(); it != conn_map.end(); ++it) {
+		for (ConversationMap::iterator it = conv_map.begin(); it != conv_map.end(); ++it) {
 			delete it->second;
 		}
 	}
@@ -48,8 +48,8 @@ namespace FeatureExtractor {
 		// http://stackoverflow.com/a/101980/3503528
 		// - iterator can will also used to remove finished connection from map
 		// - if connection not found, try with swapped src & dst (opposite direction)
-		ConnectionMap::iterator it = conn_map.lower_bound(key);
-		if (it != conn_map.end() && !(conn_map.key_comp()(key, it->first)))
+		ConversationMap::iterator it = conv_map.lower_bound(key);
+		if (it != conv_map.end() && !(conv_map.key_comp()(key, it->first)))
 		{
 			// Key (connection) already exists
 			conversation = it->second;
@@ -58,8 +58,8 @@ namespace FeatureExtractor {
 			// If not found, try with opposite direction for TCP & UDP (bidirectional)
 			if (ip_proto == TCP || ip_proto == UDP) {
 				FiveTuple rev_key = key.get_reversed();
-				ConnectionMap::iterator rev_it = conn_map.lower_bound(rev_key);
-				if (rev_it != conn_map.end() && !(conn_map.key_comp()(rev_key, rev_it->first)))
+				ConversationMap::iterator rev_it = conv_map.lower_bound(rev_key);
+				if (rev_it != conv_map.end() && !(conv_map.key_comp()(rev_key, rev_it->first)))
 				{
 					// Key for opposite direction already exists
 					conversation = rev_it->second;
@@ -84,9 +84,9 @@ namespace FeatureExtractor {
 				conversation = new IcmpConversation(packet);
 				break;
 			}
-			assert(conversation != nullptr);
+			assert(conversation != nullptr && "Attempt to add NULL conversation to conversation map");
 			
-			it = conn_map.insert(it, ConnectionMap::value_type(key, conversation));
+			it = conv_map.insert(it, ConversationMap::value_type(key, conversation));
 		}
 
 		// Pass new packet to conversation
@@ -94,7 +94,7 @@ namespace FeatureExtractor {
 
 		// If connection is in final state, remove it from map & enqueue to output
 		if (is_finished) {
-			conn_map.erase(it);	
+			conv_map.erase(it);
 			output_queue.push(conversation);
 		}
 	}
@@ -140,8 +140,8 @@ namespace FeatureExtractor {
 
 		// Erasing during iteration available since C++11
 		// http://stackoverflow.com/a/263958/3503528
-		ConnectionMap::iterator it = conn_map.begin();
-		while (it != conn_map.end()) {
+		ConversationMap::iterator it = conv_map.begin();
+		while (it != conv_map.end()) {
 			bool is_timedout = false;
 			Conversation *conv = it->second;
 			ip_field_protocol_t ip_proto = conv->get_five_tuple_ptr()->get_ip_proto();
@@ -191,7 +191,7 @@ namespace FeatureExtractor {
 			// and to temporary list of timed out conversations
 			if (is_timedout) {
 				timedout_convs.push_back(conv);
-				conn_map.erase(it++);
+				conv_map.erase(it++);
 			}
 			else {
 				++it;
@@ -215,11 +215,11 @@ namespace FeatureExtractor {
 
 		// Erasing during iteration available since C++11
 		// http://stackoverflow.com/a/263958/3503528
-		ConnectionMap::iterator it = conn_map.begin();
-		while (it != conn_map.end()) {
+		ConversationMap::iterator it = conv_map.begin();
+		while (it != conv_map.end()) {
 			Conversation *conv = it->second;
 			timedout_convs.push_back(conv);
-			conn_map.erase(it++);
+			conv_map.erase(it++);
 		}
 
 		// Sort timed out conversations by timestamp of last fragmet seen

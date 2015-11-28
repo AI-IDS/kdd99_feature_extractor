@@ -144,7 +144,7 @@ namespace FeatureExtractor {
 		// Array for mapping service_t to string (char *)
 		static const char* const SERVICE_NAMES[NUMBER_OF_SERVICES];
 		static_assert(sizeof(Conversation::SERVICE_NAMES) / sizeof(char *) == NUMBER_OF_SERVICES, 
-			"Mapping of services to string failed: number of string does not match number of values");
+			"Mapping of services to strings failed: number of string does not match number of values");
 
 	protected:
 		FiveTuple five_tuple;

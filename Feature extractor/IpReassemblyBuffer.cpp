@@ -46,7 +46,7 @@ namespace FeatureExtractor {
 		
 		// If no hole left IP datagram is reassembled
 		if (hole_list.is_empty()) {
-			assert(datagram != nullptr);
+			assert(datagram != nullptr && "IP reassebly failed: NULL datagram");
 
 			// Update timestamps, frame count & length
 			datagram->set_start_ts(first_frag_ts);

@@ -62,7 +62,7 @@ namespace FeatureExtractor {
 
 		// Forward to per host stats
 		map<uint32_t, TStatsPerHost>::iterator it = per_host.find(dst_ip);
-		assert(it != per_host.end()); // "Reporting removal of convesation not in queue: no such dst. IP record"
+		assert(it != per_host.end() && "Reporting removal of convesation not in queue: no such dst. IP record");
 		TStatsPerHost *this_host = &it->second;
 		this_host->report_conversation_removal(conv);
 

@@ -16,7 +16,7 @@ namespace FeatureExtractor {
 
 	void ReferenceCounter::deregister_reference()
 	{
-		assert(reference_count > 0); // "Deregistering reference failed: no registered reference!"
+		assert(reference_count > 0  && "Deregistering reference failed: no more registered references left!");
 
 		// If no more references, commit suicide (hahaha)
 		if (!(reference_count--))

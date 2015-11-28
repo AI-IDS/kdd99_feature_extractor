@@ -40,7 +40,7 @@ namespace FeatureExtractor {
 	 */
 	void IpReassemblyBufferHoleList::add_fragment(size_t frag_start, size_t frag_end, bool is_last_frag) {
 		// Should not insert to completed datagram
-		assert(!this->is_empty());
+		assert(!this->is_empty() && "Attempt to insert fragment to reassembled datagram");
 
 		Hole *prev = nullptr;
 		Hole *hole = this->first_hole;

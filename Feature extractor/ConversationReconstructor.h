@@ -16,8 +16,8 @@ namespace FeatureExtractor {
 	 */
 	class ConversationReconstructor
 	{
-		typedef map<FiveTuple, Conversation*> ConnectionMap;
-		ConnectionMap conn_map;
+		typedef map<FiveTuple, Conversation*> ConversationMap;
+		ConversationMap conv_map;
 
 
 		// Queue of reconstructed conversations prepared to output

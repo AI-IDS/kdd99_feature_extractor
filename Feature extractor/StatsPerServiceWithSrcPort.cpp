@@ -28,7 +28,7 @@ namespace FeatureExtractor {
 		
 		// Find the conversation count for source port number & decrement
 		map<uint16_t, uint32_t>::iterator it = same_src_port_counts.find(src_port);
-		assert(it != same_src_port_counts.end()); // "Stats: reporting removal of non-existing source port"
+		assert(it != same_src_port_counts.end() && "Stats: reporting removal of non-existing source port");
 		it->second--;
 
 		// Remove from list if no conversation for given src port left

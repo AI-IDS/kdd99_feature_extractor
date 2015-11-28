@@ -93,7 +93,7 @@ namespace FeatureExtractor {
 
 		// IP
 		ip_header_t *ip = (ip_header_t *)eth->get_eth2_sdu();
-		assert(header->len >= eth->ETH2_HEADER_LENGTH + ip->IP_MIN_HEADER_LENGTH);
+		assert(header->len >= eth->ETH2_HEADER_LENGTH + ip->IP_MIN_HEADER_LENGTH && "Packet too short to fit Ethernet header");
 		f->set_src_ip(ip->src_addr);
 		f->set_dst_ip(ip->dst_addr);
 		f->set_ip_proto(ip->protocol);
@@ -112,7 +112,7 @@ namespace FeatureExtractor {
 		icmp_header_t *icmp = nullptr;
 		switch (ip->protocol) {
 		case TCP:
-			assert(f->get_ip_payload_length() >= tcp->TCP_MIN_HEADER_LENGTH);
+			assert(f->get_ip_payload_length() >= tcp->TCP_MIN_HEADER_LENGTH && "Packet too short to fit TCP header");
 			tcp = (tcp_header_t *)ip->get_sdu();
 			f->set_src_port(ntohs(tcp->src_port));
 			f->set_dst_port(ntohs(tcp->dst_port));
@@ -120,14 +120,14 @@ namespace FeatureExtractor {
 			break;
 
 		case UDP:
-			assert(f->get_ip_payload_length() >= udp->UDP_MIN_HEADER_LENGTH);
+			assert(f->get_ip_payload_length() >= udp->UDP_MIN_HEADER_LENGTH && "Packet too short to fit UDP header");
 			udp = (udp_header_t *)ip->get_sdu();
 			f->set_src_port(ntohs(udp->src_port));
 			f->set_dst_port(ntohs(udp->dst_port));
 			break;
 
 		case ICMP:
-			assert(f->get_ip_payload_length() >= icmp->ICMP_MIN_HEADER_LENGTH);
+			assert(f->get_ip_payload_length() >= icmp->ICMP_MIN_HEADER_LENGTH && "Packet too short to fit ICMP header");
 			icmp = (icmp_header_t *)ip->get_sdu();
 			f->set_icmp_type(icmp->type);
 			f->set_icmp_code(icmp->code);
