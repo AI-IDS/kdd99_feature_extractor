@@ -99,7 +99,7 @@ namespace FeatureExtractor {
 		f->set_ip_proto(ip->protocol);
 		f->set_ip_id(ntohs(ip->id));
 		f->set_ip_flag_mf(ip->flag_mf());
-		f->set_ip_frag_offset(ip->frag_offset());
+		f->set_ip_frag_offset((uint16_t) ip->frag_offset());
 		f->set_ip_payload_length(ntohs(ip->total_length) - ip->header_length());
 
 		// Look for L4 headers only in first fragment
