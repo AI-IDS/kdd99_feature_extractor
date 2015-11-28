@@ -88,8 +88,9 @@ void extract(Sniffer *sniffer, const Config *config, bool is_running_live)
 		Packet *datagr = nullptr;
 		if (has_more_traffic) {
 			//TODO: move filter to sniffer
+			eth_field_type_t eth_type = frag->get_eth_type();
 			ip_field_protocol_t ip_proto = frag->get_ip_proto();
-			assert((ip_proto == TCP || ip_proto == UDP || ip_proto == ICMP)
+			assert((eth_type == IPV4 && (ip_proto == TCP || ip_proto == UDP || ip_proto == ICMP))
 				&& "Sniffer returned packet that is not (TCP or UDP or ICMP)");
 
 			// IP Reassembly

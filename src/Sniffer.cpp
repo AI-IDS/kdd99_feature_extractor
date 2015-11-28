@@ -22,7 +22,7 @@ namespace FeatureExtractor {
 	const size_t Sniffer::SNAPLEN = 94;
 
 	// We are interested only in this
-	const char *Sniffer::DEFAULT_FILTER = "tcp or udp or icmp";
+	const char *Sniffer::DEFAULT_FILTER = "ip and (tcp or udp or icmp)";
 
 	Sniffer::Sniffer(const char *fname, const Config *config)
 		: additional_frame_length(config->get_additional_frame_len())
