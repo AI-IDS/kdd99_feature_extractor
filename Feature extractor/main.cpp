@@ -4,6 +4,7 @@
 #include <string.h>
 #include <new>          // std::bad_alloc
 #include <csignal>
+#include <assert.h>
 #include "Config.h"
 #include "Sniffer.h"
 #include "IpReassembler.h"
@@ -88,8 +89,8 @@ void extract(Sniffer *sniffer, const Config *config, bool is_running_live)
 		if (has_more_traffic) {
 			//TODO: move filter to sniffer
 			ip_field_protocol_t ip_proto = frag->get_ip_proto();
-			if (ip_proto != TCP && ip_proto != UDP && ip_proto != ICMP)
-				continue;
+			assert((ip_proto != TCP && ip_proto != UDP && ip_proto != ICMP)
+				&& "Sniffer returned packet that is not (TCP or UDP or ICMP)");
 
 			// IP Reassembly
 			datagr = reasm.reassemble(frag);
@@ -169,7 +170,7 @@ void list_interfaces()
 	if (pcap_findalldevs(&alldevs, errbuf) == -1)
 	{
 		cerr << "Error in pcap_findalldevs: " << errbuf << endl;
-		exit(-1);
+		exit(1);
 	}
 
 	// Print the list
@@ -185,7 +186,7 @@ void list_interfaces()
 	pcap_freealldevs(alldevs);
 }
 
-// TODO: code in usage() can be reused function/macro
+// TODO: code snippets in usage() can be reused function/macro
 void parse_args(int argc, char **argv, Config *config)
 {
 	int i;
@@ -478,12 +479,12 @@ void invalid_option(char *opt)
 {
 	cout << "Invalid option '" << opt << "'" << endl << endl;
 	usage();
-	exit(-1);
+	exit(1);
 }
 
 void invalid_option_value(char *opt, char *val)
 {
 	cout << "Invalid value '" << val << "' for option '" << opt << "'" << endl << endl;
 	usage();
-	exit(-1);
+	exit(1);
 }

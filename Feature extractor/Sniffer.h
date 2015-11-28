@@ -16,11 +16,11 @@ namespace FeatureExtractor {
 	{
 		pcap_t *handle;
 
-		// Snapshot length (in bytes) - limited to improve performace
-		// 96B = 14B Eth2 header + 60B max IP header length + 20 TCP basic header
-		// This must be enlarged ("unlimited"), if deep packet inspection 
-		// (i.e. payload analysis) is employed.
-		static const size_t SNAPLEN = 94;
+		// Snapshot length (in bytes) - limited to improve performace (value in .cpp)
+		static const size_t SNAPLEN;
+
+		// Snapshot length (in bytes) - limited to improve performace (value in .cpp)
+		static const char *DEFAULT_FILTER;
 
 		// Additional length for each frame 
 		// For example 4B = Ethernet II CRC/FSC size (if it is not part of libpcap packet capture)
@@ -28,6 +28,7 @@ namespace FeatureExtractor {
 		// Value 0 should lead to same result as you can see in wireshark
 		size_t additional_frame_length;
 
+		void set_filter(const char *filter);
 
 
 	public:
@@ -35,12 +36,10 @@ namespace FeatureExtractor {
 		Sniffer(int inum, const Config *config = new Config());
 		~Sniffer();
 
+		/**
+		 * Returns next parsed headers L3 & L4 of next frame 
+		 */
 		IpFragment *next_frame();
-
-
-		//debug
-		static uint32_t counter;
-
 	};
 }
 

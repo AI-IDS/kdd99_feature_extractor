@@ -7,9 +7,22 @@
 // prevent localtime warning --> solved with localtime_s
 //#pragma warning(disable : 4996)
 
+// Unknown netmask constant for filter creation
+#ifndef PCAP_NETMASK_UNKNOWN
+#define PCAP_NETMASK_UNKNOWN 0xffffffff
+#endif
+
 namespace FeatureExtractor {
-	
 	using namespace std;
+
+	// Snapshot length (in bytes) - limited to improve performace
+	// 96B = 14B Eth2 header + 60B max IP header length + 20 TCP basic header
+	// This must be enlarged ("unlimited"), if deep packet inspection 
+	// (i.e. payload analysis) is employed.
+	const size_t Sniffer::SNAPLEN = 94;
+
+	// We are interested only in this
+	const char *Sniffer::DEFAULT_FILTER = "tcp or udp or icmp";
 
 	Sniffer::Sniffer(const char *fname, const Config *config)
 		: additional_frame_length(config->get_additional_frame_len())
@@ -20,11 +33,14 @@ namespace FeatureExtractor {
 		if ((this->handle = pcap_open_offline(fname, errbuf)) == NULL)
 		{
 			cerr << "Error: Unable to open the file " << fname << endl;
-			exit(-1);
+			exit(1);
 		}
 
 		// Limit snapshot length
 		pcap_set_snaplen(this->handle, SNAPLEN);
+
+		// Filter unneeded network sh*t
+		set_filter(DEFAULT_FILTER);
 	}
 
 
@@ -40,7 +56,7 @@ namespace FeatureExtractor {
 		if (pcap_findalldevs(&alldevs, errbuf) == -1)
 		{
 			cerr << "Error in pcap_findalldevs: " << errbuf << endl;
-			exit(-1);
+			exit(1);
 		}
 
 		// Jump to the selected adapter
@@ -51,7 +67,7 @@ namespace FeatureExtractor {
 		{
 			cerr << "Interface number out of range." << endl;
 			pcap_freealldevs(alldevs);
-			exit(-1);
+			exit(1);
 		}
 
 		// Open the adapter in promiscuous mode, limit snaphot length
@@ -60,11 +76,33 @@ namespace FeatureExtractor {
 		{
 			cerr << "Unable to open the adapter. " << d->name << " is not supported by WinPcap" << endl;
 			pcap_freealldevs(alldevs);
-			exit(-1);
+			exit(1);
 		}
 
-		//cout << "Interface: " << d->name << endl << d->description << endl;
 		pcap_freealldevs(alldevs);
+
+		// Filter unneeded network sh*t
+		set_filter(DEFAULT_FILTER);
+	}
+
+
+	void Sniffer::set_filter(const char *filter)
+	{
+		struct bpf_program filter_program;
+
+		// Compile filter
+		if (pcap_compile(handle, &filter_program, filter, 0, PCAP_NETMASK_UNKNOWN) == -1)
+		{
+			cerr <<  "Error compiling filter '" << filter << "'" << endl;
+			exit(1);
+		}
+
+		// Set filter
+		if (pcap_setfilter(handle, &filter_program) == -1)
+		{
+			cerr << "Error setting filter '" << filter << "'" << endl;
+			exit(1);
+		}
 	}
 
 	IpFragment *Sniffer::next_frame()
