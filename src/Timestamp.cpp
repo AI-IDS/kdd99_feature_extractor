@@ -14,8 +14,8 @@ namespace FeatureExtractor {
 	}
 	Timestamp::Timestamp(int64_t usecs)
 	{
-		ts.tv_sec = usecs / 1000000;
-		ts.tv_usec = usecs % 1000000;
+		ts.tv_sec = (long) (usecs / 1000000);
+		ts.tv_usec = (long) (usecs % 1000000);
 	}
 
 	Timestamp::~Timestamp()
