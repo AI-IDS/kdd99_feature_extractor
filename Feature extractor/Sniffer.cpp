@@ -143,6 +143,7 @@ namespace FeatureExtractor {
 
 	Sniffer::~Sniffer()
 	{
+		pcap_close(handle);
 	}
 }
 

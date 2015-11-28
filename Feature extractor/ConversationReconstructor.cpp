@@ -99,6 +99,12 @@ namespace FeatureExtractor {
 		}
 	}
 
+
+	void ConversationReconstructor::report_time(const Timestamp &now)
+	{
+		check_timeouts(now);
+	}
+
 	Conversation *ConversationReconstructor::get_next_conversation()
 	{
 		if (output_queue.empty())

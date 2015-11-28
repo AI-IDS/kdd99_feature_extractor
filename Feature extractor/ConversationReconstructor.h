@@ -41,6 +41,10 @@ namespace FeatureExtractor {
 		 */
 		 void add_packet(const Packet *packet);
 
+		 /**
+		  * When no new packets, time can be reported to timeout old connections
+		  */
+		 void report_time(const Timestamp &now);
 
 		/**
 		 * Returns next reconstructed conversation from internal queue of finished conversation.

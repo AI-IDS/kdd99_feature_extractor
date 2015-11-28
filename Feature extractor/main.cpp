@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string.h>
 #include <new>          // std::bad_alloc
+#include <csignal>
 #include "Config.h"
 #include "Sniffer.h"
 #include "IpReassembler.h"
@@ -12,15 +13,23 @@
 using namespace std;
 using namespace FeatureExtractor;
 
+static volatile bool temination_requested = false;
+
+void signal_handler(int signum);
 void usage();
 void list_interfaces();
 void parse_args(int argc, char **argv, Config *config);
 void invalid_option(char *opt);
 void invalid_option_value(char *opt, char *val);
-void extract(Sniffer *sniffer, const Config *config);
+void extract(Sniffer *sniffer, const Config *config, bool is_running_live);
 
 int main(int argc, char **argv)
 {
+	// Register signal handler for termination
+	signal(SIGINT, signal_handler);
+	signal(SIGBREAK, signal_handler);
+	signal(SIGTERM, signal_handler);
+
 	try {
 		Config config;
 		parse_args(argc, argv, &config);
@@ -31,7 +40,7 @@ int main(int argc, char **argv)
 			if (config.should_print_filename())
 				cout << "INTERFACE " << inum << endl;
 			Sniffer *sniffer = new Sniffer(inum, &config);
-			extract(sniffer, &config);
+			extract(sniffer, &config, true);
 		}
 		else {
 			// Input from files
@@ -42,7 +51,7 @@ int main(int argc, char **argv)
 					cout << "FILE '" << files[i] << "'" << endl;
 
 				Sniffer *sniffer = new Sniffer(files[i], &config);
-				extract(sniffer, &config);
+				extract(sniffer, &config, false);
 			}
 		}
 	}
@@ -55,38 +64,48 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-void extract(Sniffer *sniffer, const Config *config)
+void signal_handler(int signum)
+{
+	cerr << "Terminating extractor (signal " << signum << " received)" << endl;
+	temination_requested = true;
+}
+
+void extract(Sniffer *sniffer, const Config *config, bool is_running_live)
 {
 	IpReassembler reasm;
 	ConversationReconstructor conv_reconstructor;
 	StatsEngine stats_engine(config);
 
 	bool has_more_traffic = true;
-	while (has_more_traffic) {
-		Packet *datagr = nullptr;
+	while (!temination_requested && (has_more_traffic || is_running_live)) {
 
 		// Get frame from sniffer
 		IpFragment *frag = sniffer->next_frame();
 		has_more_traffic = (frag != NULL);
 
-		// IP Reassembly
-		if (has_more_traffic)  {
+		
+		Packet *datagr = nullptr;
+		if (has_more_traffic) {
+			//TODO: move filter to sniffer
 			ip_field_protocol_t ip_proto = frag->get_ip_proto();
 			if (ip_proto != TCP && ip_proto != UDP && ip_proto != ICMP)
 				continue;
 
+			// IP Reassembly
 			datagr = reasm.reassemble(frag);
-		}
-		else {
-			// If no more traffic, finish everything
-			conv_reconstructor.finish_all_conversations();
+
+			// Conversation reconstruction
+			if (datagr) {
+				conv_reconstructor.add_packet(datagr);
+			}
+			else {
+				// Tell conversation reconstruction just how the time goes on
+				Timestamp now = frag->get_end_ts();
+				conv_reconstructor.report_time(now);
+			}
 		}
 
-		// Pass datagrams/packets to conversation reconstruction engine
-		if (datagr)
-			conv_reconstructor.add_packet(datagr);
-
-		// Output conversations
+		// Output timedout conversations 
 		Conversation *conv;
 		while ((conv = conv_reconstructor.get_next_conversation()) != nullptr) {
 			ConversationFeatures *cf = stats_engine.calculate_features(conv);
@@ -95,6 +114,19 @@ void extract(Sniffer *sniffer, const Config *config)
 			cf->print(config->should_print_extra_features());
 			delete cf;
 		}
+	}
+
+	// If no more traffic, finish everything
+	conv_reconstructor.finish_all_conversations();
+
+	// Output leftover conversations
+	Conversation *conv;
+	while ((conv = conv_reconstructor.get_next_conversation()) != nullptr) {
+		ConversationFeatures *cf = stats_engine.calculate_features(conv);
+		conv = nullptr;
+
+		cf->print(config->should_print_extra_features());
+		delete cf;
 	}
 }
 
@@ -160,7 +192,7 @@ void parse_args(int argc, char **argv, Config *config)
 
 	// Options
 	for (i = 1; i < argc && argv[i][0] == '-'; i++) {
-		int len = strlen(argv[i]);
+		size_t len = strlen(argv[i]);
 		if (len < 2)
 			invalid_option(argv[i]);
 
