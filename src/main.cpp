@@ -17,11 +17,11 @@ using namespace FeatureExtractor;
 static volatile bool temination_requested = false;
 
 void signal_handler(int signum);
-void usage();
+void usage(char *name);
 void list_interfaces();
 void parse_args(int argc, char **argv, Config *config);
-void invalid_option(char *opt);
-void invalid_option_value(char *opt, char *val);
+void invalid_option(char *opt, char *progname);
+void invalid_option_value(char *opt, char *val, char *progname);
 void extract(Sniffer *sniffer, const Config *config, bool is_running_live);
 
 int main(int argc, char **argv)
@@ -87,7 +87,8 @@ void extract(Sniffer *sniffer, const Config *config, bool is_running_live)
 		
 		Packet *datagr = nullptr;
 		if (has_more_traffic) {
-			//TODO: move filter to sniffer
+			// Do some assertion about the type of packet just to be sure
+			// If sniffer's filter fails to fulfill this assertion, "continue" can be used here
 			eth_field_type_t eth_type = frag->get_eth_type();
 			ip_field_protocol_t ip_proto = frag->get_ip_proto();
 			assert((eth_type == IPV4 && (ip_proto == TCP || ip_proto == UDP || ip_proto == ICMP))
@@ -132,9 +133,11 @@ void extract(Sniffer *sniffer, const Config *config, bool is_running_live)
 	}
 }
 
-void usage()
+void usage(char *name)
 {
-	cout << "Usage: extractor [OPTION] [FILE]..." << endl
+	// Option '-' orignaly meant to use big read timeouts and exit on first timeout. Other approach used
+	// because original approach did not work (does this option make sense now?).
+	cout << "Usage: " << name << " [OPTION]... [FILE]" << endl
 		<< " -h, --help    Display this usage  " << endl
 		<< " -l, --list    List interfaces  " << endl
 		<< " -i   NUMBER   Capture from interface with given number (default 1)" << endl
@@ -196,7 +199,7 @@ void parse_args(int argc, char **argv, Config *config)
 	for (i = 1; i < argc && argv[i][0] == '-'; i++) {
 		size_t len = strlen(argv[i]);
 		if (len < 2)
-			invalid_option(argv[i]);
+			invalid_option(argv[i], argv[0]);
 
 		// Second character
 		char *endptr;
@@ -205,7 +208,7 @@ void parse_args(int argc, char **argv, Config *config)
 		switch (argv[i][1]) {
 		case '-': // Long option
 			if (strcmp(argv[i], "--help") == 0) {
-				usage();
+				usage(argv[0]);
 				exit(0);
 			}
 			if (strcmp(argv[i], "--list") == 0) {
@@ -213,11 +216,11 @@ void parse_args(int argc, char **argv, Config *config)
 				exit(0);
 			}
 
-			invalid_option(argv[i]);
+			invalid_option(argv[i], argv[0]);
 			break;
 
 		case 'h':
-			usage();
+			usage(argv[0]);
 			exit(0);
 			break;
 
@@ -229,49 +232,49 @@ void parse_args(int argc, char **argv, Config *config)
 		case 'i':
 			if (len == 2) {
 				if (argc <= ++i)
-					invalid_option_value(argv[i - 1], "");
+					invalid_option_value(argv[i - 1], "", argv[0]);
 
 				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + strlen(argv[i]))
-					invalid_option_value(argv[i - 1], argv[i]);
+					invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 				config->set_interface_num(num);
 			}
 			else if (len == 3 && argv[i][2] == 't') {	// Option -it
 				if (argc <= ++i)
-					invalid_option_value(argv[i - 1], "");
+					invalid_option_value(argv[i - 1], "", argv[0]);
 
 				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + strlen(argv[i]))
-					invalid_option_value(argv[i - 1], argv[i]);
+					invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 				config->set_icmp_timeout(num);
 			}
 			else {
-				invalid_option(argv[i]);
+				invalid_option(argv[i], argv[0]);
 			}
 			break;
 
 		case 'e':
 			if (len != 2)
-				invalid_option(argv[i]);
+				invalid_option(argv[i], argv[0]);
 
 			config->set_print_extra_features(true);
 			break;
 
 		case 'v':
 			if (len != 2)
-				invalid_option(argv[i]);
+				invalid_option(argv[i], argv[0]);
 
 			config->set_print_filename(true);
 			break;
 
 		case 'o':
 			if (len != 2)
-				invalid_option(argv[i]);
+				invalid_option(argv[i], argv[0]);
 
 			if (argc <= ++i)
-				invalid_option_value(argv[i - 1], "");
+				invalid_option_value(argv[i - 1], "", argv[0]);
 
 			out_stream = ofstream(argv[i]);
 			// streambuf *coutbuf = std::cout.rdbuf(); //save old buf
@@ -280,28 +283,28 @@ void parse_args(int argc, char **argv, Config *config)
 
 		case 'p':
 			if (len != 2)
-				invalid_option(argv[i]);
+				invalid_option(argv[i], argv[0]);
 
 			if (argc <= ++i)
-				invalid_option_value(argv[i - 1], "");
+				invalid_option_value(argv[i - 1], "", argv[0]);
 
 			num = strtol(argv[i], &endptr, 10);
 			if (endptr < argv[i] + strlen(argv[i]))
-				invalid_option_value(argv[i - 1], argv[i]);
+				invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 			config->set_pcap_read_timeout(num);
 			break;
 
 		case 'a':
 			if (len != 2)
-				invalid_option(argv[i]);
+				invalid_option(argv[i], argv[0]);
 
 			if (argc <= ++i)
-				invalid_option_value(argv[i - 1], "");
+				invalid_option_value(argv[i - 1], "", argv[0]);
 
 			num = strtol(argv[i], &endptr, 10);
 			if (endptr < argv[i] + strlen(argv[i]))
-				invalid_option_value(argv[i - 1], argv[i]);
+				invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 			config->set_additional_frame_len(num);
 			break;
@@ -309,74 +312,74 @@ void parse_args(int argc, char **argv, Config *config)
 		case 'c':
 			if (len == 2) {
 				if (argc <= ++i)
-					invalid_option_value(argv[i - 1], "");
+					invalid_option_value(argv[i - 1], "", argv[0]);
 
 				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + strlen(argv[i]))
-					invalid_option_value(argv[i - 1], argv[i]);
+					invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 				config->set_count_window_size(num);
 			}
 			else if (len == 3 && argv[i][2] == 'i') {	// Option -ci
 				if (argc <= ++i)
-					invalid_option_value(argv[i - 1], "");
+					invalid_option_value(argv[i - 1], "", argv[0]);
 
 				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + strlen(argv[i]))
-					invalid_option_value(argv[i - 1], argv[i]);
+					invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 				config->set_conversation_check_interval_ms(num);
 			}
 			else {
-				invalid_option(argv[i]);
+				invalid_option(argv[i], argv[0]);
 			}
 			break;
 
 		case 'u':
 			// Limit to '-ut'
 			if (len != 3 || argv[i][2] != 't')
-				invalid_option(argv[i]);
+				invalid_option(argv[i], argv[0]);
 
 			if (argc <= ++i)
-				invalid_option_value(argv[i - 1], "");
+				invalid_option_value(argv[i - 1], "", argv[0]);
 
 			num = strtol(argv[i], &endptr, 10);
 			if (endptr < argv[i] + strlen(argv[i]))
-				invalid_option_value(argv[i - 1], argv[i]);
+				invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 			config->set_udp_timeout(num);
 			break;
 
 		case 'f':
 			if (len != 3)
-				invalid_option(argv[i]);
+				invalid_option(argv[i], argv[0]);
 
 			// Third character
 			switch (argv[i][2]) {
 			case 't':
 				if (argc <= ++i)
-					invalid_option_value(argv[i - 1], "");
+					invalid_option_value(argv[i - 1], "", argv[0]);
 
 				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + strlen(argv[i]))
-					invalid_option_value(argv[i - 1], argv[i]);
+					invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 				config->set_ipfrag_timeout(num);
 				break;
 
 			case 'i':
 				if (argc <= ++i)
-					invalid_option_value(argv[i - 1], "");
+					invalid_option_value(argv[i - 1], "", argv[0]);
 
 				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + strlen(argv[i]))
-					invalid_option_value(argv[i - 1], argv[i]);
+					invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 				config->set_ipfrag_check_interval_ms(num);
 				break;
 
 			default:
-				invalid_option(argv[i]);
+				invalid_option(argv[i], argv[0]);
 				break;
 			}
 			break;
@@ -384,11 +387,11 @@ void parse_args(int argc, char **argv, Config *config)
 		case 't':
 			if (len == 2) {
 				if (argc <= ++i)
-					invalid_option_value(argv[i - 1], "");
+					invalid_option_value(argv[i - 1], "", argv[0]);
 
 				num = strtol(argv[i], &endptr, 10);
 				if (endptr < argv[i] + strlen(argv[i]))
-					invalid_option_value(argv[i - 1], argv[i]);
+					invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 				config->set_time_window_size_ms(num);
 			}
@@ -397,75 +400,73 @@ void parse_args(int argc, char **argv, Config *config)
 				switch (argv[i][2]) {
 				case 's':
 					if (argc <= ++i)
-						invalid_option_value(argv[i - 1], "");
+						invalid_option_value(argv[i - 1], "", argv[0]);
 
 					num = strtol(argv[i], &endptr, 10);
 					if (endptr < argv[i] + strlen(argv[i]))
-						invalid_option_value(argv[i - 1], argv[i]);
+						invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 					config->set_tcp_syn_timeout(num);
 					break;
 
 				case 'e':
 					if (argc <= ++i)
-						invalid_option_value(argv[i - 1], "");
+						invalid_option_value(argv[i - 1], "", argv[0]);
 
 					num = strtol(argv[i], &endptr, 10);
 					if (endptr < argv[i] + strlen(argv[i]))
-						invalid_option_value(argv[i - 1], argv[i]);
+						invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 					config->set_tcp_estab_timeout(num);
 					break;
 
 				case 'r':
 					if (argc <= ++i)
-						invalid_option_value(argv[i - 1], "");
+						invalid_option_value(argv[i - 1], "", argv[0]);
 
 					num = strtol(argv[i], &endptr, 10);
 					if (endptr < argv[i] + strlen(argv[i]))
-						invalid_option_value(argv[i - 1], argv[i]);
+						invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 					config->set_tcp_rst_timeout(num);
 					break;
 
 				case 'f':
 					if (argc <= ++i)
-						invalid_option_value(argv[i - 1], "");
+						invalid_option_value(argv[i - 1], "", argv[0]);
 
 					num = strtol(argv[i], &endptr, 10);
 					if (endptr < argv[i] + strlen(argv[i]))
-						invalid_option_value(argv[i - 1], argv[i]);
+						invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 					config->set_tcp_fin_timeout(num);
 					break;
 
 				case 'l':
 					if (argc <= ++i)
-						invalid_option_value(argv[i - 1], "");
+						invalid_option_value(argv[i - 1], "", argv[0]);
 
 					num = strtol(argv[i], &endptr, 10);
 					if (endptr < argv[i] + strlen(argv[i]))
-						invalid_option_value(argv[i - 1], argv[i]);
+						invalid_option_value(argv[i - 1], argv[i], argv[0]);
 
 					config->set_tcp_last_ack_timeout(num);
 					break;
 
 				default:
-					invalid_option(argv[i]);
+					invalid_option(argv[i], argv[0]);
 					break;
 				}
 			}
 			else {
-				invalid_option(argv[i]);
+				invalid_option(argv[i], argv[0]);
 			}
 			break;
 
-
 		default:
-			invalid_option(argv[i]);
+			invalid_option(argv[i], argv[0]);
 			break;
 		}
-
 	}
 
 	// File list
@@ -476,16 +477,16 @@ void parse_args(int argc, char **argv, Config *config)
 	}
 }
 
-void invalid_option(char *opt)
+void invalid_option(char *opt, char *progname)
 {
 	cout << "Invalid option '" << opt << "'" << endl << endl;
-	usage();
+	usage(progname);
 	exit(1);
 }
 
-void invalid_option_value(char *opt, char *val)
+void invalid_option_value(char *opt, char *val, char *progname)
 {
 	cout << "Invalid value '" << val << "' for option '" << opt << "'" << endl << endl;
-	usage();
+	usage(progname);
 	exit(1);
 }
