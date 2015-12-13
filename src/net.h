@@ -1,6 +1,12 @@
 #pragma once
 
-#include <stdint.h>
+#include "types.h"
+
+// ntoh fuctions
+#if !defined(_WIN32) && !defined(WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__) && !defined(__BORLANDC__)
+#include <netinet/in.h>
+#endif
+
 // Bug in win WpdPack_4_1_2: On line 69 of pcap-stdinc.h, 'inline' is re-defined
 // http://www.winpcap.org/pipermail/winpcap-bugs/2013-November/001760.html
 // Solved by including pcap.h after standard libs
@@ -23,7 +29,7 @@ namespace FeatureExtractor {
 	/*
 	 * Ethernet header
 	 */
-	typedef struct {
+	struct ether_header_t {
 		uint8_t dst_addr[6];
 		uint8_t src_addr[6];
 		eth_field_type_t type_length;
@@ -33,7 +39,7 @@ namespace FeatureExtractor {
 		bool is_ethernet2() const;
 		bool is_type_ipv4() const;
 		uint8_t *get_eth2_sdu() const;
-	} ether_header_t;
+	};
 
 	/*
 	 * IP protocol field
@@ -48,7 +54,7 @@ namespace FeatureExtractor {
 	/*
 	 * IP header
 	 */
-	typedef struct {
+	struct ip_header_t {
 		uint8_t ver_ihl;	// 4 bits version and 4 bits internet header length
 		uint8_t tos;
 		uint16_t total_length;
@@ -71,29 +77,29 @@ namespace FeatureExtractor {
 		size_t frag_offset() const;
 		const char *protocol_str() const;
 		uint8_t *get_sdu() const;
-	} ip_header_t;
+	};
 
 	/*
 	 * UDP header 
 	 */
-	typedef struct {
+	struct udp_header_t {
 		uint16_t src_port;
 		uint16_t dst_port;
 		uint16_t length;
 		uint16_t checksum;
 
 		static const size_t UDP_MIN_HEADER_LENGTH = 8;
-	} udp_header_t;
+	};
 
 	/*
 	* TCP flags field
 	*/
-	typedef struct tcp_field_flags_t {
+	struct tcp_field_flags_t {
 		uint8_t flags;
 
 		tcp_field_flags_t();
 		tcp_field_flags_t(uint8_t flags);
-		bool fin() const;
+		bool fin() const;	
 		bool syn() const;
 		bool rst() const;
 		bool psh() const;
@@ -101,12 +107,12 @@ namespace FeatureExtractor {
 		bool urg() const;	// Urgent
 		bool ece() const;	// ECN Echo
 		bool cwr() const;	// Congestion Window Reduced
-	} tcp_field_flags_t;
+	};
 
 	/*
 	 * TCP header
 	 */
-	typedef struct {
+	struct tcp_header_t  {
 		uint16_t src_port;
 		uint16_t dst_port;
 		uint32_t seq;
@@ -118,7 +124,7 @@ namespace FeatureExtractor {
 		uint16_t urgent_p;
 
 		static const size_t TCP_MIN_HEADER_LENGTH = 20;
-	} tcp_header_t;
+	};
 
 
 
@@ -146,11 +152,11 @@ namespace FeatureExtractor {
 	/*
 	 * ICMP header
 	 */
-	typedef struct {
+	struct icmp_header_t {
 		icmp_field_type_t type;
 		uint8_t code;
 		uint16_t checksum;
 
 		static const size_t ICMP_MIN_HEADER_LENGTH = 8;
-	} icmp_header_t;
+	};
 }

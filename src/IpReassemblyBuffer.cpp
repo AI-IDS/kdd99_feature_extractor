@@ -5,8 +5,8 @@ namespace FeatureExtractor {
 	using namespace std;
 
 	IpReassemblyBuffer::IpReassemblyBuffer()
-		: datagram(nullptr), frame_count(0), total_length(0)
-		, first_frag_ts(), last_frag_ts()
+		: datagram(nullptr), first_frag_ts(), last_frag_ts()
+		, frame_count(0), total_length(0)
 	{
 	}
 

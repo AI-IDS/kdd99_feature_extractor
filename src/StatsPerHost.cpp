@@ -1,8 +1,10 @@
 #include "StatsPerHost.h"
 
-// Disable C4351 warning message:
+// MSVC: Disable C4351 warning message:
 // new behavior: elements of array 'StatsPerHost::same_srv_counts' will be default initialized
-#pragma warning(disable:4351)
+#ifdef _MSC_VER
+	#pragma warning(disable:4351)
+#endif
 
 namespace FeatureExtractor {
 

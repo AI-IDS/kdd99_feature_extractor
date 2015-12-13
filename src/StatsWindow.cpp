@@ -20,9 +20,9 @@ namespace FeatureExtractor {
 	StatsWindow<TStatsPerHost, TStatsPerService>::~StatsWindow()
 	{
 		// Deallocate leftover conversations in the queue
-		while (!queue.empty()) {
-			Conversation *conv = queue.front();
-			queue.pop();
+		while (!finished_convs.empty()) {
+			Conversation *conv = finished_convs.front();
+			finished_convs.pop();
 
 			// Object commits suicide if no more references to it
 			conv->deregister_reference();
@@ -38,7 +38,7 @@ namespace FeatureExtractor {
 
 		// Find or insert with single lookup: 
 		// http://stackoverflow.com/a/101980/3503528
-		map<uint32_t, TStatsPerHost>::iterator it = per_host.lower_bound(dst_ip);
+		typename map<uint32_t, TStatsPerHost>::iterator it = per_host.lower_bound(dst_ip);
 		if (it != per_host.end() && !(per_host.key_comp()(dst_ip, it->first)))
 		{
 			// Found
@@ -47,7 +47,7 @@ namespace FeatureExtractor {
 		else {
 			// The key does not exist in the map
 			// Add it to the map + update iterator to point to new item
-			it = per_host.insert(it, map<uint32_t, TStatsPerHost>::value_type(dst_ip, TStatsPerHost(feature_updater)));
+			it = per_host.insert(it, typename map<uint32_t, TStatsPerHost>::value_type(dst_ip, TStatsPerHost(feature_updater)));
 			stats = &it->second;
 		}
 
@@ -61,7 +61,7 @@ namespace FeatureExtractor {
 		service_t service = conv->get_service();
 
 		// Forward to per host stats
-		map<uint32_t, TStatsPerHost>::iterator it = per_host.find(dst_ip);
+		typename map<uint32_t, TStatsPerHost>::iterator it = per_host.find(dst_ip);
 		assert(it != per_host.end() && "Reporting removal of convesation not in queue: no such dst. IP record");
 		TStatsPerHost *this_host = &it->second;
 		this_host->report_conversation_removal(conv);
@@ -90,7 +90,7 @@ namespace FeatureExtractor {
 
 		// Add new connection to window queue (+ register reference)
 		conv->register_reference();
-		queue.push(conv);
+		finished_convs.push(conv);
 
 		perform_window_maintenance(conv);
 	}

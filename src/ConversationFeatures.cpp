@@ -170,6 +170,8 @@ namespace FeatureExtractor {
 		this->dst_host_same_srv_count = dst_host_same_srv_count;
 	}
 
+	// Allow using localtime instead of localtime_s 
+	#pragma warning(disable : 4996)
 	void ConversationFeatures::print(bool print_extra_features) const
 	{
 		stringstream ss;
@@ -224,15 +226,15 @@ namespace FeatureExtractor {
 			ss << ft->get_dst_port() << ',';
 
 			// Time (e.g.: 2010-06-14T00:11:23)
-			//struct tm *ltime;
-			struct tm timeinfo;
+			struct tm *ltime;
+			//struct tm timeinfo;
 			char timestr[20];
 			time_t local_tv_sec;
 			local_tv_sec = conv->get_last_ts().get_secs();
-			//ltime = localtime(&local_tv_sec);
-			localtime_s(&timeinfo, &local_tv_sec);
-			//strftime(timestr, sizeof timestr, "%Y-%m-%dT%H:%M:%S", ltime);
-			strftime(timestr, sizeof timestr, "%Y-%m-%dT%H:%M:%S", &timeinfo);
+			ltime = localtime(&local_tv_sec);
+			//localtime_s(&timeinfo, &local_tv_sec);
+			strftime(timestr, sizeof timestr, "%Y-%m-%dT%H:%M:%S", ltime);
+			//strftime(timestr, sizeof timestr, "%Y-%m-%dT%H:%M:%S", &timeinfo);
 			ss << timestr;
 		}
 

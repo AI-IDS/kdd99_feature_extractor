@@ -1,11 +1,9 @@
 
 #include <iostream>
+#include <cstdlib>
 #include "Sniffer.h"
 #include "net.h"
 #include <assert.h>
-
-// prevent localtime warning --> solved with localtime_s
-//#pragma warning(disable : 4996)
 
 // Unknown netmask constant for filter creation
 #ifndef PCAP_NETMASK_UNKNOWN

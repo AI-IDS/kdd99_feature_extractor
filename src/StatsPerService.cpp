@@ -1,6 +1,5 @@
 #include "StatsPerService.h"
 
-
 namespace FeatureExtractor {
 	StatsPerService::StatsPerService()
 		: feature_updater(nullptr)

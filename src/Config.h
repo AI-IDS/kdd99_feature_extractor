@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include "types.h"
 
 namespace FeatureExtractor {
 
@@ -19,8 +19,6 @@ namespace FeatureExtractor {
 		int interface_num;
 		int pcap_read_timeout;
 		size_t additional_frame_len;
-
-		// TODO: getters & setter for above
 
 		/**
 		 * IP reassembly

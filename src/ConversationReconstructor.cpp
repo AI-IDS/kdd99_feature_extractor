@@ -1,9 +1,11 @@
 #include "ConversationReconstructor.h"
+#include "types.h"
 #include "TcpConnection.h"
 #include "UdpConversation.h"
 #include "IcmpConversation.h"
 #include <assert.h>
 #include <algorithm>
+
 
 namespace FeatureExtractor {
 	using namespace std;
@@ -83,8 +85,12 @@ namespace FeatureExtractor {
 			case ICMP:
 				conversation = new IcmpConversation(packet);
 				break;
+
+			default:
+				break;
 			}
-			assert(conversation != nullptr && "Attempt to add NULL conversation to conversation map");
+			assert(conversation != nullptr && "Attempt to add NULL "
+				"conversation to conversation map. Possible unhadnled IP protocol value");
 			
 			it = conv_map.insert(it, ConversationMap::value_type(key, conversation));
 		}

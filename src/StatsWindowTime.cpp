@@ -8,14 +8,14 @@
 namespace FeatureExtractor {
 	template<class TStatsPerHost, class TStatsPerService>
 	StatsWindowTime<TStatsPerHost, TStatsPerService>::StatsWindowTime()
-		: StatsWindow(new FeatureUpdaterTime())
+		: StatsWindow<TStatsPerHost, TStatsPerService>(new FeatureUpdaterTime())
 		, window_size_ms(2000)		// Default size = 2 sec.
 	{
 	}
 
 	template<class TStatsPerHost, class TStatsPerService>
 	StatsWindowTime<TStatsPerHost, TStatsPerService>::StatsWindowTime(unsigned int window_size_ms)
-		: StatsWindow(new FeatureUpdaterTime())
+		: StatsWindow<TStatsPerHost, TStatsPerService>(new FeatureUpdaterTime())
 		, window_size_ms(window_size_ms)
 	{
 	}
@@ -32,12 +32,12 @@ namespace FeatureExtractor {
 		Timestamp max_delete_ts = now - (window_size_ms * 1000);	// Substract usecs
 
 		// Delete all conversations with last timestamp <= max_delete_ts
-		while (!queue.empty() && queue.front()->get_last_ts() <= max_delete_ts) {
-			Conversation *conv = queue.front();
-			queue.pop();
+		while (!this->finished_convs.empty() && this->finished_convs.front()->get_last_ts() <= max_delete_ts) {
+			Conversation *conv = this->finished_convs.front();
+			this->finished_convs.pop();
 
 			// Exclude removed conversation from stats
-			report_conversation_removal(conv);
+			this->report_conversation_removal(conv);
 
 			// Object commits suicide if no more references to it
 			conv->deregister_reference();

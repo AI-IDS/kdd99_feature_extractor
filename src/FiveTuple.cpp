@@ -3,7 +3,7 @@
 namespace FeatureExtractor {
 
 	FiveTuple::FiveTuple()
-		: src_ip(0), dst_ip(0), src_port(0), dst_port(0), ip_proto(PROTO_ZERO)
+		: ip_proto(PROTO_ZERO), src_ip(0), dst_ip(0), src_port(0), dst_port(0)
 	{
 	}
 

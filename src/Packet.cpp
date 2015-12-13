@@ -155,20 +155,24 @@ namespace FeatureExtractor {
 		return 1;
 	}
 
+// Allow using localtime instead of localtime_s 
+#ifdef _MSC_VER
+	#pragma warning(disable:4996)
+#endif
 	void Packet::print_human() const
 	{
 		// TODO: WTF ugly code, just for debugging, mal si branic..
 		stringstream ss;
 
-		//struct tm *ltime;
-		struct tm timeinfo;
+		struct tm *ltime;
+		//struct tm timeinfo;
 		char timestr[16];
 		time_t local_tv_sec;
-		local_tv_sec = start_ts.get_secs();
-		//ltime = localtime(&local_tv_sec);
-		localtime_s(&timeinfo, &local_tv_sec);
-		//strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
-		strftime(timestr, sizeof timestr, "%H:%M:%S", &timeinfo);
+		//local_tv_sec = start_ts.get_secs();
+		ltime = localtime(&local_tv_sec);
+		//localtime_s(&timeinfo, &local_tv_sec);
+		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
+		//strftime(timestr, sizeof timestr, "%H:%M:%S", &timeinfo);
 		ss << timestr;
 
 		ss << (is_eth2() ? " ETHERNET II" : " NON-ETHERNET");

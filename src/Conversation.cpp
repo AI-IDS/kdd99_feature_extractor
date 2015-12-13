@@ -223,6 +223,12 @@ namespace FeatureExtractor {
 
 	const char *Conversation::get_service_str() const 
 	{
+		// Ensure size of strins matches number of values for enum at compilation time
+#ifdef static_assert
+		static_assert(sizeof(Conversation::SERVICE_NAMES) / sizeof(char *) == NUMBER_OF_SERVICES,
+			"Mapping of services to strings failed: number of string does not match number of values");
+#endif
+
 		return SERVICE_NAMES[get_service()];
 	}
 
@@ -237,6 +243,8 @@ namespace FeatureExtractor {
 			break;
 		case ICMP:
 			return "icmp";
+			break;
+		default:
 			break;
 		}
 		return "UNKNOWN";
@@ -255,6 +263,9 @@ namespace FeatureExtractor {
 		case S2:
 		case S3:
 			return true;
+			break;
+
+		default:
 			break;
 		}
 
@@ -329,6 +340,7 @@ namespace FeatureExtractor {
 		case S4: return "S4"; break;
 		case S2F: return "S2F"; break;
 		case S3F: return "S3F"; break;
+		default: break;
 		}
 
 		return "UNKNOWN";
@@ -339,20 +351,25 @@ namespace FeatureExtractor {
 		return (this->get_last_ts() < other.get_last_ts());
 	}
 
+
+// Allow using localtime instead of localtime_s 
+#ifdef _MSC_VER
+	#pragma warning(disable:4996)
+#endif
 	void Conversation::print_human() const
 	{
 		// TODO: WTF ugly code, just for debugging, so nasrac..
 		stringstream ss;
 
-		//struct tm *ltime;
-		struct tm timeinfo;
+		struct tm *ltime;
+		//struct tm timeinfo;
 		char timestr[16];
 		time_t local_tv_sec;
-		local_tv_sec = start_ts.get_secs();
-		//ltime = localtime(&local_tv_sec);
-		localtime_s(&timeinfo, &local_tv_sec);
-		//strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
-		strftime(timestr, sizeof timestr, "%H:%M:%S", &timeinfo);
+		//local_tv_sec = start_ts.get_secs();
+		ltime = localtime(&local_tv_sec);
+		//localtime_s(&timeinfo, &local_tv_sec);
+		strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
+		//strftime(timestr, sizeof timestr, "%H:%M:%S", &timeinfo);
 
 		ss << "CONVERSATION ";
 		if (five_tuple.get_ip_proto() == ICMP) {

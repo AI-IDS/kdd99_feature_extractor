@@ -1,6 +1,5 @@
 #include "Config.h"
 
-
 namespace FeatureExtractor {
 	/**
 	 * Constructor for default timeout values:

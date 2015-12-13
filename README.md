@@ -6,6 +6,13 @@ Some feature might not be calculated exactly same way as in KDD, because there w
 
 Features in KDD should be the same as features introduced by Lee & Stolfo in their work [2].
 
+## Status
+* Current version is not 100% guarenteed to be perfect in sense that some features might be calculated bit different algorighms than KDD '99 dataset a Lee & Stolfo used. Hovewer, it is suitable for educational purposes.
+* Compiled & tested in following environments:
+  * Windows 7 x64, MSCV 2015 (14), WinPcap 4.1.3
+  * Windows 7 x64, MSCV 2013 (12), WinPcap 4.1.3
+  * Ubuntu 12.04 x64, gcc 4.6.3, libpcap 4.2
+
 ## Features
 * Subset of KDD '99 features [1]
   * Content features (columns 10-22 of KDD) are not included
@@ -22,6 +29,12 @@ Features in KDD should be the same as features introduced by Lee & Stolfo in the
   * Computes intrinsic features (columns 1-9 of KDD)
 4. Statistical engine
   * Computes derived features (columns 23-41 of KDD)
+
+## Planned sections in this readme
+* TODOs (e.g. IP checksum checking not implemented)
+* Known/possible problems, bugs & limitations
+* Build instructions
+
 
 ## Main sources of feature documentation
 [1] KDD Cup 1999 Data, http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html

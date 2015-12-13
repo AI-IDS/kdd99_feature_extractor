@@ -75,13 +75,13 @@ namespace FeatureExtractor {
 		return (((uint8_t *) this) + header_length());
 	}
 
-	tcp_field_flags_t::tcp_field_flags_t() : tcp_field_flags_t(0)
+	tcp_field_flags_t::tcp_field_flags_t(uint8_t flags)
+		: flags(flags)
 	{}
 
-	tcp_field_flags_t::tcp_field_flags_t(uint8_t flags)
-	{
-		this->flags = flags;
-	}
+	tcp_field_flags_t::tcp_field_flags_t()
+		: flags(0)
+	{}
 
 	bool tcp_field_flags_t::fin() const
 	{

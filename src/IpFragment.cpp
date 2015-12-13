@@ -1,5 +1,5 @@
 #include <iostream>
-#include "IPFragment.h"
+#include "IpFragment.h"
 
 namespace FeatureExtractor {
 	using namespace std;

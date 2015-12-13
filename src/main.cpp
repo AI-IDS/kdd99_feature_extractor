@@ -4,7 +4,9 @@
 #include <string.h>
 #include <new>          // std::bad_alloc
 #include <csignal>
+#include <cstdlib>
 #include <assert.h>
+
 #include "Config.h"
 #include "Sniffer.h"
 #include "IpReassembler.h"
@@ -17,19 +19,21 @@ using namespace FeatureExtractor;
 static volatile bool temination_requested = false;
 
 void signal_handler(int signum);
-void usage(char *name);
+void usage(const char *name);
 void list_interfaces();
 void parse_args(int argc, char **argv, Config *config);
-void invalid_option(char *opt, char *progname);
-void invalid_option_value(char *opt, char *val, char *progname);
+void invalid_option(const char *opt, const char *progname);
+void invalid_option_value(const char *opt, const char *val, const char *progname);
 void extract(Sniffer *sniffer, const Config *config, bool is_running_live);
 
 int main(int argc, char **argv)
 {
 	// Register signal handler for termination
 	signal(SIGINT, signal_handler);
-	signal(SIGBREAK, signal_handler);
 	signal(SIGTERM, signal_handler);
+#ifdef SIGBREAK
+	signal(SIGBREAK, signal_handler);
+#endif
 
 	try {
 		Config config;
@@ -94,7 +98,9 @@ void extract(Sniffer *sniffer, const Config *config, bool is_running_live)
 			assert((eth_type == IPV4 && (ip_proto == TCP || ip_proto == UDP || ip_proto == ICMP))
 				&& "Sniffer returned packet that is not (TCP or UDP or ICMP)");
 
-			// IP Reassembly
+			Timestamp now = frag->get_end_ts();
+
+			// IP Reassembly, frag must not be used after this
 			datagr = reasm.reassemble(frag);
 
 			// Conversation reconstruction
@@ -103,7 +109,6 @@ void extract(Sniffer *sniffer, const Config *config, bool is_running_live)
 			}
 			else {
 				// Tell conversation reconstruction just how the time goes on
-				Timestamp now = frag->get_end_ts();
 				conv_reconstructor.report_time(now);
 			}
 		}
@@ -133,11 +138,13 @@ void extract(Sniffer *sniffer, const Config *config, bool is_running_live)
 	}
 }
 
-void usage(char *name)
+void usage(const char *name)
 {
 	// Option '-' orignaly meant to use big read timeouts and exit on first timeout. Other approach used
 	// because original approach did not work (does this option make sense now?).
-	cout << "Usage: " << name << " [OPTION]... [FILE]" << endl
+	cout << "KDD'99-like feature extractor" << endl
+		<< "Build time : " << __DATE__ << " " << __TIME__ << endl << endl
+		<< "Usage: " << name << " [OPTION]... [FILE]" << endl
 		<< " -h, --help    Display this usage  " << endl
 		<< " -l, --list    List interfaces  " << endl
 		<< " -i   NUMBER   Capture from interface with given number (default 1)" << endl
@@ -276,7 +283,7 @@ void parse_args(int argc, char **argv, Config *config)
 			if (argc <= ++i)
 				invalid_option_value(argv[i - 1], "", argv[0]);
 
-			out_stream = ofstream(argv[i]);
+			out_stream.open(argv[i]);
 			// streambuf *coutbuf = std::cout.rdbuf(); //save old buf
 			cout.rdbuf(out_stream.rdbuf());		//redirect std::cout
 			break;
@@ -477,14 +484,14 @@ void parse_args(int argc, char **argv, Config *config)
 	}
 }
 
-void invalid_option(char *opt, char *progname)
+void invalid_option(const char *opt, const char *progname)
 {
 	cout << "Invalid option '" << opt << "'" << endl << endl;
 	usage(progname);
 	exit(1);
 }
 
-void invalid_option_value(char *opt, char *val, char *progname)
+void invalid_option_value(const char *opt, const char *val, const char *progname)
 {
 	cout << "Invalid value '" << val << "' for option '" << opt << "'" << endl << endl;
 	usage(progname);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include "types.h"
 #include "Timestamp.h"
 
 namespace FeatureExtractor {

@@ -28,7 +28,7 @@ namespace FeatureExtractor {
 		// Queue, methods, feature src_diff_host_rate
 
 		// Queue of conversation in observed window
-		queue<Conversation *>queue;
+		queue<Conversation *>finished_convs;
 
 		// Statistics per host (destination IP)
 		map<uint32_t, TStatsPerHost> per_host;

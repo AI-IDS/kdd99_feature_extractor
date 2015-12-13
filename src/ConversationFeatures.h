@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include "types.h"
 #include "Conversation.h"
 
 namespace FeatureExtractor {

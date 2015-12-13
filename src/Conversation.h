@@ -17,7 +17,9 @@ namespace FeatureExtractor {
 	enum conversation_state_t {
 		// General states
 		INIT,		// Nothing happened yet.
-		SF,			// Normal establishment and termination. Note that this is the same symbol as for state S1. You can tell the two apart because for S1 there will not be any byte counts in the summary, while for SF there will be.
+		SF,			// Normal establishment and termination. Note that this is the same 
+					// symbol as for state S1. You can tell the two apart because for S1 there
+					// will not be any byte counts in the summary, while for SF there will be.
 
 		// TCP specific
 		S0,			// Connection attempt seen, no reply.
@@ -143,8 +145,6 @@ namespace FeatureExtractor {
 
 		// Array for mapping service_t to string (char *)
 		static const char* const SERVICE_NAMES[NUMBER_OF_SERVICES];
-		static_assert(sizeof(Conversation::SERVICE_NAMES) / sizeof(char *) == NUMBER_OF_SERVICES, 
-			"Mapping of services to strings failed: number of string does not match number of values");
 
 	protected:
 		FiveTuple five_tuple;
