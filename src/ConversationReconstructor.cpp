@@ -190,7 +190,6 @@ namespace FeatureExtractor {
 				default:
 					break;
 				}
-				break;
 			}
 
 			// If buffer is timed out, remove conversation from active conversations
