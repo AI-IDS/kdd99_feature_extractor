@@ -72,7 +72,7 @@ namespace FeatureExtractor {
 		int read_timeout = config->get_pcap_read_timeout();
 		if ((this->handle = pcap_open_live(d->name, SNAPLEN, 1, read_timeout, errbuf)) == NULL)
 		{
-			cerr << "Unable to open the adapter. " << d->name << " is not supported by WinPcap" << endl;
+			cerr << "Unable to open the adapter. " << d->name << errbuf << endl;
 			pcap_freealldevs(alldevs);
 			exit(1);
 		}
