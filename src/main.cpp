@@ -188,7 +188,7 @@ void list_interfaces()
 	for (d = alldevs, i = 1; d; d = d->next, i++) {
 
 		cout << i << ". "
-			<< setiosflags(ios_base::left) << setw(40) << d->description
+			<< setiosflags(ios_base::left) << setw(40) << (char *)((d->description != 0)? d->description:"NULL")
 			<< "\t[" << d->name << ']' << endl;
 	}
 	cout << endl;
