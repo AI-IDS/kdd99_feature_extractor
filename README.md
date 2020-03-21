@@ -30,10 +30,21 @@ Features in KDD should be the same as features introduced by Lee & Stolfo in the
 4. Statistical engine
   * Computes derived features (columns 23-41 of KDD)
 
+## Build instructions to Linux (tested on Ubuntu)
+1. Create a folder to temporal build files<br/>
+   `mkdir build-files`<br/><br/>
+2. Enter in the folder and compile the cache<br/>
+  `cd build-files`<br/>
+   `cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" ..`<br/><br/>
+3. Exit the folder of build cache and compile the project<br/>
+  `cd ..`<br/>
+  `cmake --build ./build-files --target kdd99extractor -- -j 4`<br/><br/>
+4. Path to compiled project is:<br/>
+  `build-files/src/kdd99extractor`<br/><br/>
+
 ## Planned sections in this readme
 * TODOs (e.g. IP checksum checking not implemented)
 * Known/possible problems, bugs & limitations
-* Build instructions
 
 
 ## Main sources of feature documentation
